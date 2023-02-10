@@ -1,3 +1,5 @@
+# Git功能强大，学海无涯，路还很长，慢慢走，慢慢品，致敬Linus Torvalds先生！
+
 Mouse：
 双击左键 —— 复制
 单击中键 —— 粘贴
@@ -101,14 +103,6 @@ git remote rm （已存在的远程库别名）—— 删除远程库别名
 git push vh （分支名）—— push分支“master”到远程库（vh是别名，可直接写网址）
 git push vh （分支名）--force —— 强制push到远程库，否则会提交失败,报错原因：本地项目版本号低于远端仓库版本号
 
-Tips：众所周知github是会保存历史记录的，而且就算删了某文件，别人也是能在历史记录里复原
-所以，怎么清除github的历史记录（孑然一身更新到github）呢？
-step 1：git checkout --orphan  （新分支名） —— 新建并转入空分支
-step 2：git commit -m "xxx"
-step 3：git branch -D （原分支名）—— 强制删除原分支
-step 4：git branch -m （新分支名） （原分支名）—— 重命名新分支（防止github产生新分支）
-step 4：git push vh （原分支名）--force —— 强制覆盖github上的原分支（历史记录也会被“空历史记录”覆盖）
-
 git push vh :(分支名) —— 删除github上某分支
 
 git pull vh （分支名）—— 从远程库拉取更新内容到本地库
@@ -134,6 +128,19 @@ Step5：命令行中输入 ssh -T git@github.com 测试SSH是否成功配置
 （若ssh -T git@github.com后长时间无反应，可考虑开手机关闭wifi开数据，然后开热点给电脑再次尝试）
 Step6：git remote add vh-ssh git@github.com:Vh-WmSm/Vh.git —— 创建ssh远程库别名为vh-ssh
 Step7：git push vh-ssh (分支名) —— （可能还要填密码）然后ssh push成功
+
+如何清除github的历史记录？
+（假如有些东西想彻底删除，本地直接删除后push上去是不行的，因为还可以翻看历史记录找回）
+法一：历史记录跳回某一个版本
+用git reset --soft （版本号）回到某版本后（再提一次：soft不会删除目标版本不存在的东西），
+本地再更改到满意后（想删的删，想改的改）
+
+法二：想直接清空历史记录（此法原理：空分支的log是空的，且已知log与github的历史记录同步）
+step 1：git checkout --orphan  （新分支名） —— 新建并转入空分支
+step 2：git commit -m "xxx" —— 空分支中原文件已自动存入暂存区，commit即可
+step 3：git branch -D （原分支名）—— 强制删除原分支
+step 4：git branch -m （新分支名） （原分支名）—— 重命名新分支（防止github产生新分支）
+step 4：git push vh （原分支名）--force —— 强制覆盖github上的原分支（历史记录也会被“空历史记录”覆盖）
 
 
 Web_Problem
