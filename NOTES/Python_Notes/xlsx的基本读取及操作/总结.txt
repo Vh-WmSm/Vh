@@ -1,0 +1,1 @@
+①wb.active是获取xlsx文件打开时的那一个sheet，若是wb.workbook，则就是新建一个sheet，若是打开一个xlsx即wb.load_workbook则就是获取该文件当时保存时所在的sheet

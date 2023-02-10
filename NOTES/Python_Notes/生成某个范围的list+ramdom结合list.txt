@@ -1,0 +1,12 @@
+①
+法一：
+list[i for i in range(1,101)]
+生成一个1到100的list
+
+法二：
+list = []
+list.extent(range(1,101))
+
+②random.randint([1,2,3],2)  # 意思是在[1,2,3]
+里随机抽取2个数
+

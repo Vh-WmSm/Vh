@@ -1,0 +1,161 @@
+Mouse：
+双击左键 —— 复制
+单击中键 —— 粘贴
+
+
+Vim：
+进入编辑模式（append）：
+i —— 在光标前插入文本
+a —— 在光标后插入文本
+o —— 在当前行下一行插入文本
+O —— 在当前行上一行插入文本
+
+ctrl + Insert 复制（同linux命令）（类比windows的ctrl + c）
+shift + Insert 粘贴（同linux命令）（类比windows的ctrl + v）
+esc —— 退出编辑模式（退出编辑模式才能输入命令）
+
+h、j、k、l —— 左、下、上、右
+gg —— 光标到开头
+V —— 进入可视模式（选择单行，然后↑或↓键可选择多行）
+G（shift + g） —— 光标到末行开头
+ggVG —— 文本全选
+g_ —— 光标到行尾
+*y —— 复制所选文本（然后可在电脑其他地方ctrl + v粘贴）
+p —— 在该行下方粘贴所复制内容
+yy —— 复制单行
+dd —— 删除单行
+dG —— 删除当前光标行及往下行的内容
+ggdG —— 全部删除
+x —— 删除光标后的一个字符
+
+u —— 撤销（类比ctrl + z）
+ctrl + r —— 重做（类比ctrl + y 或 ctrl + shift + z）
+
+J —— 把光标所在行和下一行提上来合并为一行
+
+ZZ（或“:wq”） —— 保存并退出
+:q! —— 不保存并退出
+
+
+
+Linux：
+cd .. —— 返回上一级（注意和cmd不同，这里d和.之间有一个空格）
+touch —— 新建文件（cmd是type nul > 文件名）
+cat （文件名） —— 把文件内容打印到界面（cmd是type 文件名）
+vim （文件名）—— 新建文件并进入vim编辑器
+mkdir —— 新建文件夹
+mv —— 移动文件（cmd是move）（move 1.txt 2.txt可以重命名文件）
+rm —— 删除文件（cmd是del）
+rm -r —— 删除文件夹（cmd是rd）
+clear/ctrl + l（小写L）—— 清屏（cmd是cls）
+
+
+Git：
+git init —— 初始化
+git add .（在git 2.x版本-A和.一样，而在1.x版本.不会提交删除的文件）—— 提交所有文件到暂存区
+git add -u 提交修改的和删除的文件到暂存区，不提交新建的文件
+git add 文件名——提交某文件到暂存区
+git commit -m "版本信息" （若此时只想提交暂存区中某个文件，则此处写它的文件名）—— 提交文件到本地仓库
+git commit -m用于提交暂存区的文件，git commit -am用于提交跟踪过的文件（可省去重新git add .这一步操作）
+git status —— 查看本地库状态
+git reflog —— 查看简略版本信息（鼠标左键复制简略版本号可用reset恢复）
+git log —— 查看详细版本信息
+git reset --hard 简略版本号 —— 恢复到某个版本
+
+git config --global(--local) [xxx].xxx xxx —— 在全局（当前）仓库.gitconfig(.config)文件写入参数
+e.g:
+Command —— git config --global --user.name Vh-WmSm
+等价于在全局.gitconfig文件里写入：（我的全局.gitconfig文件在---C:\Users\Vh）
+[user]
+	name = Vh-WmSm
+
+git config --global --list(-l) —— 打印全局.gitconfig文件内容
+git config --global(--local) --unset [xxx].xxx xxx —— （逆命令）清除.gitconfig中的xxx
+
+git branch （分支名：hot-fix(热修)）—— 新建分支（把当前分支状态完全复制）  ------ a
+git checkout （分支名）—— 切换分支  ------ b
+git checkout -b （分支名）—— a、b命令同时进行
+git checkout --orphan  new_branch —— 新建一个空白分支（Tips:  orphan --- 孤儿）
+（“空白”——即会把原分支文件放在暂存区，但不会commit）
+（若不做任何操作，再次切换回原分支，此空白分支不会保留）
+
+git branch -v —— 查看所有分支
+git branch -d （分支名）—— 普通删除分支
+git branch -D （分支名）—— 强制删除分支（提示“error：分支未合并”时可用）
+git merge （分支名）—— 合并分支（如当前在master分支想更改东西但不想妨碍master的运行，那么可新建分支“hot-fix”然后在新分支修改并commit后再回到master分支用merge命令可直接更新修改内容）
+git branch -m 旧名字 新名字 —— 更改分支名
+
+git remote add vh https://github.com/Vh-WmSm/Vh.git 创建html远程库别名为vh
+git remote -v —— 查看远程库别名
+git remote rm （已存在的远程库别名）—— 删除远程库别名
+
+git push vh master - push分支“master”到远程库（vh是别名，可直接写网址）
+git push vh :(分支名) —— 删除github上某分支
+
+git pull vh （分支名）—— 从远程库拉取更新内容到本地库
+git pull --rebase vh （分支名）—— 远程库同步到本地库
+
+git clone （https://xxx.git网址）—— 克隆远程库的项目到本地库
+（不需要先git init，直接新建一个文件夹运行克隆命令即可）
+（克隆不需要登陆账号，直接克隆即可）
+（克隆自动拉取代码、初始化本地库、给被克隆链接其别名为origin）
+
+如何启用ssh远程库push？
+Step1：git bash命令行中输入 ssh-keygen -t rsa -C "xxx@xx.com 创建ssh私/公匙
+（邮箱填github的注册邮箱）
+（创建后在x/.ssh目录中会生成id_rsa和id_rsa.pub两个文件）
+（大概在global目录中，具体可以看生成时的文字提示）
+Step2：进入GitHub网站，打开Settings
+Step3：点击SSH and GPG keys后点击New SSH key
+Step4：把id_isa.pub的内容粘贴到New SSH key的正文中，标题可随意写
+Step5：命令行中输入 ssh -T git@github.com 测试SSH是否成功配置（Successful即可）
+Step6：git remote add vh-ssh git@github.com:Vh-WmSm/Vh.git —— 创建ssh远程库别名为vh-ssh
+Step7：git push vh-ssh (分支名) —— ssh push成功！
+
+
+Web_Problem
+a. What is hosts? hosts文件空白是不影响操作的，说到hosts文件就不得不谈到
+它的作用，就是写出域名和ip的映射关系，在DNS没出来之前就是靠其工作的。
+电脑想要去到哪个ip地址最先查看hosts文件，有的话就通过其对应关系解析进入
+想要的域名。就像这个www.wesoullove.com,假如我给它写的对应关系是127.0.0.1
+就无法进入这个域名，因为这个ip代表的就是本机地址。
+b. 最新github的hosts下载地址：https://raw.hellogithub.com/hosts
+
+
+Fatal_Exception：
+Question —— git连接github失败或github加载太慢
+Solution —— 使用DevSidecar加速器软件
+
+Command —— git push vh My_Project
+Exception —— the remote end hung up unexpectedly
+Cause —— 网络问题或推送代码的大小超出了git默认的范围，可以调整git推送代码的最大值
+Solution —— 执行以下命令，在.gitconfig添加参数
+git config -- global http.lowspeedlimit=0
+git config -- global http.lowspeedtime=999999
+git config --global http.postBuffer 524288000 （设置缓存为500M）
+Exception —— 添加参数后还是报一样的错
+Cause —— 用http提交有上传大小限制
+Solution —— 改为了ssh提交
+
+Command —— git push vh （分支名）
+Exception —— error: failed to push some refs to 'https://github.com/Vh-WmSm/Vh.git'
+Cause —— 远程库与本地库不一致（如单独在github上对某文件进行了更改，而不是在本地更改后再push到github上）
+Solution —— git pull --rebase vh （分支名）
+（先把远程库某行更新的内容同步到本地库某行（此操作不会覆盖本地已
+更新待push的内容）然后再把本地待更新内容push到远程库即可）
+e.g：
+远程库初始：          本地库初始：
+111                         111
+远程库被更改：	本地库：
+222                         111
+远程库：		本地库被更改：
+222			111
+			333
+执行：git pull --rebase vh （分支名）
+远程库：		本地库被同步（原更改不变）：
+222			222
+			333
+执行：git push vh （分支名）
+远程库被更新：	本地库：
+222			222
+333			333

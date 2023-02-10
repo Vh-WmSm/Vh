@@ -1,0 +1,1 @@
+open(xxx, 'r', encoding='gb18030', errors='ignore')

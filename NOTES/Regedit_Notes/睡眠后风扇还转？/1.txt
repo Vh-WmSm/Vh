@@ -1,0 +1,21 @@
+你好楼主。这个可能设置有问题，检查一下。 主板BIOS设置问题
+1
+有的电脑是主板BIOS设置不对，设置方法如下：
+开机，按DEL键进入BIOS设置界面
+2
+选择 “Power Management Setup”
+3
+选择 S3睡眠模式
+
+WIN7相关设置不对，解决方法如下：
+单击”开始“，然后点击”运行“
+步骤阅读
+输入regedit打开的注册表编辑器
+
+展开[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Power]
+
+4
+双击AwayModeEnabled项，将它的值设置为0
+
+5
+重启使其生效，以后点击Windows 7“开始”菜单中的“睡眠”，即可进入睡眠模式了。（风扇就不会转） 

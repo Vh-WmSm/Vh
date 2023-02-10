@@ -1,0 +1,5 @@
+接下来在打开的注册表编辑器窗口中，我们定位到HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\policies\system注册表项。
+
+在右侧窗口中找到“ShutdownWithoutOutlogon”注册表键值
+
+这时就会弹出编辑该注册表键值的窗口，在窗口中把数值数据修改为1，最后点击确定按钮，重新启动计算机后，笔记本电脑再进入睡眠时，就不会再出现风扇转动的情况了。
