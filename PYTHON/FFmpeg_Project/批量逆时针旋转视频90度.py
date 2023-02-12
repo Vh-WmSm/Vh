@@ -1,3 +1,4 @@
+# 一次不能太多，因为会超过cmd输入内容上限，以后有必要就优化
 import os
 
 desktop_path = 'c:\\users\\vh\\desktop'

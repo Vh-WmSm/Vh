@@ -7,6 +7,7 @@ f = open(path + '\\' + file_name, 'rb')  # 由于chardet.detect只接收bytes型
 content = f.read()
 data_dict = chardet.detect(content)
 print(data_dict)
+print(data_dict['encoding'])
 
 
 '''
