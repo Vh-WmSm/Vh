@@ -56,7 +56,8 @@ if __name__ == '__main__':
     print(file_list)
     judge = input('现在，你想做什么？\n①把后缀为xxx的文件(非文件夹)全部移到origin_path。\n②把后缀为xxx的文件内容写入All_Content.txt中\n请选择（1 or 2）：')
     suffix = input('文件后缀(e.g: txt)（直接回车默认全部文件）：')
-    jud = input(f'即将把此目录及其所有子目录下的所有{suffix}文件全部移动到此目录，请了解清楚后谨慎操作，操作不可逆！！！\n确认请输入yes：')
+    if judge == '1':
+        jud = input(f'即将把此目录及其所有子目录下的所有{suffix}文件全部移动到此目录，请了解清楚后谨慎操作，操作不可逆！！！\n确认请输入yes：')
     if judge == '1' and jud == 'yes':
         for target_file in target_list:
             if suffix == target_file[target_file.rfind('.') + 1:] or suffix == '':
