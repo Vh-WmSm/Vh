@@ -22,7 +22,7 @@ import chardet
 
 
 def fun(father_path, son_path):
-    global target_list, file_list
+    # global target_list, file_list  # 由于列表是可变类型，所以不需要global
 
     os.chdir(son_path)
     subfolder_list = os.listdir()
