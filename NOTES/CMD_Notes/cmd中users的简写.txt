@@ -1,0 +1,5 @@
+users\\vh 等价于 %userprofile%
+
+所以cd users\vh\desktop == cd %userprofile%\desktop
+
+但%userprofile%在python的os.chdir()不起作用
