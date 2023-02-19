@@ -1,0 +1,2 @@
+在输入框输入命令后
+ctrl + shift + Enter
