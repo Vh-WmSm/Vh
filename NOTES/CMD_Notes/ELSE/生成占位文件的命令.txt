@@ -1,0 +1,8 @@
+占位文件是实际大小为0的文件，但却占据着磁盘x字节的文件
+
+cmd生成命令：
+用法: fsutil file createNew <文件名> <长度>
+示例: fsutil file createNew C:\testfile.txt 1000
+
+<长度>以字节B为单位，若要生成1G大小，则需换算：1024(1k)*1024(1M)*1024(1G)
+=1,073,741,824

@@ -1,0 +1,5 @@
+打开cmd 
+cd到desktop路径，输入以下代码
+powercfg /batteryreport
+然后battery-report.html会存放在桌面上
+打开即可跳转到某网页，查看电池使用时间报告
