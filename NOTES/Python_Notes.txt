@@ -424,6 +424,211 @@ exit(0) —— 0为结束代码，写0就是0，写1就是1，因为正常结束
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+day 6:
+
+匿名函数(lambda)：
+先学基础：
+万物皆对象：
+对象就会有内存地址，就会有一个引用
+通过这个引用就可以找到该对象并使用它 
+在python中函数也是对象，对象是内存中专门用来存储的数据的一块区域
+函数名就是该函数的对象，保存的是该函数所在的地址
+e.g:
+def f():
+	print(1)
+t = f
+print(t) --- 内存地址1
+print(f) --- 内存地址1
+
+实现一个可以调用另外一个函数的函数：
+e.g:
+def f():
+	print(1)
+def t(x):  # t函数形参x获得f函数的地址
+	x()  # 函数地址加括号就是调用这个地址指向的函数内容 —— 即f函数
+t(f)  # 把f函数的地址赋给t函数并执行t函数
+
+正式了解lambda函数：
+e.g1:
+lambda : 1 + 1 --- 匿名函数没有函数名，不可直接调用，但其本身整体是一个对象，即函数的地址
+func = lambda : 1 + 1 --- 用一个变量接收这个函数的地址，然后就可以调用了
+print(func()) --- 函数的地址加括号即可调用（加print是因为lambda: 1 + 1意思是return 冒号后面的）
+或者直接调用print((lambda : 1 + 1)())这样也行
+
+e.g2:
+func = lambda x: print(x ** 10)
+func(2) --- 1024
+
+格式：
+lambda [形参1], [形参2], ... : [单行表达式] 或 [函数调用]
+lambda 定义和普通函数的区别：
+1. lambda 没有函数名
+2. lambda 参数列表外没有括号
+3. lambda 函数体中，只能实现简单的表达式计算或函数调用
+4. lambda 函数体中，不能使用 return（因为默认返回表达式计算结果，所以加了return反而报错），
+同时，if，while，for-in 也不能用
+
+5. lambda 函数体中，可以使用 if 实现的三目运算符
+e.g:
+func = lambda m, n: if m > n else n
+
+使用场景：
+变量 = lambda ...
+
+一般情况下，因为 lambda 的局限性，使得它不能实现复杂功能，只能实现简单的功能
+那么在使用时，一般会实现一个简单的，一次性使用的场景
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+高阶函数 - map：
+map(fun, my_list) —— 把my_list中每一个元素依次放入fun函数中运算，把对应结果返回到map对象（这个对象直接打印是返回一个map对象而看不到内容，但可以用for遍历，也可以转换为list打印出来）
+e.g:
+my_list = [1, 2, 3, 4, 5]
+def fun(x):
+	return x ** 2
+result = map(fun, my_list)
+print(list(result)) --- [1, 4, 9, 16, 25]
+
+因为map第一个参数放的是函数的对象（地址），故可以用匿名函数，因此以上可优化为
+my_list = [1, 2, 3, 4, 5]
+result = map(lambda x: x*2, my_list)
+print(list(result)) --- [1, 4, 9, 16, 25]
+
+这样的优点是：
+因为fun只用一次，所以用lambda可以不需要开辟一个新函数fun从而省内存空间
+
+同理，可以分析一下已经很熟悉的这个表达式的原理：
+a, b = map(int, input().split())
+int是int()函数的对象，所以map()是把input().split()的内容逐个放到int()函数中处理，
+最后得到一个map“列表”对象。若输入1 2那么split()会根据空格把字符串分隔为['1','2']
+那么再通过map可以把'1'、'2'分别放入int()中处理成1, 2然后包装成map“列表”，
+然后这个map“列表”再通过拆包把1、2分配到a、b上
+
+map实现原理：
+def my_map(func, c_list):
+	# 定义一个新空列表，保存映射结果
+	new_list = []
+	# 遍历原列表中的数据
+	for i in c_list:
+		# 调用函数func()计算映射值，并保存到新列表中
+		new_list.append(func(i))
+	return new_list
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+高阶函数 - reduce：
+reduce(fun, my_list)
+1. 用传给reduce中的函数fun(有两个参数)，先对my_list中第1、2个元素进行操作
+2. 得到的结果再与第三个数据用fun函数运算，以此类推，最后得到一个结果
+
+e.g1: —— 求n的阶乘
+import functools  # reduce函数需要导入functools库
+
+print(functools.reduce(lambda x1, x2: x1 * x2, [i for i in range(1, int(input('n=')) + 1)]))
+
+e.g2: —— 相当于.join的作用
+import functools
+
+my_list = ['a', 'b', 'c']
+print(functools.reduce(lambda x1,x2: x1 + x2, my_list))
+
+e.g3: —— 把'abc'转大写
+import functools
+
+my_list = list('abc')
+print(functools.reduce(lambda x1,x2: x1.upper() + x2.upper(), my_list))
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+高阶函数 - filter（过滤函数）：—— 用于过滤序列，过滤掉不符合条件的元素
+filter(fun, my_list) —— 把my_list中每一个元素依次传入fun中进行判断，
+若fun返回值为True说明符合条件，最后将返回True的元素放到filter对象中，
+同map类似，可用list()转换来查看其内容
+
+e.g1:
+my_list = [1,2,3,4,5,6,7,8,9,10]
+print(list(filter(lambda x: x%2 == 0, my_list))) --- [2, 4, 6, 8, 10]
+
+e.g2:
+my_list = ['123', '456', 'a', ' ', '&&&', '890']
+print(list(filter(lambda x: x.isdigit(), my_list))) --- ['123', '456', '890']
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+sort方法的高级应用 - key与lambda结合使用
+
+my_list = [{'id': 1, 'name': 'tom', 'age': 12}, {'id': 2, 'name': 'rose', 'age': 14}, {'id': 1, 'name': 'jack', 'age': 16}]
+# 默认sort方法是不能对字典进行比较排序的
+# 按id的降序排序：
+my_list.sort(key=lambda d: d['id'], reverse=True)
+print(my_list)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+文件的操作
+文件的作用 —— 将数据进行持久化存储
+e.g:
+保存“学生管理系统”的输入
+作为数据库的底层实现
+
+文件的读取：
+f = open('1.txt', 'r') ---r写成rt(read text)也一样，w写成wt，a写成at都一样
+print(f) --- <_io.TextIOWrapper name='1.txt' mode='r' encoding='cp936'>
+可见，默认使用cp936编码读取文件，经查询，cp936即GBK编码
+encoding要与文件编码格式一致，若文件为utf-8，还用默认编码cp936的话，读到中文就会报以下错
+'gbk' codec can't decode byte 0xa0 in position 19: incomplete multibyte sequence
+
+f.read()  # size默认-1，表示读取整个文件内容 —— 只适合小文件，不适合大文件（如蓝光电影30G，电脑内存如今最大可能才16G，30G不可能读完，而且就算能读完，效率也非常低）
+f.read(size)  # 读取n个字节
+
+读取大文件怎么读？ —— 在读取数据时，每次指定读取一部分
+f = open('1.txt', 'r', encoding='')
+while True:
+	content = file.read(1024)  # 一次读1024字节（1kB字节）或4096字节
+	if content == '':
+		break  # 如果read返回空字符串，说明文件读取完毕，退出循环
+	print(content, end='')
+f.close()
+
+文件其他读取方式：
+readline()  # 一次读取一行
+readlines()  # 一次性将整个文件内的内容以行的形式读取出来，放到一个列表中（也会把\n读取出来）
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+其他文件操作：
+自己写一个复制命令： —— 针对大文件的复制
+
+import os
+def my_copy(src, dst):
+	# 以读取的方式打开源文件(src)
+	file_r = open(src, 'r')  # 若复制的文件是视频或图片，则'r'改为'rb'
+	# 以写的方式打开目标文件(dst)
+	file_w = open(dst, 'w')  # 若~，则'w'改为'wb'
+	# 循环
+	while True:
+		# 读取文件内容
+		content = file_r.read(1024)
+		# 将读取的文件内容写入到另一个文件中
+		if content == '':  # 若~ 则''改为b''
+			print('文件拷贝成功')
+			break
+		# 写入文件
+		file_w.write(content)
+	# 关闭文件
+	file_r.close()
+	file_w.cloce()
+
+command_lis = sys.argv  # 用来接收命令行窗口的输入，空格分隔（python 1.py 1.txt 2.txt --- sys.args == [1.py, 1.txt, 2.txt]）
+src = sys.argv[1]
+dst = sys.argv[2]
+my_copy(src, dst)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+day 7:
+
 
 
 
