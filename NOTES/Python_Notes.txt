@@ -189,6 +189,9 @@ del d[key] —— 同pop
 del d —— 删除整个字典
 d.clear() —— 清空字典
 
+字典的其他方法：
+d.keys() —— 获取所有的键，list(d.keys())可查看
+d.values() —— 获取所有的值
 
 无序字典和有序字典
 在Python 3.5之前，dict类型是无序的 —— 写入顺序与显示顺序不同
@@ -210,10 +213,10 @@ s = set() —— 这才是定义一个空集合
 
 公共方法：
 1.运算符：
-运算符	Python表达式	结果	     描述	支持的数据类型	
-+		[1,2] + [3,4]		[1,2,3,4]   合并	str、list、tuple
-*		['Hi']*2		['Hi', 'Hi']  复制	str、list、tuple
-in		3 in (1,2,3)		true	元素是否存在 str、list、tuple、dict
+运算符 表达式        结果	     描述     支持的数据类型	
++         [1,2]+[3,4]	[1,2,3,4]   合并	str、list、tuple
+*	  ['Hi']*2	['Hi', 'Hi']  复制	str、list、tuple
+in	  3 in (1,2,3)	 true	             str、list、tuple、dict
 not in 	
 
 2.Python内置函数
