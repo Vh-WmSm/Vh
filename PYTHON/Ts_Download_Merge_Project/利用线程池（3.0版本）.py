@@ -7,7 +7,7 @@ import concurrent.futures
 
 
 def wget_download(url, file_name):
-    wget.download(url, ts_path + file_name)
+    wget.download(url, ts_path + '\\' + file_name)
     return f'{file_name}已下载'
 
 
@@ -37,7 +37,7 @@ if __name__ == '__main__':
     with open(url_txt_path, 'r', encoding=check_encoding(url_txt_path)) as f_r:
         url_list = f_r.read().strip().splitlines()
     with concurrent.futures.ThreadPoolExecutor(max_workers=150) as executor:
-        future_results = [executor.submit(wget_download, url, '\\' + f'{count}.ts') for count, url in
+        future_results = [executor.submit(wget_download, url, f'{count}.ts') for count, url in
                           enumerate(url_list)]  # 枚举函数，为每个url都对应一个相应的索引，这样就可以代替队列按顺序下载
         for f in concurrent.futures.as_completed(future_results):
             print(f.result())  # 打印的是wget_download的return值
