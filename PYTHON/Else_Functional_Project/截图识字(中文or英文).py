@@ -13,5 +13,4 @@ while True:
 
     else:
         text = ''.join(pytesseract.image_to_string(img, lang='chi_sim').split())
-    print(text)
-    input()
+    print(text, end='\n\n')
