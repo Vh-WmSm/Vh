@@ -1,4 +1,5 @@
 # 我的第一个面向对象项目
+import os
 from PIL import Image
 import pytesseract
 
@@ -18,10 +19,13 @@ class My_Str_Jud(object):
 
 class Screenshot_Translator(object):
     def __init__(self):
-        self.img_address = 'C:\\Users\\Vh\\Desktop'
+        self.img_address = self.get_desktop_path()
         self.img_name = '1.png'
         self.judge = '中文'
         self.text = ''
+
+    def get_desktop_path(self):
+        return os.path.join(os.path.expanduser('~'), 'Desktop')  # 可以获取当前用户的桌面地址，有这项技术后，换到别的电脑就不需要该代码了
 
     def Info_Change(self):
         jud = input('若要全更改请输入1，只变换识别模式请输入2（不更改直接回车）：')
@@ -79,6 +83,7 @@ class Screenshot_Translator(object):
                     i = '）'
                 text_ += i
                 count += 1
+            self.text = text_
         return self.text
 
     # 处理完成后的字符串打印方法
