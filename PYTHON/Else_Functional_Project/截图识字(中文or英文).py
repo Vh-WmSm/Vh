@@ -83,7 +83,7 @@ class Screenshot_Translator(object):
 
     # 处理完成后的字符串打印方法
     def Text_Printer(self):
-        print(self.text)
+        print(self.text, end='\n\n\n')
 
 
 if __name__ == '__main__':
