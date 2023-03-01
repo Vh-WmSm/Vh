@@ -3,9 +3,9 @@ Author: Vh-WmSm
 Version: 3.0
 Form: Object oriented
 '''
-import os
+from os import path
 from PIL import Image
-import pytesseract
+from pytesseract import image_to_string
 
 
 class My_Tool(object):
@@ -15,7 +15,7 @@ class My_Tool(object):
         function: 可以获取当前用户的桌面地址，有这项技术后，换到别的电脑就不需要该代码了
         :return: 当前用户的桌面地址
         """
-        return os.path.join(os.path.expanduser('~'), 'Desktop')
+        return path.join(path.expanduser('~'), 'Desktop')
 
     @staticmethod
     def enumerate_tuple_switch_to_list(text):
@@ -37,7 +37,8 @@ class My_Tool(object):
         :param str: 输入第二个字符是“.”的字符串
         :return: “.” 或 "。"
         '''
-        file_suffix = ['.py', '.txt', '.png', '.jpg', '.mp4', '.mp3', '.m4a', '.docx', '.doc', '.xls', '.xlsx', '.ppt', '.pptx']
+        file_suffix = ['.py', '.txt', '.png', '.jpg', '.mp4', '.mp3', '.m4a', '.docx', '.doc', '.xls', '.xlsx', '.ppt',
+                       '.pptx']
         if str[0].isdigit():
             return '.'
         if len(str) == 2:  # 如果str长度为2，说明是句末的句号
@@ -49,17 +50,6 @@ class My_Tool(object):
             return '.'
         else:
             return '。'
-    @staticmethod
-    def is_English(s):
-        '''
-        target: 做一个识别英文字母的函数，因为isalpha()或isalnum()中文字符和英文字符都会返回True，不符合要求
-        return: 如果字符串s所有字符都是英文字母，则返回True，否则返回False
-        '''
-        for i in s:
-            if not ('a' <= i <= 'z' or 'A' <= i <= 'Z'):
-                return False
-        else:
-            return True
 
 
 class Screenshot_Translator(object):
@@ -93,7 +83,6 @@ class Screenshot_Translator(object):
         else:
             pass
 
-
     def __str__(self):
         s = f'当前默认设置：\n截图所在地址：{self.img_address}\n截图名：{self.img_name}\n识别模式：{self.mode}\n是否删除空行：{self.del_blank}'
         return s
@@ -102,9 +91,9 @@ class Screenshot_Translator(object):
     def Identify_Screenshots(self):
         img = Image.open(self.img_address + f'\\{self.img_name}')
         if self.mode == '1':
-            self.text = pytesseract.image_to_string(img)
+            self.text = image_to_string(img)
         else:
-            self.text = pytesseract.image_to_string(img, lang='chi_sim')  # 识别中文
+            self.text = image_to_string(img, lang='chi_sim')  # 识别中文
         return self.text
 
     # 识别后的字符串处理方法
