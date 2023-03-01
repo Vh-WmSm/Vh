@@ -3,9 +3,9 @@ Author: Vh-WmSm
 Version: 3.0
 Form: Object oriented
 '''
+import os
 from PIL import Image
-from os import path
-from pytesseract import image_to_string
+import pytesseract
 
 
 class My_Tool(object):
@@ -15,7 +15,7 @@ class My_Tool(object):
         function: 可以获取当前用户的桌面地址，有这项技术后，换到别的电脑就不需要该代码了
         :return: 当前用户的桌面地址
         """
-        return path.join(path.expanduser('~'), 'Desktop')
+        return os.path.join(os.path.expanduser('~'), 'Desktop')
 
     @staticmethod
     def enumerate_tuple_switch_to_list(text):
@@ -37,22 +37,18 @@ class My_Tool(object):
         :param str: 输入第二个字符是“.”的字符串
         :return: “.” 或 "。"
         '''
-        file_suffix = ['py', 'txt', 'png', 'jpg', 'mp4', 'mp3', 'm4a', 'docx', 'doc', 'xls', 'xlsx', 'ppt', 'pptx']
-        temp = ''
-        for x in str:
-            if x.isdigit():
-                return '.'  # 如果第一个字符是数字，则说明此”.“是编号后的点，直接返回”.“
-            if My_Tool.is_English(x):  # 如果x是字母或数字，则加入字符串temp
-                temp += x
-            elif x == '.':  # 给一个elif判断是不是.因为若此时是句末的句号，则text[count+1:]会访问越界，只能返回空字符串而不是'.'
-                pass
-            else:
-                break  # 遇到其他字符，如中文，则退出循环
-        if temp not in file_suffix:
-            return '。'  # 如得到的temp与file_suffix列表比较，若不在其中，则说明不是后缀名的点，返回句号
-        else:
+        file_suffix = ['.py', '.txt', '.png', '.jpg', '.mp4', '.mp3', '.m4a', '.docx', '.doc', '.xls', '.xlsx', '.ppt', '.pptx']
+        if str[0].isdigit():
             return '.'
-
+        if len(str) == 2:  # 如果str长度为2，说明是句末的句号
+            return '。'
+        case1 = str[1] + str[2] + str[3]  # 如.py
+        case2 = case1 + str[4]  # 如.txt
+        case3 = case2 + str[5]  # 如.docx
+        if case1 in file_suffix or case2 in file_suffix or case3 in file_suffix:
+            return '.'
+        else:
+            return '。'
     @staticmethod
     def is_English(s):
         '''
@@ -67,56 +63,69 @@ class My_Tool(object):
 
 
 class Screenshot_Translator(object):
-    def Menu(self):
-        print(' ' + '=' * 35 + f'\n| 欢迎使用PY截图识字小工具，现在是第{self.count}次运行 |\n' + ' ' + '=' * 35)
+    @staticmethod
+    def Menu(count):
+        print(' ' + '=' * 43 + f'\n| 欢迎使用PY截图识字小工具，现在是第{count}次运行 |\n' + ' ' + '=' * 43)
 
     def __init__(self, count):
-        self.count = count
-        self.Menu()
+        self.Menu(count)
         self.img_address = My_Tool.get_desktop_path()  # 获取桌面地址
         self.img_name = '1.png'
-        self.judge = '中文'
+        self.mode = '中文'
+        self.del_blank = '不删除'
         self.text = ''
 
     def Info_Change(self):
-        jud = input('若要全更改请输入1，只变换识别模式请输入2（不更改直接回车）：')
-        if jud == '1':
+        jud = input('0.全更改；1.只更改截图位置；2.只更改截图名；3，只更改识别模式；4.只更改删除空行模式（不更改直接回车）：')
+        if jud == '0':
             self.img_address = input('截图位置：')
             self.img_name = input('截图名（要带后缀）：')
-            print('识别模式已自动改为英文')
-            self.judge = '1'
+            self.mode = input('识别模式：1.英文；2.中文：')
+            self.del_blank = input('是否删除多余空行：1.删除；2.不删除：')
+        elif jud == '1':
+            self.img_address = input('截图位置：')
         elif jud == '2':
-            self.judge = '1'
+            self.img_name = input('截图名（要带后缀）：')
+        elif jud == '3':
+            self.mode = '1'
+        elif jud == '4':
+            self.del_blank = '1'
+        else:
+            pass
+
 
     def __str__(self):
-        s = f'当前默认设置：\n截图所在地址：{self.img_address}\n截图名：{self.img_name}\n识别模式：{self.judge}'
+        s = f'当前默认设置：\n截图所在地址：{self.img_address}\n截图名：{self.img_name}\n识别模式：{self.mode}\n是否删除空行：{self.del_blank}'
         return s
 
     # 初步识别截图的方法
     def Identify_Screenshots(self):
         img = Image.open(self.img_address + f'\\{self.img_name}')
-        if self.judge == '1':
-            self.text = image_to_string(img)
+        if self.mode == '1':
+            self.text = pytesseract.image_to_string(img)
         else:
-            self.text = image_to_string(img, lang='chi_sim')  # 识别中文
+            self.text = pytesseract.image_to_string(img, lang='chi_sim')  # 识别中文
         return self.text
 
     # 识别后的字符串处理方法
     def Text_Processor(self):
-        if self.judge == '1':
+        if self.mode == '1':
             # 英文模式不需处理
             pass
         else:
             self.text = ''.join(self.text.split(' '))  # 不知何原因，识别中文会一个字空一格，先作处理
-            text_list = list(self.text)  # 把字符串转换为列表，使得一个字符为一个列表元素，这样操作可以避免split('\n')会删除\n的缺点
-            temp_list = [text_list[0]]  # 赋初值，防止下方temp_list[-1]访问越界
-            for t in text_list[1:]:
-                if temp_list[-1] == '\n' and t == '\n':  # 如果temp_list最后是\n且t本身还是\n，则跳过，以此法删除多余行
-                    continue
-                else:
-                    temp_list.append(t)
-            self.text = ''.join(temp_list)  # 再直接连接字符串即可
-            # 把英文标点符号改为中文的
+            if self.del_blank == '1':  # 选择1，删除多余空行
+                text_list = list(self.text)  # 把字符串转换为列表，使得一个字符为一个列表元素，这样操作可以避免split('\n')会删除\n的缺点
+                temp_list = [text_list[0]]  # 赋初值，防止下方temp_list[-1]访问越界
+                for t in text_list[1:]:
+                    if temp_list[-1] == '\n' and t == '\n':  # 如果temp_list最后是\n且t本身还是\n，则跳过，以此法删除多余行
+                        continue
+                    else:
+                        temp_list.append(t)
+                self.text = ''.join(temp_list)  # 再直接连接字符串即可
+            else:
+                pass
+        # 把英文标点符号改为中文的
         text_temp = ''
         for i in My_Tool.enumerate_tuple_switch_to_list(self.text):  # 枚举识别后的字符串
             if i[1] == ',':
