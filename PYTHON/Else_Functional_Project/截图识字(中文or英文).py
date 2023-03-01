@@ -3,9 +3,9 @@ Author: Vh-WmSm
 Version: 3.0
 Form: Object oriented
 '''
-import os
 from PIL import Image
-import pytesseract
+from os import path
+from pytesseract import image_to_string
 
 
 class My_Tool(object):
@@ -15,7 +15,7 @@ class My_Tool(object):
         function: 可以获取当前用户的桌面地址，有这项技术后，换到别的电脑就不需要该代码了
         :return: 当前用户的桌面地址
         """
-        return os.path.join(os.path.expanduser('~'), 'Desktop')
+        return path.join(path.expanduser('~'), 'Desktop')
 
     @staticmethod
     def enumerate_tuple_switch_to_list(text):
@@ -33,16 +33,18 @@ class My_Tool(object):
     @staticmethod
     def suffix_dot_judge(str):
         '''
-        :target: 判断该“.”是某文件名的后缀，还是一句话的“。”
-        :param str: 输入一个由“.”开始的字符串
+        :target: 判断该“.”是某文件名的后缀或是某个编号的后面的”.“，还是一句话的“。”
+        :param str: 输入第二个字符是“.”的字符串
         :return: “.” 或 "。"
         '''
         file_suffix = ['py', 'txt', 'png', 'jpg', 'mp4', 'mp3', 'm4a', 'docx', 'doc', 'xls', 'xlsx', 'ppt', 'pptx']
         temp = ''
         for x in str:
+            if x.isdigit():
+                return '.'  # 如果第一个字符是数字，则说明此”.“是编号后的点，直接返回”.“
             if My_Tool.is_English(x):  # 如果x是字母或数字，则加入字符串temp
                 temp += x
-            elif x == '.':  # 给一个elif判断是不是.因为若此时是句末的句号，则text[count+1:]会越界，只能返回空字符串而不是'.'
+            elif x == '.':  # 给一个elif判断是不是.因为若此时是句末的句号，则text[count+1:]会访问越界，只能返回空字符串而不是'.'
                 pass
             else:
                 break  # 遇到其他字符，如中文，则退出循环
@@ -65,7 +67,12 @@ class My_Tool(object):
 
 
 class Screenshot_Translator(object):
-    def __init__(self):
+    def Menu(self):
+        print(' ' + '=' * 35 + f'\n| 欢迎使用PY截图识字小工具，现在是第{self.count}次运行 |\n' + ' ' + '=' * 35)
+
+    def __init__(self, count):
+        self.count = count
+        self.Menu()
         self.img_address = My_Tool.get_desktop_path()  # 获取桌面地址
         self.img_name = '1.png'
         self.judge = '中文'
@@ -89,9 +96,9 @@ class Screenshot_Translator(object):
     def Identify_Screenshots(self):
         img = Image.open(self.img_address + f'\\{self.img_name}')
         if self.judge == '1':
-            self.text = pytesseract.image_to_string(img)
+            self.text = image_to_string(img)
         else:
-            self.text = pytesseract.image_to_string(img, lang='chi_sim')  # 识别中文
+            self.text = image_to_string(img, lang='chi_sim')  # 识别中文
         return self.text
 
     # 识别后的字符串处理方法
@@ -100,7 +107,15 @@ class Screenshot_Translator(object):
             # 英文模式不需处理
             pass
         else:
-            self.text = ''.join(self.text.split())  # 不知何原因，识别中文会一个字空一格，所以先作处理
+            self.text = ''.join(self.text.split(' '))  # 不知何原因，识别中文会一个字空一格，先作处理
+            text_list = list(self.text)  # 把字符串转换为列表，使得一个字符为一个列表元素，这样操作可以避免split('\n')会删除\n的缺点
+            temp_list = [text_list[0]]  # 赋初值，防止下方temp_list[-1]访问越界
+            for t in text_list[1:]:
+                if temp_list[-1] == '\n' and t == '\n':  # 如果temp_list最后是\n且t本身还是\n，则跳过，以此法删除多余行
+                    continue
+                else:
+                    temp_list.append(t)
+            self.text = ''.join(temp_list)  # 再直接连接字符串即可
             # 把英文标点符号改为中文的
         text_temp = ''
         for i in My_Tool.enumerate_tuple_switch_to_list(self.text):  # 枚举识别后的字符串
@@ -109,7 +124,7 @@ class Screenshot_Translator(object):
             elif i[1] == ':':
                 i[1] = '：'
             elif i[1] == '.':
-                i[1] = My_Tool.suffix_dot_judge(self.text[i[0]:])
+                i[1] = My_Tool.suffix_dot_judge(self.text[i[0] - 1:])
             elif i[1] == '(':
                 i[1] = '（'
             elif i[1] == ')':
@@ -120,12 +135,12 @@ class Screenshot_Translator(object):
 
     # 处理完成后的字符串打印方法
     def Text_Printer(self):
-        print(self.text, end='\n\n\n')
+        print('\n\n识别结果如下：\n\n' + self.text, end='\n\n')
 
 
 if __name__ == '__main__':
-    while True:
-        s = Screenshot_Translator()
+    for count in range(1, 100):
+        s = Screenshot_Translator(count)
         print(str(s))
         s.Info_Change()
         s.Identify_Screenshots()
