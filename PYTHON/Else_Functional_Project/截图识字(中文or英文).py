@@ -114,21 +114,21 @@ class Screenshot_Translator(object):
                 self.text = ''.join(temp_list)  # 再直接连接字符串即可
             else:
                 pass
-        # 把英文标点符号改为中文的
-        text_temp = ''
-        for i in My_Tool.enumerate_tuple_switch_to_list(self.text):  # 枚举识别后的字符串
-            if i[1] == ',':
-                i[1] = '，'
-            elif i[1] == ':':
-                i[1] = '：'
-            elif i[1] == '.':
-                i[1] = My_Tool.suffix_dot_judge(self.text[i[0] - 1:])
-            elif i[1] == '(':
-                i[1] = '（'
-            elif i[1] == ')':
-                i[1] = '）'
-            text_temp += i[1]
-        self.text = text_temp
+            # 把英文标点符号改为中文的
+            text_temp = ''
+            for i in My_Tool.enumerate_tuple_switch_to_list(self.text):  # 枚举识别后的字符串
+                if i[1] == ',':
+                    i[1] = '，'
+                elif i[1] == ':':
+                    i[1] = '：'
+                elif i[1] == '.':
+                    i[1] = My_Tool.suffix_dot_judge(self.text[i[0] - 1:])
+                elif i[1] == '(':
+                    i[1] = '（'
+                elif i[1] == ')':
+                    i[1] = '）'
+                text_temp += i[1]
+            self.text = text_temp
         return self.text
 
     # 处理完成后的字符串打印方法
