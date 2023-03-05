@@ -1,6 +1,6 @@
 import os
 
-os.chdir('C:\\Users\\Vh\\OneDrive\\my_project\\NOTES')
+os.chdir('C:\\Users\\Vh\\OneDrive\\my_project\\NOTES\\Linux_Git_Notes')
 f_r = open('Linux_Git_Study_Notes.txt', 'r', encoding='utf-8')
 catalogue = '目录：'
 content = '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n'
