@@ -1,0 +1,132 @@
+day 3:
+*单任务多任务的概念：
+单任务 —— 执行完一个任务才能执行下一个任务
+多任务 —— 同时执行多个任务（同时开启qq、微信……）（现在电脑的操作系统都是多任务操作系统）
+多任务的好处是充分利用CPU资源，提高程序的执行效率，让程序具备处理多个任务的能力
+
+*多任务的执行方式：
+并发：在一段时间内交替去执行任务（时间片轮转法）
+e.g:对于单核cpu处理多任务，操作系统轮流让各个软件交替执行，假如：软件1执行0.01秒，切换到软件2，软件2执行0.01秒，再切换到软件3，执行0.01秒……这样反复执行下去。表面上看，每个软件都是交替执行的，但是，由于CPU的执行速度实在是太快了，我们感觉就像这些软件都在同时执行一样，这里需要注意单核cpu是并发的执行多任务的。（cpu核数小于任务数就会启用并发来执行任务）
+
+并行：
+对于多核cpu处理多任务，操作系统会给cpu的每个内核安排一个执行的软件，多个内核是真正的一起执行软件。这里需要注意多核cpu是并行的执行多任务，始终有多个软件一起执行（并行才是多个任务真正意义一起执行）
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*多进程
+进程的介绍：
+进程是操作系统进行资源分配的基本单位
+在Python程序中，想要实现多任务可以使用进程来完成，进程是实现多任务的一种方式（还有线程、协程）
+
+进程的概念：
+一个正在运行的程序或者软件就是一个进程，它是操作系统进行资源分配的基本单位，也就是说每后动一个进程，操作系统都会给其分配一定的运行资源（内存资源）保证进程的运行。
+比如：现实生活中的公司可以理解成是一个进程，公司提供办公资源（电脑、办公桌椅等），真正干活的是员工，员工可以理解成线程。
+注意：
+一个程序运行后至少有一个进程，一个进程默认有一个线程，进程里面可以创建多个线程，线程是依附在进程里面的，没有进程就没有线程
+
+多进程概念：
+多进程可以完成多任务，每个进程就好比一家独立的公司，每个公司都各自在运营，每个进程也各自在运行，执行各自的任务
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*创建进程
+import time
+import multiprocessing
+def task1():
+    for i in range(10):
+        print('A --', i + 1)
+        # 模拟任务执行时间
+        time.sleep(0.5)
+def task2():
+    for i in range(10):
+        print('B --', i + 1)
+        time.sleep(1)
+if __name__ == '__main__':
+    # 创建子进程对象（target参数不能写成task1()，因为task才是传进去一个函数对象，而加()就是执行这个函数让target获取函数的返回值了）
+    p1 = multiprocessing.Process(target=task1)
+    p2 = multiprocessing.Process(target=task2)
+    # 开启进程
+    p1.start()
+    p2.start()
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*获取进程ID和进程的父ID以及进程名
+os.getpid() —— 获取进程ID
+os.getppid() —— 获取进程的父ID
+multiprocessing.current_process() —— 当前进程对象（这条语句写在哪个进程的任务函数中，就获取哪个进程）
+进程对象.name —— 获取进程对象的name属性（获取进程名）
+e.g:
+import os
+import time
+import multiprocessing
+# 创建任务
+def task1():
+    mp = multiprocessing.current_process()
+    print(f'task1:{mp}')  # task1:<Process name='P1' parent=15036 started>
+    print(f'任务1的PID:{os.getpid()} 父进程的PID是:{os.getppid()}')  # 任务1的PID:17812 父进程的PID是:15036
+    time.sleep(1)
+def task2():
+    mp = multiprocessing.current_process()
+    print(f'task1:{mp}')  # task1:<Process name='P2' parent=15036 started>
+    print(f'任务2的PID:{os.getpid()} 父进程的PID是:{os.getppid()}')  # 任务2的PID:18136 父进程的PID是:15036
+    time.sleep(1)
+if __name__ == '__main__':
+    print(f'主进程PID:{os.getpid()} 父进程的PID是:{os.getppid()}')  # 主进程PID:15036 父进程的PID是:14092
+    mp = multiprocessing.current_process()
+    print(mp)  # <_MainProcess name='MainProcess' parent=None started>
+    print(mp.name)  # MainProcess
+    # 创建子进程
+    p1 = multiprocessing.Process(target=task1, name='P1')
+    p2 = multiprocessing.Process(target=task2, name='P2')
+    print(p1)  # <Process name='P1' parent=15036 initial> —— initial是初始化好了（准备好了）的意思
+    print(p2)  #  <Process name='P2' parent=15036 initial>
+    # 启动进程
+    p1.start()
+    p2.start()
+    print(p1)  # <Process name='P1' pid=17812 parent=15036 started>
+    print(p1.pid)  # 17812
+    print(p2)  # <Process name='P2' pid=18136 parent=15036 started>
+
+可见：
+主进程PID:3164 父进程的PID是:15244
+任务1的PID:14408 父进程的PID是:3164
+任务2的PID:1192 父进程的PID是:3164
+两个任务的父PID相同等于主进程PID，说明主进程产生了两个子进程P1和P2
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*进程执行带有参数的任务
+Process类执行任务并给任务传参数有两种方式：
+args表示以元组的方式给执行任务传参
+kwargs表示以字典方式给执行任务传参
+
+e.g:
+import time
+import multiprocessing
+def task1(count):
+    for i in range(count):
+        print('task - ', i + 1)
+        time.sleep(1)
+def task2(content, count):
+    for i in range(count):
+        print(content, ' - ', i + 1)
+        time.sleep(1)
+if __name__ == '__main__':
+    # 利用args传参
+    p1 = multiprocessing.Process(target=task1, args=(5, ))  # 参数只传一个，所以要写成(5, )，加个逗号保证是元组（因为在底层是for循环遍历这个args的，而整数5是不能遍历的）
+    p2 = multiprocessing.Process(target=task2, args=('Python', 5))  # 用位置参数args传参要注意顺序
+    p1.start()
+    p2.start()
+    #利用kwargs传参
+    p1 = multiprocessing.Process(target=task1, kwargs={'count': 5})
+    p2 = multiprocessing.Process(target=task2, kwargs={'count': 5, 'content': 'Hello'})  # 关键字参数可不在乎传参顺序
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*进程的注意点
+
+
+
+
