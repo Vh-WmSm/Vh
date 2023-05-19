@@ -1,0 +1,28 @@
+在命令提示符（cmd）中，可以使用 for 命令来编写循环。for 命令的语法如下：
+
+bash
+Copy code
+for %variable in (set) do command
+其中，%variable 是循环变量，可以自定义。set 是需要遍历的集合，可以是文件、文件夹、字符串等。command 是要在每次循环中执行的命令。
+
+例如，以下命令将在当前目录下遍历所有文件，然后在每个文件的文件名前添加一个前缀 "new_"：
+
+perl
+Copy code
+for %f in (*) do ren "%f" "new_%f"
+在循环中，%f 是循环变量，(*) 表示遍历当前目录下的所有文件，ren 是重命名命令，将 %f 前添加一个前缀 "new_"。
+
+此外，for 命令还支持其他选项和参数，例如可以使用 /d 选项遍历文件夹，使用 /r 选项递归遍历文件夹中的所有文件等。具体用法可以通过输入 for /? 查看帮助文档来学习。
+
+
+例子：
+注：rem或::都表示注释的意思
+rem @echo off 关闭回显
+@echo off 
+rem 在bat批处理文件中%i需改为%%i因为单个百分号在批处理中通常表示变量的占位符，因此需要使用双重百分号%%来表示循环变量
+rem /l表示使用循环计数器，in (84, 1, 88)表示84开始步长为1一直到88（包含88）
+for /l %%i in (84,1,88) do (
+    pipenv run you-get  https://www.bilibili.com/video/BV1et411b73Z?p=%%i
+)
+rem 暂停脚本的执行，直到用户按下任意键继续
+pause

@@ -1,0 +1,15 @@
+^表示换行
+e.g:
+d^
+more?ir
+（相当于输入dir命令）
+
+如何重定向输入“换行”到txt文件？
+(echo Hello
+More?echo World) > 1.txt
+
+注意这种换行只需echo前加“(”即可不需写“^”
+而且More?后面需再写一个echo
+
+>是覆盖到1.txt
+>>是追加到1.txt

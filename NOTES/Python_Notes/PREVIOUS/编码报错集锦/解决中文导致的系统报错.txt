@@ -1,0 +1,5 @@
+SyntaxError: Non-UTF-8 code starting with '\xb5' in file E:/Python1/study/first.py on line 2, but no encoding declared
+
+只需要在第一行写上注释：# coding=gbk
+
+即可

@@ -1,0 +1,17 @@
+①
+从运行命令打开回收站。使用 Windows 键 + R 短键打开"运行"提示符，键入以下命令，然后按 确定。
+
+explorer.exe shell:RecycleBinFolder
+
+②
+命令行
+在命令行上，键入
+
+start shell:RecycleBinFolder
+它不区分大小写，因此您可以键入start shell:recyclebinfolder。
+
+运行对话框
+一种替代方法是使用“ 运行”对话框（菜单“开始/运行”或Win+ R）-键入的内容较少。类型
+
+shell:RecycleBinFolder
+然后按确定（或按Enter）。

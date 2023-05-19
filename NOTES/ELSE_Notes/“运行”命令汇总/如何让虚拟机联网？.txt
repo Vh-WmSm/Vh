@@ -1,0 +1,7 @@
+运行：
+services.msc
+找到Vmware DHCP Service和Vmware NAT Service并同时开启
+
+如果还不能联网，则在终端输入shutdown -h now重启一下虚拟机
+
+测试是否能连网：ping baidu.com，通即可

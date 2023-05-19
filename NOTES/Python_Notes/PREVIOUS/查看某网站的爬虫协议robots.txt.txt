@@ -1,0 +1,26 @@
+如B站
+
+https://www.bilibili.com/robots.txt
+
+
+User-agent: Yisouspider
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: bingbot
+Allow: /
+
+User-agent: *
+Disallow: /
+
+主要看Disallow:若没写，则都可爬取无限制
+
+
+而qq音乐的
+User-agent: *
+Disallow: /playlist/
+Disallow: /yqq/playlist/
+Disallow: /n/yqq/playlist/
+说明这些不能爬

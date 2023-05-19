@@ -1,0 +1,30 @@
+需要用到you-get包（cmd里使用以下命令安装包）
+
+pip install you-get #安装you-get包
+批量下载分P视频（cmd里面）
+
+you-get --playlist --format=dash-flv720 -o D:\SX https://www.bilibili.com/video/BV13t411G7oh
+you-get为调用you-get程序
+
+--playlist可以使其按列表下载（批量下载的关键）
+
+--format=dash-flv720指定下载720P的flv视频（没有这一步的话可能下载的会非常慢）
+
+这个信息可以用下面这个-i命令查看一下
+
+you-get --playlist -i https://www.bilibili.com/video/BV13t411G7oh
+-o用来指定下载目录
+
+后面跟上要下载的网址即可
+
+
+
+下载下来的文件音画分离，可以使用ffmpeg解决。
+
+Jortana：you-get不自动合并音频和视频的解决办法
+11 赞同 · 3 评论文章
+
+一些视频可能需要会员才能下载，此时我们需要带cookies请求。you-get支持这种请求。目前支持Mozilla cookies.sqlite和Netscape两种格式的cookies。前者可以使用火狐浏览器直接导出。后者在Chromium内核的浏览器上可以使用Get cookies.txt插件获取。（我本人用的Edge）
+
+you-get --cookies=C:\Users\91425\Desktop\cookies.txt --format=dash-flv -o D:\SX https://www.bilibili.com/video/BV19h411s7oq
+--cookies=C:\Users\91425\Desktop\cookies.txt 部分就是指定cookies的部分

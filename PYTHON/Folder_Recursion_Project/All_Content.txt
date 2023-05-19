@@ -1,0 +1,3945 @@
+代码.py
+# coding=gbk
+import os
+
+path = 'E:\\Python1\\总结\\os.listdic()和join()的用法'
+list_ = os.listdir(path)
+print(list_)
+
+list_.remove('代码.py')
+str_ = ''.join(list_)
+print(str_)
+
+lis = str_.split('.txt')
+print(lis)
+
+
+threading线程的应用.py
+from threading import Thread, current_thread
+import time
+
+def tes():
+    print(f'子线程开始，名字：{current_thread().name}')
+    time.sleep(2)
+    print(f'子线程结束，名字：{current_thread().name}')
+
+print('主线程开始')
+threads = [Thread(target=tes) for _ in range(3)]  # 其中_为占位符，相当于i
+for __ in threads:  # 这里测试了一下两个_是否可以是占位符，看来是可以的， 这说明了所谓“占位符”其实就是一个变量罢了
+    __.start()
+for __ in threads:
+    __.join()
+print('主线程结束')
+
+
+多线程调用cmd you-get批量下载B站视频（内含json的应用）.py
+import os
+import sys
+import threading
+import requests
+import PySimpleGUI as sg
+
+
+def url_txt_creator(desktop_path, judge):
+    if judge == '1':
+        url = input('输入其中一个url（例如：https://www.bilibili.com/video/BV1aT411T7nr?p=1）（一定要包含“?p=”）：')
+        url_same = url.split('?')[0]
+        episode_selete = input('要下载第几集到第几集？（空格分隔）：')
+        start = int(episode_selete.split()[0])
+        end = int(episode_selete.split()[1])
+        f = open(desktop_path + '\\url.txt', 'a', encoding='gb18030')
+        for i in range(start, end + 1):
+            f.write(url_same + f'?p={i}\n')
+        f.close()
+        return url
+    else:
+        print('下面则通过一个弹窗帮助你生成url.txt，请找到BV号所在的json文件……')
+
+        page_num = ''
+        url_ = ''
+        mid = ''
+        season_id = ''
+        sort_reverse = ''
+        page_size = ''
+        spm_id_from = ''
+        layout = [
+            [sg.Text('{:<21}'.format('该合集有多少页？：')), sg.In()],
+            [sg.Text('{:<21}'.format('url头：')), sg.In()],
+            [sg.Text('{:<15}'.format('mid:')), sg.Input()],
+            [sg.Text('{:<28}'.format('season_id:')), sg.In()],
+            [sg.Text('{:<28}'.format('sort_reverse:')), sg.In()],
+            [sg.Text('{:<17}'.format('page_size:')), sg.In()],
+            [sg.Text('{:<32}'.format('spm_id_from（这个是点进视频，看网址的部分，一般来说一个合集的spm_id_from都一样）:')), sg.In()],
+            [sg.Button('确认参数')]  # 设置“开始裁剪”按钮
+        ]
+        windows = sg.Window('B站视频下载引导', layout, keep_on_top=True)  # 显示窗口
+        while True:  # 设置窗口循环
+            event, values = windows.read()  # 设置变量作为窗口显示内容
+            if event == None:  # 设置关闭窗口事件
+                break
+            if event == '确认参数':  # 设置点击“开始裁剪”按钮事件
+                # 设置返回内容
+                page_num = int(values[0])
+                url_ = values[1]
+                mid = values[2]
+                season_id = values[3]
+                sort_reverse = values[4]
+                page_size = values[5]
+                spm_id_from = values[6]
+                windows.close()
+
+                # url_ = 'https://api.bilibili.com/x/polymer/space/seasons_archives_list'
+                # url = 'https://api.bilibili.com/x/polymer/space/seasons_archives_list?mid=384234870&season_id=295885&sort_reverse=false&page_num=1&page_size=30'
+        for i in range(1, page_num + 1):
+            params = {
+                'mid': mid,
+                'season_id': season_id,
+                'sort_reverse': sort_reverse,
+                'page_num': f'{i}',
+                'page_size': page_size
+            }
+            headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+                                     'AppleWebKit/537.36 (KHTML, like Gecko) Chrome'
+                                     '/107.0.0.0 Safari/537.36 Edg/107.0.1418.42'}  # 由于B站对爬虫不限制，以所也可以不用headers
+            res = requests.get(url_, params=params, headers=headers)
+            lis = res.json()['data']['archives']
+            f = open(desktop_path + '\\url.txt', 'a', encoding='gb18030')
+            for li in lis:
+                f.write('https://www.bilibili.com/video/' + li['bvid'] + f'/?spm_id_from={spm_id_from}' + '\n')
+            f.close()
+
+        print('请先检查url.txt网址是否正确（主要检查spm_id_from有没有哪个视频不是当前编号的，如果有，则删除或更改再继续运行程序！）')
+        judge_check = input('检查好了吗？（直接回车默认好了）')
+        if judge_check == '':
+            return
+
+
+def switch_case(Format_judge):
+    Formats = {
+        '1': '360',
+        '2': '480',
+        '3': '720',
+        '4': '1080',
+    }
+    return Formats.get(Format_judge, None)
+
+
+def download():
+    global lock, re_key, f_r, download_path, judge_F, Format
+    
+
+    lock.acquire()
+
+    url = f_r.readline()
+    if url == '':
+        re_key = 0
+        lock.release()  # 若某子线程发现获取的url是空的，说明已经爬取结束了，为全局变量re_key赋值0，然后解开线程锁，让当前主线程下剩下的子线程继续获取“空”后返回，等消耗完剩下子线程后即可
+        return
+
+    lock.release()
+    if judge_F == '1':
+        order = f'you-get -F dash-flv{Format} {url}'
+        with open('c:\\users\\vh\\desktop\\1.txt', 'w', encoding='gb18030') as f:
+            f.write(order)
+    else:
+        order = f'you-get {url}'
+    os.chdir(download_path)
+    os.system(order)
+def Video_clarity():
+    global judge_F, Format
+    judge_F = input('对清晰度有要求吗？（直接回车默认没有）有则按1：')
+    if judge_F == '1':
+        judge_F_f = input('是否查看这个playlist的视频清晰度都有哪几个？（直接回车则不查看）：')
+        if judge_F_f != '':
+            order_test = f'start cmd /K you-get -i {url}'  # 用命令start cmd /K 让os.system结束后cmd窗口不会自动关闭
+            print(order_test)
+            os.system(order_test)
+        Format_judge = input('现在请选择一个清晰度输入：1.360、2.480、3.720、4.1080：')
+        Format = switch_case(Format_judge)
+
+def Set_the_thread():
+    global f_r, lock, re_key
+    thread_num = int(input('每次调用多少个cmd下载子线程？：'))
+
+    f_r = open(desktop_path + '\\url.txt', 'r', encoding='gb18030')
+    lock = threading.Lock()
+    re_key = 1
+
+    while re_key == 1:
+        threads = [threading.Thread(target=download) for _ in range(thread_num)]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()  # 设置线程等待，等该轮主线程结束后才进行下一轮，否则所有cmd将全部弹出
+if __name__ == '__main__':
+    judge_F = Format = ''
+    desktop_path = 'c:\\users\\vh\\desktop'
+    download_path = input('下载到：')
+    os.chdir(desktop_path)
+    judge1 = input('是否已经有url.txt且待下载视频链接都在内了？1.是。2.否：')
+    if judge1 == '1':
+        Video_clarity()
+        Set_the_thread()
+        sys.exit()
+    if 'url.txt' in os.listdir(desktop_path):
+        os.system('del url.txt')
+    judge2 = input('有共同的url吗？（是不是一个playlist？）：1.有。2.没有：')
+    if judge2 == '1':
+        url = url_txt_creator(desktop_path, judge2)
+    elif judge2 == '2':
+        ju = input('是否通过引导自动生成url.txt？（注意，只适用于在一个合集里，但并不是一个playlist）（若不是合集，请自己制作url.txt）（直接回车默认进行引导）：')
+        if ju == '':
+            url_txt_creator(desktop_path, judge2)
+        with open(desktop_path + '\\url.txt', 'r', encoding='gb18030') as f_:
+            url = f_.readline()  # 取url.txt中第一个作为样本，为下面可能查看视频有哪些清晰度做准备
+            # （但有个缺点就是可能其他视频清晰度又有不同，所以如果是url.txt中不是一个playlist建议用默认清晰度下载就好了，不要自定义清晰度）
+    else:
+        print('输入有误，退出程序……')
+        sys.exit()
+
+    Video_clarity()
+    Set_the_thread()
+
+
+重命名B站下载的视频.py
+import os
+# 【考研必备】信号与系统专业基础复习课      《信号与系统》郑君里 (P1. 信号与系统-第1课_高清)
+
+
+lis = os.listdir()
+s = '【考研 北邮】 通信原理【雪山灰虎】 (P'
+for li in lis:
+    if s in li:
+        start = s.rfind('P')
+        new_name = ''.join(li[start + 1:].split(')'))  # 去除P及之前的和')'
+        new_name_ = '.'.join(new_name.split('. '))  # 根据需要自行添加代码
+        order = 'rename "{}" "{}"'.format(li, new_name)
+        # print(order)
+        os.system(order)
+
+
+        # 笔记：os还有这个功能
+        # os.rename(i, i[start:])用这个可以不用system
+        
+
+
+重命名B站下载的视频2.0.py
+import os
+
+
+#  去掉某个符号之前的字符串，保留后面的字符串
+def keep_back(same, lis):
+    judge = input('1.从前数第一个这个字符。2.从后数第一个这个字符：')
+    if judge == '1':
+        for i in lis:
+            if same in i:
+                new = i.split(same, 1)[1]
+                os.rename(i, new)
+    elif judge == '2':
+        for i in lis:
+            if same in i:
+                rsame_index = i.rfind(same)
+                new = i[rsame_index + 1:]
+                os.rename(i, new)
+
+#  去掉某个符号之后的字符串，保留之前的字符串但保留后缀
+def del_back(same, lis):
+    judge = input('1.从前数第一个这个字符。2.从后数第一个这个字符：')
+    if judge == '1':
+        for i in lis:
+            if same in i:
+                suffix_index = i.rfind('.')
+                suffix = i[suffix_index:]
+                new = i.split(same, 1)[0] + suffix
+                os.rename(i, new)
+    elif judge == '2':
+        for i in lis:
+            if same in i:
+                suffix_index = i.rfind('.')
+                suffix = i[suffix_index:]
+                rsame_index = i.rfind(same)
+                new = i[:rsame_index] + suffix
+                os.rename(i, new)
+# 删除某个字符
+def del_mark(x, lis):
+    judge = input('1.删除所有这个字符。2.删除从前数第一个这个字符。3.删除从后数第一个：')
+    if judge == '1':
+        new_name = ''
+        for li in lis:
+            if x in li:
+                for i in li:
+                    if i != x:
+                        new_name += i
+                os.rename(li, new_name)
+                new_name = ''
+    elif judge == '2':
+        for li in lis:
+            if x in li:
+                index = li.find(x)
+                new_name = li[:index] + li[index + 1:]
+                os.rename(li, new_name)
+    elif judge == '3':
+        for li in lis:
+            if x in li:
+                index = li.rfind(x)
+                new_name = li[:index] + li[index + 1:]
+                os.rename(li, new_name)
+
+
+# 替换某个字符串
+def replace(x, x_replace, lis):  # 事实上有一个方法叫replace()，不用下面这么麻烦，而现在懒得改了
+    while True:
+        judge = input('1.替换所有这个字符。2.替换从前数第一个这个字符。3.替换从后数第一个：')
+        if judge == '1':
+            for li in lis:
+                if x in li:
+                    new_name = x_replace.join(li.split(x))
+                    os.rename(li, new_name)
+            break
+
+        elif judge == '2':
+            for li in lis:
+                if x in li:
+                    new_name = x_replace.join(li.split(x, 1))
+                    os.rename(li, new_name)
+            break
+
+        elif judge == '3':
+            for li in lis:
+                if x in li:
+                    find_index = li.rfind(x)
+                    new_name = li[:find_index] + x_replace + li[find_index + 1:]
+                    os.rename(li, new_name)
+            break
+
+        else:
+            print('输入错误，请重新输入……')
+
+
+# 在某个字符后n个位置加入某个字符
+def add(x, add_x, lis):
+    place_index = int(input('把字符add_x加入字符x的后多少位？（若就放x的后面，就写1）：'))
+    for li in lis:
+        if x in li:
+            x_index = li.find(x)
+            new_name = li[:x_index + 1 + place_index - 1] + add_x + li[x_index + place_index - 1 + 1:]
+            os.rename(li, new_name)
+            # print(new_name)
+
+
+if __name__ == '__main__':
+    address = input('地址（不写默认py文件所在地址）：')
+    if address == '':
+        address = os.getcwd()
+    os.chdir(address)
+
+    while True:
+        lis = os.listdir()
+        judge = input(
+            '1.del *.xml\n2.去掉前或后数第一个字符以及前面的，保留其后面的\n3.去掉某个符号之后的字符串，保留之前的字符串但保留后缀\n'
+            '4.删除某个字符\n5.替换某个字符串\n6.在某个字符x后n个位置加入某个字符add_x（x仅从前数第一个）\n请选择：')
+
+        if judge == '1':
+            os.system('del *.xml')
+        elif judge == '2':
+            same = input('请输入相同部分（这个部分之后的都会保留）：')
+            keep_back(same, lis)
+        elif judge == '3':
+            same = input('请输入相同部分（这个部分之前的及.后缀都会保留）：')
+            del_back(same, lis)
+        elif judge == '4':
+            x = input('删除哪个符号：')
+            del_mark(x, lis)
+
+        elif judge == '5':
+            x = input('替换哪个字符串？')
+            x_replace = input('替换为：')
+            replace(x, x_replace, lis)
+        elif judge == '6':
+            x = input('以哪个字符为基准：')
+            add_x = input('加入什么字符：')
+            add(x, add_x, lis)
+        else:
+            print('输入有误，请重新输入')
+            continue
+
+        print('重命名完成')
+        jud = input('继续直接回车，退出则任意键再回车：')
+        if jud != '':
+            break
+
+
+光纤系统设计.py
+import PySimpleGUI as sg
+import sys
+
+def float_(Pt, DSR, Pr, Pp, namuda, Me, am,  a, Lf, As, Ac, fb):
+    return [float(Pt), float(DSR), float(Pr), float(Pp), float(namuda), float(Me), float(am), float(a), float(Lf), float(As), float(Ac), float(fb)]
+Pt_DSR_Pr_Pp = '';judge = '';namuda = '';Me = '';am = '';a = '';Lf = '';As = '';Ac = '';fb = '';jud = ''
+while True:
+    layout = [
+        [sg.Text('{:<21}'.format('Pt_DSR_Pr_Pp:')), sg.In(Pt_DSR_Pr_Pp)],
+        [sg.Text('{:<18}'.format('G652/G654？(1或2):')), sg.In(judge)],
+        [sg.Text('{:<27}'.format('namuda:')), sg.In(namuda)],
+        [sg.Text('{:<18}'.format('设备富余度Me:')), sg.In(Me)],
+        [sg.Text('{:<18}'.format('光缆富余度am:')), sg.Input(am)],
+        [sg.Text('{:<22}'.format('啁啾系数a:')), sg.In(a)],
+        [sg.Text('{:<19}'.format('单盘光缆盘长Lf:')), sg.In(Lf)],
+        [sg.Text('{:<12}'.format('单个光纤接头损耗As:')), sg.In(As)],
+        [sg.Text('{:<14}'.format('光纤连接器损耗Ac:')), sg.In(Ac)],
+        [sg.Text('{:<16}'.format('标称比特率fb(GHz):')), sg.In(fb)],
+        [sg.Text('{:<25}'.format('ITU-T？Y/N:')), sg.In(jud)],
+        [sg.Button('开始设计')]
+    ]
+    windows = sg.Window('光纤设计计算器', layout, keep_on_top=True)  # 显示窗口
+    while True:  # 设置窗口循环
+        event, values = windows.read()  # 设置变量作为窗口显示内容
+        if event == None:  # 设置关闭窗口事件
+            sys.exit()
+        if event == '开始设计':  # 设置点击“开始设计”按钮事件
+            # 设置返回内容
+            Pt_DSR_Pr_Pp = values[0]
+            judge = values[1]
+            namuda = values[2]
+            Me = values[3]
+            am = values[4]
+            a = values[5]
+            Lf = values[6]
+            As = values[7]
+            Ac = values[8]
+            fb = values[9]
+            jud = values[10]
+        Pt, DSR, Pr, Pp = Pt_DSR_Pr_Pp.split(' ')
+        Pt, DSR, Pr, Pp, namuda, Me, am, a, Lf, As, Ac, fb = float_(Pt, DSR, Pr, Pp, namuda, Me, am, a, Lf, As, Ac, fb)
+        a_s = As / Lf
+        if judge == '1':
+            if namuda == 1550:
+                af = 0.25
+                D = 20
+            else:
+                af = 0.4
+                D = 3.5
+        else:
+            namuda = 1550
+            af = 0.18
+            D = 22
+        if jud == 'Y' or jud == 'y':
+            LD = DSR / D
+        else:
+            LD = 71400 / (a * D * namuda ** 2 * (fb / 1000) ** 2)
+        LL = (Pt - Pr - 2 * Ac - Me - Pp) / (af + a_s + am)
+        print('损耗受限距离：LL = {:.2f}\n色散受限距离：LD = {:.2f}'.format(LL, LD))
+        break
+    windows.close()
+
+
+党校刷课脚本.py
+from pyautogui import *
+import time
+import pytesseract
+from PIL import Image
+
+
+def screen_shot(x, y, x1, y1):
+    keyDown('alt')  # 快捷键调出截图工具
+    keyDown('shift')
+    press('a')
+    keyUp('alt')
+    keyUp('shift')
+    moveTo(x, y)  # 移到相应位置截图
+    dragTo(x1, y1)
+    keyDown('ctrl')  # 保存
+    press('s')
+    keyUp('ctrl')
+    press('enter')
+    sleep(0.5)  # 等待保存完毕
+
+
+def save_img(address_0, target_add, num):
+    os.chdir(address_0)
+    # 重命名截图(之所以可以用*.png，是因为桌面上只有它一张png图片)
+    order = 'rename *.png {}.png'.format(num)
+    os.system(order)
+    order = 'move {}.png {}\\{}'.format(num, address_0, target_add)
+    os.system(order)
+
+
+def start(address_0, num, key):
+    # if num == 0:
+    #     location = list(locateOnScreen('C:\\Users\\Vh\\Desktop\\desktop\\xx.png', confidence=0.97))
+    #     x = location[:2][0] - 1000
+    #     y = location[:2][1] - 45
+    #     x1 = x + 500
+    #     y1 = y + 55
+    #     screen_shot(x, y, x1, y1)
+    #     save_img(address_0, 'time', i)
+    #     location = locateOnScreen('C:\\Users\\Vh\\Desktop\\time\\{}.png'.format(i), confidence=0.97)
+    #     click(center(location))
+    # 
+    # sleep(2)  # 等待进入这一系列课程
+
+    location = list(locateOnScreen('C:\\Users\\Vh\\Desktop\\desktop\\hd.png', confidence=0.97))
+    if num == 0 and key == '':
+        location = locateOnScreen('C:\\Users\\Vh\\Desktop\\desktop\\ml.png', confidence=0.97)
+        x, y = center(location)
+        x -= 180
+        y += 60
+    else:
+        x, y = location[:2]
+        x += 45
+        y += 66
+    x1 = x + 270
+    y1 = y + 40
+    screen_shot(x, y, x1, y1)
+    save_img(address_0, 'mp4_name', num)
+
+    img = Image.open('c:\\users\\vh\\desktop\\mp4_name\\{}.png'.format(num))  # 打开图片
+    text = pytesseract.image_to_string(img)
+
+    if text == '':
+        screen_shot(x, y + 60, x1, y1 + 60)
+        save_img(address_0, 'rec', num)
+        img = Image.open('c:\\users\\vh\\desktop\\rec\\{}.png'.format(num))  # 打开图片
+        text1 = pytesseract.image_to_string(img)
+        if text1 == '':
+            return 0  # 本系列课已经结束，返回
+
+    moveTo(2000, 300)  # 把鼠标移走防止课程名称字体变红色
+    location = locateOnScreen('C:\\Users\\Vh\\Desktop\\mp4_name\\{}.png'.format(num), confidence=0.97)
+    click(center(location))
+    while True:
+        location_wqgk = locateOnScreen('C:\\Users\\Vh\\Desktop\\desktop\\wqgk.png', confidence=0.97)
+        location_jxgk = locateOnScreen('C:\\Users\\Vh\\Desktop\\desktop\\jxgk.png', confidence=0.97)
+        if location_wqgk != None or location_jxgk != None:
+            break
+    if location_wqgk != None:
+        x, y = center(location_wqgk)
+        click(x, y + 90)
+    elif location_jxgk != None:
+        x1, y1 = center(location_jxgk)
+        click(x1, y1)
+    elif location_ztj != None:
+        x2, y2 = center(location_ztj)
+        click(x2, y2)
+    moveTo(2000, 300)
+    return 1
+
+
+def find_pop_up():
+    while True:
+        location = locateOnScreen('C:\\Users\\Vh\\Desktop\\desktop\\zt.png', confidence=0.97)
+        time.sleep(1)
+        if location != None:
+            x = center(location)[0]
+            y = center(location)[1] + 100
+            click(x, y)
+            sleep(1)
+            try:
+                location_ = locateOnScreen('C:\\Users\\Vh\\Desktop\\desktop\\ztj.png', confidence=0.97)
+                click(center(location_))
+            except:
+                pass
+            moveTo(2000, 300)  # 把鼠标移到最右边防止影响视野
+        location_ = locateOnScreen('C:\\Users\\Vh\\Desktop\\desktop\\spbfwb.png', confidence=0.97)
+        if location_:
+            x = center(location_)[0]
+            y = center(location_)[1] + 100
+            click(x, y)
+            sleep(2)
+            return
+
+
+def next_lesson(i):
+    location = locateOnScreen('C:\\Users\\Vh\\Desktop\\desktop\\fhkcy.png', confidence=0.97)
+    click(center(location))
+    sleep(0.6)
+    location = locateOnScreen('C:\\Users\\Vh\\Desktop\\desktop\\lwh.png', confidence=0.97)
+    click(center(location))
+    sleep(0.6)
+    location = locateOnScreen('C:\\Users\\Vh\\Desktop\\desktop\\wdkc.png', confidence=0.97)
+    click(center(location))
+    sleep(0.6)
+    # while True:
+    #     last_lesson_location = locateOnScreen('C:\\Users\\Vh\\Desktop\\time\\{}.png'.format(i - 1), confidence=0.97)
+    #     if last_lesson_location == None:
+    #         for j in range(5):
+    #             press('down')
+    #     else:
+    #         while last_lesson_location != None:
+    #             press('down')
+    #             last_lesson_location = locateOnScreen('C:\\Users\\Vh\\Desktop\\time\\{}.png'.format(i - 1),
+    #                                                   confidence=0.97)
+    #         press('down')
+    #         return
+
+
+if __name__ == '__main__':
+    while True:
+        key = input('是否从第一课开始(若否则按空格再回车，若是则直接回车)：')
+        sleep(2)
+        address_0 = 'c:\\users\\vh\\desktop'
+        os.chdir('c:\\users\\vh\\desktop\\mp4_name')
+        os.system('@echo y | del *.*')
+        os.chdir('c:\\users\\vh\\desktop\\rec')
+        os.system('@echo y | del *.*')
+        num = -1
+        while True:
+            num += 1
+            if start(address_0, num, key) == 0:
+                next_lesson(0)
+                break
+            find_pop_up()
+
+
+批量爬取学习通学习页面的ppt图片.py
+import os
+import time
+import requests
+
+
+# 主菜单
+def menu():
+    print('*' * 10 + '【欢迎来到学习通任务点中ppt图片爬取程序 4.0版本(2022.6.3)】' + '*' * 10)
+    print('【程序使用方法】')
+    print('①先确定你的桌面地址，如：C:\\Users\\Vh\\Desktop')
+    print('②确保你的桌面中有一个按要求做好的url.txt文本文档')
+    print('Tips:桌面地址确定方法和文本文档创建方法在代码的注释中', end='\n\n')
+    '''注：
+        ①桌面地址确定方法：确保未选中桌面任何文件的情况下，在桌面空白处按住shift再点击鼠标右键，弹出菜单中点击
+        "打开PowerShell"，然后复制桌面地址(复制“C――p”，“>”号和前面的空格不要复制)即可（win11需先按“显示更多选项”）
+        ②url.txt创建方法，在桌面右键新建一个文本文档，重命名为url（后缀不用变），然后在网页上打开学习通任务点相应PPT，
+            在最后一张图片上，右键鼠标，点击复制图像链接，然后粘贴到url.txt文件里，回车，后续可依次粘贴需要的PPT地址'''
+
+    '''更新历史：1.0版本：可单个下载ppt，需手动更改循环次数和图片地址
+                 2.0版本：增加了批量下载功能
+                 3.0版本：增加了自动创建文件夹功能、增加了验证码功能、增加了turtle库的应用
+                 4.0版本：修复了需手动输入url.txt中url个数的弊端，程序可自动读取'''
+    judge = input('看明白并做好准备工作后，输入y/Y开始吧！\n\n' + '请输入：')
+    if judge == 'y' or judge == 'Y':
+        return
+    else:
+        print('\n' + '那等你准备好后再来运行我吧！')
+        exit()
+
+
+# 定义获取基础信息的函数(列表按顺序存储：桌面地址、循环次数(url个数)、url列表)
+def get_info():
+    info_lis = []
+    address = input('\n' + '请输入你的桌面地址：')
+    info_lis.append(address)
+    with open(address + '\\url.txt', 'r') as f:
+        urls = f.read().strip('\n').split('\n')  # strip是去除url字符串最后的一些可能存在的空行，split是以换行符的形式分割存放url到列表中
+    number = len(urls)
+    info_lis.append(number)
+    info_lis.append(urls)
+    return info_lis
+
+
+# 定义新建文件夹的函数
+def create_folder(number):
+    folder_name = [str(i) for i in range(1, number + 1)]  # 利用“列表解析”生成文件夹编号列表  知识点书本 P98
+    for name in folder_name:
+        try:
+            os.makedirs(name)  # 尝试批量生成文件夹，若桌面已经存在该名字的文件夹，则避开报错，继续往下运行
+        except:
+            continue
+
+
+# 定义清空该文件夹原先文件的函数
+def del_file(i, address):
+    local = '{}\\{}'.format(address, i)
+    os.chdir(local)
+    os.system('@echo y|del *.*')  # @echo y意思是自动输入y，表示“确定删除”
+
+
+def download_picture(urls, address, number):
+    for i in range(1, number + 1):
+        del_file(i, address)  # 先删除当下文件夹内所有内容再下载新的（因为有可能该文件夹存在上一次爬取的内容）
+        url = urls[i - 1]  # 获取当前循环的url
+        start = int(url.rfind('/')) + 1  # 获取页数的最高位下标
+        end = int(url.rfind('.'))  # 获取页数的最低位的下一位的下标
+        nums = int(url[start:end])  # 获取总页数
+        url = url[:start] + '{}' + url[end:]  # 把xxxxx/nums.png换成xxxxx/{}.png
+        for num in range(1, nums + 1):
+            res = requests.get(url.format(num))  # 利用requests库的get方法获取下载地址响应
+            with open("{}\\{}\\{}.png".format(address, i, num), 'wb') as picture:
+                picture.write(res.content)  # 从响应中获取图片内容，并写入相应的.png文件中
+        print("完成第{}个ppt的爬取！".format(i))
+
+
+def end(t0, t1):
+    print('\n本次爬取所耗时间：{}s\n欢迎下次使用本程序，再见！'.format(round(t1 - t0, 3)), end='')  # round(, 3)四舍五入，保留3位小数
+    input('\n\n键入任意继续……')
+
+
+
+
+if __name__ == '__main__':
+    menu()  # 显示菜单
+    info_lis = get_info()  # 获取基础信息
+    address = info_lis[0]  # 得到python工作区位置：即url.txt所在位置
+    os.chdir(address)  # 设定python工作区为桌面，而不是此py文件所在位置
+    number = info_lis[1]  # 得到循环次数
+    create_folder(number)  # 自动在桌面创建文件夹并命名为1、2、3……
+    urls = info_lis[2]  # 获取url列表
+    t0 = time.time()  # “摁下秒表”，统计爬取所需总时间
+    download_picture(urls, address, number)  # 开始爬取（urls列表下标是从0开始，而i从1开始，所以要减1）
+    t1 = time.time()
+    end(t0, t1)  # 打印所耗时间，结束语
+
+
+校园网10.200.0.2登录（selenium深深度应用）.py
+from selenium import webdriver  # 获得浏览器驱动
+from selenium.webdriver.common.by import By
+from time import sleep
+
+
+driver = webdriver.Chrome()
+url = 'http://10.200.0.2'
+driver.get(url)
+driver.implicitly_wait(5)
+driver.find_elements(By.CLASS_NAME, 'edit_lobo_cell')[2].send_keys('')
+driver.find_elements(By.CLASS_NAME, 'edit_lobo_cell')[3].send_keys('')
+
+
+el1 = driver.find_element(By.CSS_SELECTOR, 'div [class="edit_lobo_cell edit_radio"] > span [value="@telecom"]')  # 用css层级搜索找到“中国电信”左边那个小圆圈
+driver.execute_script("arguments[0].click();", el1)  # 普通点击方法无效，用js点击
+el2 = driver.find_elements(By.CLASS_NAME, 'edit_lobo_cell')[1]
+driver.execute_script("arguments[0].click();", el2)  # 普通点击方法无效，用js点击
+sleep(1)
+driver.close()
+
+
+校园网退出.py
+from selenium import webdriver  # 获得浏览器驱动
+from selenium.webdriver.common.by import By
+from pyautogui import press
+
+
+driver = webdriver.Chrome()
+url = 'http://10.200.0.2'
+driver.get(url)
+driver.implicitly_wait(5)
+el = driver.find_element(By.CLASS_NAME, 'btn')
+driver.execute_script("arguments[0].click();", el)
+driver.implicitly_wait(3)
+press('enter')
+driver.close()
+
+
+爬取中国运载火箭技术研究院数据.py
+# coding=gbk
+import requests
+import bs4
+from bs4 import BeautifulSoup
+import openpyxl
+
+wb = openpyxl.Workbook()
+sheet = wb.active
+sheet.title = '卫星'
+title_data = ['发射时间', '发射卫星']
+sheet.append(title_data)
+k = 1
+for i in range(9):
+    if i == 0:
+        url = 'http://www.calt.com/n482/n505/index.html'
+        j = 9
+    else:
+        url = 'http://www.calt.com/n482/n505/index_3805_' + str(9 - i) + '.html'
+        j = 1
+    res = requests.get(url)
+    res.encoding = 'utf-8'
+    bs_satellite = BeautifulSoup(res.text, 'html.parser')
+    items = bs_satellite.find_all('table')[j].find_all('tr')
+
+    for item in items:
+        if item == items[0]:
+            continue
+        k = k+1
+        date = item.find_all('td')[0]
+        satellite = item.find_all('td')[2]
+        # sheet['A'+str(k)] = date.text
+        # sheet['B'+str(k)] = satellite.text
+        # 或
+        data_satellite = [date.text, satellite.text]
+        sheet.append(data_satellite)
+wb.save('2019――2021中国发射的卫星.xlsx')
+wb.close()
+
+
+爬取学习通现代交换速课音频（selenium深度应用）.py
+from selenium import webdriver  # 获得浏览器驱动
+import requests
+from selenium.webdriver.common.by import By
+import os
+
+# def open_(address, num, content):
+#     with open(address + '\\' + num + '.txt', 'w', encoding='gb18030') as f:
+#         f.write(content)
+
+# address = 'c:\\users\\vh\\desktop'
+
+address = input('下载到：')
+unit = int(input('第几章：'))
+lesson = int(input('这章的第几节课：'))
+frames = int(input('这节课的有几个iframe：'))
+
+os.chdir(address)
+for i in range(frames):  # 在目标文件夹创建frames个文件夹并编号为1、2、3……
+    try:
+        os.mkdir(str(i + 1))
+    except:
+        pass
+
+driver = webdriver.Edge()  # 直接这样写是打开浏览器窗口运行，如果要静默运行则以下代码
+
+# driver_options = webdriver.EdgeOptions()
+# driver_options.add_argument('--headless')
+# driver = webdriver.Edge(options=driver_options)
+
+url = 'http://passport2.chaoxing.com/login?fid=1055&refer=http://i.mooc.chaoxing.com'
+driver.get(url)
+driver.implicitly_wait(3)
+
+driver.maximize_window()  # 这行代码可以把浏览器窗口最大化
+
+driver.find_element(By.XPATH, '//*[@id="phone"]').send_keys('')
+driver.find_element(By.ID, 'pwd').send_keys('')
+driver.find_element(By.CLASS_NAME, 'btn-big-blue.margin-btm24').click()  # 按登录键
+driver.implicitly_wait(3)
+
+driver.switch_to.frame('frame_content')  # 切换到“我学的课”这个frame
+
+driver.find_elements(By.CLASS_NAME, 'course-name.overHidden2')[3].click()  # 点击进入“现代交换技术”课程 （一个class中有多个参数用“.”连接）
+driver.implicitly_wait(3)
+
+windows = driver.window_handles  # 获取所有窗口句柄  笔记：driver.current_window_handle --> 获取当前窗口句柄
+driver.switch_to.window(windows[-1])  # 弹出了新窗口，所以切换到当前窗口（因为是新窗口，所以肯定是倒数第一个，所以index = -1）
+
+driver.find_element(By.CLASS_NAME, 'zj').click()  # 进入“现代交换技术”后点击“章节”
+driver.implicitly_wait(3)
+
+driver.switch_to.frame('frame_content-zj')  # 进入“章节”这个frame
+unit_select = driver.find_elements(By.CSS_SELECTOR, '[class="chapter_unit"]')[unit - 1]  # 选中第x章
+unit_select.find_elements(By.CSS_SELECTOR, '[class="catalog_name"]')[lesson].click()  # 进入x章的第y课
+
+# open_(address, '初始页面', driver.page_source)  # 获取当前网页源代码，与最后“返回命令”后的源代码作对比，做一个小实验
+
+for frame_index in range(frames):
+    driver.switch_to.frame('iframe')  # 进入此学习页面第一级frame
+    # open_(address, '进入第一级', driver.page_source)  # 获取当前网页源代码
+
+    iframe = driver.find_elements(By.TAG_NAME, 'iframe')[frame_index]  # 进入此学习页面第二级frame
+    # open_(address, '进入第二级', driver.page_source)  # 获取当前网页源代码
+
+    driver.switch_to.frame(iframe)  # iframe没有id或class时，可用标签或XPATH定位
+    driver.switch_to.frame('frame_content')  # 进入此学习页面第三级frame
+    # open_(address, '进入第三级', driver.page_source)  # 获取当前网页源代码
+
+    au_url_list = driver.find_element(By.CLASS_NAME, 'swiper-wrapper').find_elements(By.CLASS_NAME, 'annex-audio')
+    os.chdir(address + '\\' + str(frame_index + 1))
+    for i in range(len(au_url_list)):
+        au_url = au_url_list[i].find_element(By.TAG_NAME, 'audio').get_attribute('src')
+        au_res = requests.get(au_url)
+        with open('{}.mp3'.format(i + 1), 'wb') as f:
+            f.write(au_res.content)
+
+    driver.switch_to.default_content()  # 返回命令
+    # open_(address, '返回命令后', driver.page_source)  # 获取当前网页源代码——实验证明：“返回命令后”不是返回到上一级frame，而是直接返回到初始页面
+
+
+代码.py
+# coding=gbk
+import requests
+from bs4 import BeautifulSoup
+import openpyxl
+
+wb = openpyxl.Workbook()
+sheet = wb.active
+sheet.title = '豆瓣电影'
+column_name = ['电影名称', '评分', '网址']
+sheet.append(column_name)
+
+url = 'https://movie.douban.com/cinema/nowplaying/foshan/'
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win'
+                         '64; x64) AppleWebKit/537.36 (KHTML,'
+                         ' like Gecko) Chrome/99.0.4844.74 Safa'
+                         'ri/537.36 Edg/99.0.1150.52'}
+res = requests.get(url, headers=headers)
+bs = BeautifulSoup(res.text, 'html.parser')
+lis = bs.find('ul', class_='lists').find_all('ul', class_='')
+for li in lis:
+    title = li.find('li', class_="stitle").text.replace(' ', '').replace('\n', '')
+    try:
+        score = li.find('li', class_="srating").text
+    except:
+        score = ''
+    url = li.find('li', class_="stitle").find('a')['href']
+    data = [title, score, url]
+    sheet.append(data)
+wb.save("C:\\users\\vh-暖夏\\desktop\\豆瓣热映电影榜.xlsx")
+wb.close()
+print('Done!')
+
+
+爬取豆瓣电影Top250.py
+# coding=gbk
+import openpyxl
+import requests
+from bs4 import BeautifulSoup
+
+wb = openpyxl.Workbook()
+sheet = wb.active
+sheet.title = '豆瓣电影'
+column_name = ['电影名称', '评分', '摘要', '属性', '网址']
+sheet.append(column_name)
+
+headers = {'User-Agent': 'Mozilla/5.0 '
+                         '(Windows NT 10.0; Win64; x64) AppleWebKit'
+                         '/537.36 (KHTML, like Gecko) Chrome/99.0.48'
+                         '44.74 Safari/537.36 Edg/99.0.1150.52'}
+for i in range(0, 226, 25):
+    if i == 0:
+        url = 'https://movie.douban.com/top250'
+    else:
+        url = 'https://movie.douban.com/top250?start={}&filter='.format(i)
+    res = requests.get(url, headers=headers)
+    bs = BeautifulSoup(res.text, 'html.parser')
+    lis = bs.find_all('div', class_="info")
+    for li in lis:
+        title = li.find('div', class_='hd').find('a').find('span').text
+        score = li.find('div', class_="star").find_all('span')[1].text
+        try:
+            summary = li.find('div', class_='bd').find_all('p')[1].text.replace(' ', '').replace('\n', '')
+        except:
+            summary = ''
+        property_ = li.find('div', class_='bd').find('p').text.replace(' ', '').encode('gbk', 'ignore').decode('gbk')
+        l_property = property_.split('\n')
+        url_mov = li.find("div", class_='hd').find('a')['href']
+        li_data = [title, score, summary, l_property[2], url_mov]
+        sheet.append(li_data)
+wb.save('C:\\users\\vh-暖夏\\desktop\\豆瓣Top250电影.xlsx')
+wb.close()
+print('Done')
+
+
+
+
+Ant_vpn自动点击器.py
+import pyautogui
+import time
+
+# 运行前暂停2秒时间，等待把鼠标移到click按钮上
+time.sleep(2)
+click_position = pyautogui.position()
+while True:
+    now_position = pyautogui.position()
+    pyautogui.click(click_position)
+    pyautogui.moveTo(now_position)
+    time.sleep(10)
+
+
+
+chardet检测bytes型文本编码.py
+import os
+import chardet
+
+path = input('文件地址：')
+file_name = input('文件名(要加后缀)：')
+f = open(path + '\\' + file_name, 'rb')  # 由于chardet.detect只接收bytes型，所以用rb
+content = f.read()
+data_dict = chardet.detect(content)
+print(data_dict)
+print(data_dict['encoding'])
+
+
+'''
+a = '123'.encode('utf-8')
+print(type(a)) # ——bytes
+'''
+
+
+去除txt文件中内容所有的回车.py
+# 此功能用在从网上复制下来一段话，或截图识字后粘贴到txt后由换行符的情况
+# 要保持它还是一段话，则要去除所有换行符
+import os
+
+desktop_path = 'c:\\users\\vh\\desktop'
+path = input('txt文件位置(直接回车默认桌面)：')
+if path == '':
+    path = desktop_path
+os.chdir(path)
+file_name = input("txt文件名(不加后缀)：")
+f_r = open(desktop_path + '\\' + file_name + ".txt", 'r', encoding='utf-8')
+content = f_r.read()
+re_content = ''.join(content.split('\n'))
+print(re_content)
+
+
+去除相同的环境变量.py
+import os
+
+os.chdir('c:\\users\\vh\\desktop')
+with open('1.txt', 'r', encoding='utf-8') as f:
+    content_list = f.read().split(';')
+re_li = []
+for li in content_list:
+    if li not in re_li:
+        re_li.append(li)
+print(';'.join(re_li))
+
+
+截图识字(中文or英文).py
+from PIL import Image
+import pytesseract
+
+
+img_address = input('截图位置(不填则默认桌面)：')
+if img_address == '':
+    img_address = 'c:\\users\\vh\\desktop'
+img_name = input('文件名(.png不用写)')
+judge = input('英文1；中文2：')
+img = Image.open(img_address + '\\{}.png'.format(img_name))
+if judge == '1':
+    text = pytesseract.image_to_string(img)
+
+else:
+    text = ''.join(pytesseract.image_to_string(img, lang='chi_sim').split())
+print(text)
+input()
+
+
+插入文件(文件重编号).py
+# 此文件用法：
+# 例如：某文件夹有文件1.txt、2.txt、3.txt、4.txt
+# 我想在2和3中间插入文件，则3.txt、4.txt要分别重命名为4.txt、5.txt
+# 如果文件多，人工重命名处理比较麻烦，可用此py处理
+import os
+
+address = input('位置：')
+os.chdir(address)
+lis = os.listdir()
+insert_file = input('插入文件名（要加后缀）：')
+if insert_file[0].isdigit():
+    insert_file_0 = insert_file[2:]
+else:
+    insert_file_0 = insert_file
+num_ins_file = int(input('插入位置：'))
+os.rename(insert_file, '{}.{}'.format(num_ins_file, insert_file_0))
+# 接下来遍历文件夹内所有文件：
+try:
+    for li in lis:
+        if str(num_ins_file) in li:
+            os.rename(li, '{}.{}'.format(num_ins_file + 1, li[2:]))
+            num_ins_file += 1
+except:
+    print('完成！')
+
+
+时间相加器.py
+import os
+
+
+def time_add(start, add):
+    start_ = start.split(':')
+    add_ = add.split(':')
+    if len(add_) == 1:
+        if len(str(add_)) == 1:
+            add_ = '00 00 0{}'.format(''.join(add_))
+        else:
+            add_ = '00 00 {}'.format(''.join(add_))
+        add_ = add_.split()
+    elif len(add_) == 2:
+        add_ = ' '.join(add_)
+        add_ = '00 ' + add_
+        add_ = add_.split()
+    end = []
+    up = 0
+    sec = int(start_[2]) + int(add_[2])
+    if sec >= 60:
+        up = 1
+        end.append(sec - 60)
+    else:
+        end.append(sec)
+    min = int(start_[1]) + int(add_[1]) + up
+    if min >= 60:
+        up = 1
+        end.append(min - 60)
+    else:
+        up = 0
+        end.append(min)
+    hour = int(start_[0]) + int(add_[0]) + up
+    if hour >= 24:
+        end.append(hour - 24)
+    else:
+        end.append(hour)
+    end.reverse()
+    end_ = []
+    for i in end:
+        if len(str(i)) == 1:
+            end_.append('0' + str(i))
+        else:
+            end_.append((str(i)))
+    return ':'.join(end_)
+
+
+if __name__ == '__main__':
+    judge = input('输入两个时间还是读取txt的时间？：1 or 2：')
+    if judge == '1':
+        start = ':'.join(input('被加时间：(空格分隔)').split())
+        add = ':'.join(input('所加时间：').split())
+        print(time_add(start, add))
+    elif judge == '2':
+        location = input('文件位置：')
+        file = input('文件名(不加后缀)：')
+        time_different = input('时间差：')
+        os.chdir(location)
+        with open('{}.txt'.format(file), 'r', encoding='utf-8') as f:
+            lis = f.read().split('\n')
+        lis_ = []
+        for li in lis:
+            lis_.append(li.split()[1])
+        time_s = '00:00:00'
+        for li_ in lis_:
+            start = time_s
+            add = li_
+            time_s = time_add(start, add)
+            time_s = time_add(time_s, time_different)
+        print(time_s)
+    else:
+        print('输入有误！')
+    input('键入任意继续……')
+
+
+电话号码归属地、邮编、区号等信息查询(百度复制的).py
+import phone
+from time import *
+import re
+
+
+def menu():
+    print("欢迎来到查询小程序")
+    print("1.查询")
+    print("2.用户")
+
+
+def p(n):
+    if re.match(r'1[3,4,5,7,8]\d{9}', n):
+        if re.match(r'13[0,1,2]\d{8}', n) or \
+                re.match(r"15[5,6]\d{8}", n) or \
+                re.match(r"18[5,6]", n) or \
+                re.match(r"145\d{8}", n) or \
+                re.match(r"176\d{8}", n):
+            return True
+        elif re.match(r"13[4,5,6,7,8,9]\d{8}", n) or \
+                re.match(r"147\d{8}|178\d{8}", n) or \
+                re.match(r"15[0,1,2,7,8,9]\d{8}", n) or \
+                re.match(r"18[2,3,4,7,8]\d{8}", n):
+            return True
+        else:
+            return True
+    else:
+        return False
+
+
+if __name__ == "__main__":
+    s = 0
+    menu()
+    while True:
+        op = int(input("请输入:"))
+        if op == 1:
+            phoneNum = str(input("请输入你的电话号码:"))
+            if p(phoneNum) == False:
+                print("该手机号无效")
+                for i in range(100):
+                    print('\n')
+                menu()
+            else:
+                info = phone.Phone().find(phoneNum)
+                print("手机号码:" + str(info["phone"]))
+                print("手机所属地:" + str(info["province"]) + "省" + str(info["city"]) + "市")
+                print("邮政编号:" + str(info["zip_code"]))
+                print("区域号码:" + str(info["area_code"]))
+                print("手机类型:" + str(info["phone_type"]))
+                s += 1
+                i = input("输入任意数退出...")
+                menu()
+        if op == 2:
+            print("使用次数:" + str(s))
+            i = input("输入任意数退出...")
+            menu()
+
+
+网页视频下载器.py
+import requests
+import wget
+
+while True:
+    judge = input('采用哪种方式下载？1.requests。2.wget：')
+    desktop_path = 'c:\\users\\vh\\desktop'
+    path = input('地址(直接回车默认下载到桌面)：')
+    url = input('url:')
+    if judge == '1':
+        if path == '':
+            path = desktop_path
+        res = requests.get(url)
+        with open(f'{path}\\视频.mp4', 'wb') as f:
+            f.write(res.content)
+
+    else:
+        wget.download(url, path)
+    jud = input('继续下载则直接回车')
+    if jud == '':
+        break
+    
+
+
+
+ACM：2757. Lucky Sum的多次尝试，超时！.py
+# coding=gbk
+import time
+import math
+from bisect import bisect  # 终于找到了一个很牛逼的东西，呜呜呜！可以返回列表或元组中比某数大的下一个位置的下标
+
+# 就是可以，比如a = [2,3,4,5]  print(a[bisect(2.5)])--->3
+
+# t0 = time.time()
+a = [4, 7]
+b = []
+con = [(4, 7)]
+for j in range(9):
+    for i in a:
+        b.append(i * 10 + 4)
+        b.append(i * 10 + 7)
+    a = b
+    con.append(tuple(b))
+    b = []
+l, r = map(int, input().split())
+s = 0
+for i in range(l, r + 1):
+    k = len(str(i)) - 1
+    tup_t = con[k]
+    if tup_t[len(tup_t) - 1] < i:  # 假如i为8，大于(4, 7)元组的最后一个数，不应该取元组(4, 7)，应取(44, 47, 74, 77)，故有此if
+        tup_t = con[k + 1]
+
+# 结果还是不尽如人意，这个bisect函数本质上还是二分法，只不过不需要我手动编写罢了，还是太耗时了，放弃！
+    e = bisect(tup_t, i)
+    if tup_t[e - 1] == i:
+        s += tup_t[e - 1]
+    else:
+        s += tup_t[e]
+print(s)
+
+
+#     得到美丽数列表并将他们按位数分类放入元组后，下一步操作以下采用二分法求与比i大的那个完美数，比较耗时，淘汰
+#     while True:
+#         cut = (x + y) / 2
+#         cut_down = math.floor(cut) - 1
+#         cut_up = math.ceil(cut) - 1
+#         if i < tup_t[0]:
+#             s += tup_t[0]
+#             break
+#
+#         else:
+#             if tup_t[cut_down] < i and tup_t[cut_up] > i:
+#                 s += tup_t[cut_up]
+#                 break
+#             elif tup_t[cut_down] < i and tup_t[cut_up] < i:
+#                 x = cut_up + 1
+#             elif tup_t[cut_down] > i and tup_t[cut_up] > i:
+#                 y = cut_down + 1
+#             elif tup_t[cut_down] == i:
+#                 s += tup_t[cut_down]
+#                 break
+#             else:
+#                 s += tup_t[cut_up]
+#                 break
+# print(s)
+
+
+# 得到美丽数列表的第一次尝试，此法比较耗时，淘汰
+
+# datas = [4, 7]
+# for i in range(2000):
+#     datas.append(datas[i] * 10 + 4)
+#     datas.append(datas[i] * 10 + 7)
+# t1 = time.time()
+# print(datas)
+# print(len(datas))
+
+
+excel进销存对数.py
+import openpyxl
+import os
+
+location = input('文件位置：')
+os.chdir(location)
+file = input('文件名(要加后缀)：')
+line = int(input('行数：'))
+wb = openpyxl.load_workbook(file)
+sheet = wb.active
+for i in range(2, line + 1):
+    a = sheet['C{}'.format(i)].value
+    if a == None:
+        continue
+    key = 0
+    for j in range(2, line + 1):
+        if a == sheet['A{}'.format(j)].value:
+            key = j
+            break
+    if key == 0:
+        sheet['G{}'.format(i)] = '左边无这个产品名'
+        continue
+    judge = sheet['C{}'.format(i + 1)].value
+    judge_ = sheet['C{}'.format(i + 2)].value
+    judge__ = sheet['C{}'.format(i + 3)].value
+    judge___ = sheet['C{}'.format(i + 4)].value
+    if judge != None or (judge == None and judge_ == None and judge__ == None and judge___ == None):
+        x = str(sheet['F{}'.format(i)].value)
+    else:
+        x = str(sheet['F{}'.format(i)].value) + '+' + str(sheet['F{}'.format(i + 1)].value)
+    y = str(sheet['B{}'.format(key)].value)
+    if '=' in x:
+        x = x[1:]
+    else:
+        x = x
+    if '=' in y:
+        y = y[1:]
+    else:
+        y = y
+    sheet['G{}'.format(i)] = float(eval(x)) - float(eval(y))
+wb.save('py_{}'.format(file))
+wb.close()
+
+
+
+ORC(笔记：对os.listdir()列表进行排序).py
+from PIL import Image
+import pytesseract
+import os
+import time
+
+address = input('图片所在地址（直接回车默认py文件所在位置）：')
+if address == '':
+    img_names = os.listdir()
+else:
+    os.chdir(address)
+    img_names = os.listdir(address)
+img_names_ = []
+judge = input('需要重命名.png文件吗？（直接回车则不需要），按1需要：')
+if judge == '1':
+    same_name = input('输入名字相同的部分：')
+    for i in img_names:
+        newname = ''.join(i.split(same_name))
+        os.rename(i, newname)
+        
+
+for i in img_names:
+    if '.png' in i:
+        img_names_.append(i)
+img_names_.sort(key=lambda x:int(x[:-4]))  # 对os.listdir()列表进行排序
+
+
+judge = input('这一系列的图片是：英文1；中文2：')
+
+f = open('C:\\users\\vh\\desktop\\1.txt', 'a', encoding='utf-8')
+for img_name in img_names_:
+    if address != '':
+        img = Image.open(address + '\\{}'.format(img_name))
+    else:
+        img = Image.open('{}.png'.format(img_name))
+    if judge == '1':
+        text = pytesseract.image_to_string(img)
+    else:
+        text = ''.join(pytesseract.image_to_string(img, lang='chi_sim').split())
+    f.write(text)
+f.close
+
+
+倒计时.py
+import time
+import playsound
+
+time_ = input('请输入倒计时(分 秒)：').split()
+min = int(time_[0])
+sec = int(time_[1])
+count = 1
+if sec == 0:
+    min -= 1
+    sec = 60
+for i in range(min, -1, -1):
+    if count == 1:
+        for j in range(sec - 1, -1, -1):
+            print('{}:{}'.format(i, j))
+            count += 1
+            time.sleep(1)
+    else:
+        for j in range(59, -1, -1):
+            print('{}:{}'.format(i, j))
+            time.sleep(1)
+for i in range(2):
+    playsound.playsound('c:\\users\\vh\\desktop\\rec\\铃声.mp3')
+
+
+
+简易计算器（笔记：自定义switch_case）.py
+def switch_case(op):
+    ops = {
+        '+': 1,
+        '-': 2,
+        '*': 3,
+        '/': 4,
+    }
+    return ops.get(op, None) # None为default的意思，若op不是加减乘除，则返回None
+
+
+if __name__ == '__main__':
+    datas = list(input().split())
+    datas[0] = int(datas[0])
+    datas[1] = int(datas[1])
+    if switch_case(datas[2]) == 1:
+        print(datas[0] + datas[1])
+    elif switch_case(datas[2]) == 2:
+        print(datas[0] - datas[1])
+    elif switch_case(datas[2]) == 3:
+        print(datas[0] * datas[1])
+    else:
+        out = datas[0] / datas[1]
+        out_t = datas[0] % datas[1]
+        if out_t == 0:
+            print("{:.0f}".format(out))
+        else:
+            print("{:.2f}".format(out))
+
+
+
+ffmpeg项目整合（待完善）.py
+# coding=gbk
+import os
+
+
+def menu():
+    print('请输入要完成的功能：')
+    print('''1.剪切   2.转换成gif    3.截图    4.录屏''')
+    choice = int(input('请输入：'))
+    return choice
+
+
+def local():
+    local = input('请输入文件的所在目录：')
+    os.chdir(local)
+    file = input('你想操作的文件是：')
+    return file
+
+
+def To():
+    to = input('请输入文件夹目录：')
+    os.chdir(to)
+
+
+# ffmpeg -in.mp4 -ss 00:00:10 -to 00:00:15 -vcodec copy out.mp4
+def cut():
+    file = local()
+    suffix = file.split('.')[1]  # 得到文件的后缀名
+    print('请设置剪切开始位置和终了位置：（格式：00:00:00）')
+    start = input('开始：')
+    end = input('终了：')
+    name = input('输出文件名：')
+    order = 'ffmpeg -i {} -ss {} -to {} {}.{}'.format(file, start, end, name, suffix)
+    os.system(order)
+    print('Successful!')
+
+
+# ffmpeg -i in.mp4 -ss 7.5 -to 8.5 -s 640x320 -r 15 out.gif
+def gif():
+    file = local()
+    start = input('转换开始时间：（格式：00:00:00）')
+    end = input('转换终了时间：')
+    name = input('输出文件名：')
+    order = 'ffmpeg -i {} -ss {} -to {} -r 15 {}.gif'.format(file, start, end, name)
+    os.system(order)
+    print('Successful!')
+
+
+# ffmpeg -i in.mp4 -ss 5 -vframes 1 img.jpg
+def png():
+    file = local()
+    time = input('截图时间：（格式：00:00:00）')
+    name = input('图片名：')
+    order = 'ffmpeg -i {} -ss {} -vframes 1 {}.png'.format(file, time, name)
+    os.system(order)
+    print('Successful!')
+
+
+def screen_recording():
+    To()
+    os.system('ffmpeg -f gdigrab -i desktop rec.mp4')
+
+
+if __name__ == '__main__':
+    choice = menu()
+    if choice == 1:
+        cut()
+    if choice == 2:
+        gif()
+    if choice == 3:
+        png()
+    if choice == 4:
+        screen_recording()
+
+
+mp4批量转mp3.py
+import os
+
+address = input('位置：')
+os.chdir(address)
+lis = os.listdir()
+for li in lis:
+    spl = li.split('.')
+    if spl[1] == 'mp4':
+        name = spl[0]
+        order = 'ffmpeg -i {} {}.mp3'.format(li, name)
+        os.system(order)
+
+
+mp4视频连接.py
+# coding=gbk
+from os import chdir
+from os import system
+
+location = input('文件夹所在位置：')
+chdir(location)
+file = input('请输入要连接的mp4文件名（不带后缀，空格分隔）：').split(' ')
+name = input('输出文件名（不带后缀）：')
+li = open(location + '\\list.txt', 'w')
+for fi in file:
+    li.write('file ' + "'" + '{}'.format(fi) + '.mp4' + "'\n")
+li.close()
+order = 'ffmpeg -f concat -i list.txt -c copy {}.mp4'.format(name)
+system(order)
+system('@echo y|del list.txt')
+
+
+两种方法连接ts.py
+# coding=gbk
+import os
+
+# ffmpeg -i "concat:01.mp4|02.mp4|03.mp4" -c copy out.mp4
+def ts_concat_ffmpeg(length, name):
+    s = ''
+    for i in range(length-1):
+        s += '{}.ts|'.format(i)
+    s += '{}.ts'.format(length-1)
+    order = 'ffmpeg -i "concat:{}" -c copy {}.mp4'.format(s, name)
+    os.chdir('C:\\users\\vh-暖夏\\desktop\\in')
+    os.system(order)
+
+# 运用cmd命令：copy /b *.ts name.mp4
+def ts_concat_copy(length, name):
+    str_ = ''
+    for i in range(length):
+        str_ += "{}.jc+".format(i)
+    # 去除最后一个加号
+    str1 = str_[:len(str_) - 1]  # 生成str1 = '0.ts+1.ts+...+n.ts'
+    order = 'copy /b {} {}.mp4'.format(str1, name)
+    os.chdir('C:\\users\\vh-暖夏\\desktop\\in')
+    os.system(order)
+
+if __name__ == '__main__':
+    length = int(input('请输入ts文件最后一个编号(ts文件应放在桌面的in文件夹)：')) + 1
+    name = input('输出文件名（不用写后缀）：')
+    judge = input('1.copy。2.ffmpeg。3.其他：退出：')
+    if judge == '1':
+        ts_concat_copy(length, name)
+    elif judge == '2':
+        ts_concat_ffmpeg(length, name)
+    else:
+       exit() 
+
+
+主函数.py
+import os
+import sys
+
+
+def rec(max, choice, name):
+    if name == '':
+        name = max
+    if choice == '1':
+        order = 'ffmpeg -f gdigrab -thread_queue_size 100 -i desktop -r 20 -b:v 150k -crf 30 {}.mp4'.format(name)
+    elif choice == '2':
+        order = 'ffmpeg -f dshow -rtbufsize 200M -thread_queue_size 500 -i audio="virtual-audio-capturer"' \
+                ' -f gdigrab -thread_queue_size 300 -i desktop -r 20 -b:v 150k -b:a 225k -ar 48000 -crf 30 {}.mp4'.format(name)
+    elif choice == '3':
+        order = 'ffmpeg -f dshow -rtbufsize 200M -thread_queue_size 100 -i audio="麦克风阵列 (英特尔® 智音技术)"' \
+                ' -f gdigrab -thread_queue_size 300 -i desktop -r 20 -b:v 150k -b:a 225k -ar 48000 -crf 30 {}.mp4'.format(name)
+    elif choice == '4':
+        order = 'ffmpeg -f dshow -rtbufsize 200M -thread_queue_size 500 -i audio="virtual-audio-capturer"' \
+                ' -f dshow -rtbufsize 200M -thread_queue_size 100 -i audio="麦克风阵列 (英特尔® 智音技术)" ' \
+                '-filter_complex amix=inputs=2 -f gdigrab -thread_queue_size 300 -i desktop -r 20 -b:v 150k ' \
+                '-b:a 225k -ar 48000 -crf 30 {}.mp4'.format(name)
+    else:
+        print('输入错误，退出程序！')
+        sys.exit()
+    os.system(order)
+
+
+if __name__ == '__main__':
+    desktop_path = 'C:\\Users\\vh\\Desktop'
+    name = input('文件名(不写默认1、2、3...)、(不用加.mp4后缀)：')
+    choice = input('选择录屏模式：\n1.录屏。\n2.录屏+内声。\n3.录屏+外声。\n4.录屏+内声+外声。\n请输入：')
+    os.chdir(desktop_path)
+    if not os.path.exists('rec'):
+        os.mkdir('rec')
+    os.chdir('rec')
+    rec_path = desktop_path + '\\rec'
+    lis = os.listdir(rec_path)
+    max = 0
+    for i in lis:
+        num = i[:i.rfind('.mp4')]
+        if num.isdigit():
+            if int(num) > max:
+                max = int(num)
+    rec(max + 1, choice, name)
+
+
+批量去除视频保留音频(得m4a文件).py
+import os
+
+address = input('地址：')
+os.chdir(address)
+lis = os.listdir()
+order = []
+for li in lis:
+    if '.mp4' in li:
+        name = li.split('.mp4')[0]
+        order.append('ffmpeg -i "{}" -vn -acodec copy "{}"'.format(li, name+'.m4a'))
+order_ = '&&'.join(order)
+os.system(order_)
+
+
+批量转换文件夹中视频音量.py
+# coding=gbk
+import os
+import time
+
+
+def menu():
+    folder_name = []
+    print('----------批量转换文件夹中视频音量----------')
+    print('Tips：①转换较慢，15分钟的视频转换大概需30秒。②音量转换幅度太大，会导致失真。')
+    desktop_file = os.listdir('C:\\users\\vh\\desktop')
+    while True:
+        folder_name.append(input('请输入文件夹名称（此文件夹放在桌面，且存放着要转换的视频）：'))
+        folder_name.append(input('请输入输出文件夹名称：'))
+        if folder_name[0] in desktop_file and folder_name[1] in desktop_file:
+            return folder_name
+        else:
+            print('文件夹不在桌面上，请重新输入！')
+
+
+def transform(lis, path_in, path_out):
+    while True:
+        print('按什么方式转换？1：倍数；2：分贝；3：静音输出')
+        judge_volume = input('请输入1/2/3：')
+        if judge_volume == '1':
+            volume = input('将音量转换为原文件的多少倍：（例：3、0.3）')
+            key = 1
+            break
+        elif judge_volume == '2':
+            volume = input('将音量增加/减少多少分贝：（例：10、-10）')
+            volume += 'dB'
+            key = 1
+            break
+        elif judge_volume == '3':
+            key = 0
+            break
+        else:
+            print('输入有误，重新输入！')
+    # judge_del = input('转换完成后是否删除原文件？y/n：')
+    t0 = time.time()
+    os.chdir(path_in)
+    i = 1
+    if key == 1:
+        for li in lis:
+            order = 'ffmpeg -i {} -filter:a "volume = {}" -vcodec copy o_{}'.format(li, volume, li)
+            i += 1
+            os.system(order)
+            move(path_out, 'o_{}'.format(li))
+    else:
+        for li in lis:
+            order = 'ffmpeg -i {} -an -vcodec copy o_{}'.format(li, li)
+            i += 1
+            os.system(order)
+            move(path_out, 'o_{}'.format(li))
+    # return judge_del
+    return t0
+
+
+# def del_original(lis):
+#     print('正在删除原文件……')
+#     time.sleep(1.5)
+#     for li in lis:
+#         os.system("@echo y|del {}".format(li))
+#     print('已经删除原文件！')
+#     time.sleep(0.5)
+
+def move(path_out, name):
+    os.system('move {} {}'.format(name, path_out))
+
+if __name__ == '__main__':
+    folder_name = menu()
+    path_in = 'C:\\users\\vh\\desktop\\{}'.format(folder_name[0])
+    path_out = 'C:\\users\\vh\\desktop\\{}'.format(folder_name[1])
+    lis = os.listdir(path_in)
+    t0 = transform(lis, path_in, path_out)
+    # if judge_del == 'y' or judge_del == 'Y':
+    # del_original(lis)
+    print('全部完成！')
+    time.sleep(0.5)
+    t1 = time.time()
+    print("此次转换所耗时间：" + str(t1 - t0))
+
+
+批量转换音频采样率(防止连接视频时不一样的采样率导致音频降调或升调).py
+# coding=gbk
+from os import chdir
+from os import system
+
+location = input('文件夹所在位置：')
+ar = input('要转换的采样率：')
+chdir(location)
+file = input('请输入要转换音频采样率的mp4文件名（不带后缀，空格分隔）：').split(' ')
+i = 0
+for fi in file:
+    file[i] = fi + '.mp4'
+    i += 1
+for fi in file:
+    order = 'ffmpeg -i {} -ar {} -vcodec copy z{}'.format(fi, ar, fi)
+    system(order)
+
+
+批量逆时针旋转视频90度.py
+# 一次不能太多，因为会超过cmd输入内容上限，以后有必要就优化
+import os
+
+desktop_path = 'c:\\users\\vh\\desktop'
+path = input('位置(直接回车默认桌面)：')
+if path == '':
+    path = desktop_path
+os.chdir(path)
+file_list = os.listdir()
+order_str = ''
+original_move_order = ''
+for li in file_list:
+    if '.mp4' in li:
+        name = li.split('.mp4')[0]
+        order_str += f'ffmpeg -i "{name}".mp4 -metadata:s:v rotate="90" -c copy "{name}_".mp4 & '
+        original_move_order += f'move "{name}".mp4 original & '
+
+os.system(order_str)
+
+os.mkdir('original')
+
+os.system(original_move_order)
+
+
+
+自动裁剪视频.py
+import os
+
+
+def time_f(time):
+    if len(time) == 1:
+        if len(str(time)) == 1:
+            time = '00 00 0{}'.format(''.join(time))
+        else:
+            time = '00 00 {}'.format(''.join(time))
+        time = time.split()
+    elif len(time) == 2:
+        time = ' '.join(time)
+        time = '00 ' + time
+        time = time.split()
+    return time
+
+
+def time_add(start, add):
+    start_ = time_f(start.split(':'))
+    add_ = time_f(add.split(':'))
+    end = []
+    up = 0
+    sec = int(start_[2]) + int(add_[2])
+    if sec >= 60:
+        up = 1
+        end.append(sec - 60)
+    else:
+        end.append(sec)
+    min = int(start_[1]) + int(add_[1]) + up
+    if min >= 60:
+        up = 1
+        end.append(min - 60)
+    else:
+        up = 0
+        end.append(min)
+    hour = int(start_[0]) + int(add_[0]) + up
+    if hour >= 24:
+        end.append(hour - 24)
+    else:
+        end.append(hour)
+    end.reverse()
+    end_ = []
+    for i in end:
+        if len(str(i)) == 1:
+            end_.append('0' + str(i))
+        else:
+            end_.append((str(i)))
+    return ':'.join(end_)
+
+
+location = input('文件位置：')
+file_in = input('要拆分的文件(不加后缀)：')
+file_in_ = '"' + file_in + '.mp4' + '"'
+file_txt = input('txt文件名(不加后缀)：')
+time_difference = input('时间差：')
+out_location = input('输出位置：')
+start = ':'.join(input('裁剪开始时间：').split())
+os.chdir(location)
+with open(location + '\\{}.txt'.format(file_txt), 'r', encoding='utf-8-sig') as f:
+    content = f.read().split('\n')
+for con in content:
+    lis = con.split()
+    time_add_ = time_add(start, lis[1])
+    file_out = '"' + lis[0] + '.mp4' + '"'
+    order = 'ffmpeg -ss {} -to {} -i {} -c copy {}'.format(start, time_add_, file_in_, file_out)
+    os.system(order)
+    move_order = 'move {} {}'.format(file_out, out_location)
+    os.system(move_order)
+    start = time_add(time_add_, time_difference)
+
+
+获取视频某一帧图片.py
+# coding=gbk
+import os
+import PySimpleGUI as sg
+import sys
+location = ''
+name_in = ''
+out_location = ''
+while True:
+    layout = [
+        [sg.Text('{:<21}'.format('请输入文件所在地址:')), sg.In(location)],
+        [sg.Text('{:<15}'.format('请输入文件名(要加上后缀名):')), sg.Input(name_in)],
+        [sg.Text('{:<33}'.format('图片时间:')), sg.In()],
+        [sg.Text('{:<17}'.format('输出文件名(不用写后缀名):')), sg.In()],
+        [sg.Text('{:<32}'.format('输出位置:')),sg.In(out_location)],
+        [sg.Button('开始获取')]  # 设置“开始获取”按钮
+    ]
+    windows = sg.Window('获取视频某一帧图片', layout, keep_on_top=True)  # 显示窗口
+    while True:  # 设置窗口循环
+        event, values = windows.read()  # 设置变量作为窗口显示内容
+        if event == None:  # 设置关闭窗口事件
+            sys.exit()
+        if event == '开始获取':  # 设置点击“开始获取”按钮事件
+            # 设置返回内容
+            location = values[0]
+            name_in = values[1]
+            start = values[2].split()
+            start = ':'.join(start)
+            name_out = values[3]
+            out_location = values[4]
+            os.chdir(location)
+            # 自动生成序号：
+            lis = os.listdir(out_location)
+            lis_t = []
+            max = 0
+            for i in lis:
+                if '.mp4' in i or '.png' in i:
+                    l = i.split('.', 1)[0]
+                    if l.isdigit():
+                        if int(l) > max:
+                            max = int(l)
+            name_i = '"' + '{}'.format(name_in) + '"'
+            name_o = '"' + '{}.{}.png'.format(max + 1, name_out) + '"'
+            order = 'ffmpeg -ss {} -i {} -vframes 1 {}'.format(start, name_i, name_o)
+            os.system(order)
+            print(order)
+            file = '"' + "{}.{}.png".format(max + 1, name_out) + '"'
+            out_loca = '"' + '{}'.format(out_location) + '"'
+            move_order = "move {} {}".format(file, out_loca)
+            print(move_order)
+            os.system(move_order)
+            print('完成！')
+            break
+    windows.close()
+
+
+视频属性批量查看.py
+# coding=gbk
+import os
+
+location = input('文件夹所在位置：')
+os.chdir(location)
+file = input('请输入要查看参数的mp4文件名（不带后缀，空格分隔）：').split(' ')
+i = 0
+for fi in file:
+    file[i] = fi + '.mp4'
+    i += 1
+for fi in file:
+    order = 'ffprobe {}'.format(fi)
+    os.system(order)
+input('输入任意以继续……')
+
+
+视频裁剪器.py
+# coding=gbk
+import os
+import PySimpleGUI as sg
+import sys
+
+location = ''
+name_in = ''
+out_location = ''
+while True:
+    layout = [
+        [sg.Text('{:<21}'.format('请输入文件所在地址:')), sg.In(location)],
+        [sg.Text('{:<15}'.format('请输入文件名(要加上后缀名):')), sg.Input(name_in)],
+        [sg.Text('{:<28}'.format('裁剪开始时间:')), sg.In()],
+        [sg.Text('{:<28}'.format('裁剪结束时间:')), sg.In()],
+        [sg.Text('{:<17}'.format('输出文件名(不用写后缀名):')), sg.In()],
+        [sg.Text('{:<32}'.format('输出位置:')), sg.In(out_location)],
+        [sg.Button('开始裁剪')]  # 设置“开始裁剪”按钮
+    ]
+    windows = sg.Window('视频裁剪器', layout, keep_on_top=True)  # 显示窗口
+    while True:  # 设置窗口循环
+        event, values = windows.read()  # 设置变量作为窗口显示内容
+        if event == None:  # 设置关闭窗口事件
+            sys.exit()
+        if event == '开始裁剪':  # 设置点击“开始裁剪”按钮事件
+            # 设置返回内容
+            location = values[0]
+            name_in = values[1]
+            start = values[2].split()
+            start = ':'.join(start)
+            end = values[3].split()
+            end = ':'.join(end)
+            name_out = values[4]
+            out_location = values[5]
+            suffix = name_in.rsplit('.', 1)[1]  # 获取后缀
+            os.chdir(location)
+
+            # 自动生成序号：
+            if out_location != '':
+                lis = os.listdir(out_location)
+            else:
+                lis = os.listdir(location)
+            lis_t = []
+            max = 0
+            for i in lis:
+                if '.mp4' in i or '.png' in i:
+                    l = i.split('.', 1)[0]
+                    if l.isdigit():
+                        if int(l) > max:
+                            max = int(l)
+            if name_out != '':
+                name_o = '"' + '{}.{}.{}'.format(max + 1, name_out, suffix) + '"'
+            else:
+                name_o = '"' + '{}.{}'.format(max + 1, suffix) + '"'
+            name_i = '"' + '{}'.format(name_in) + '"'
+            order = 'ffmpeg -ss {} -to {} -i {} -c copy {}'.format(start, end, name_i, name_o)
+            os.system(order)
+            print(order)
+            if out_location != '':
+                out_loca = '"' + '{}'.format(out_location) + '"'
+                move_order = "move {} {}".format(name_o, out_loca)
+                os.system(move_order)
+                print(move_order)
+            print('完成！')
+            break
+    windows.close()
+
+
+视频转音频且减小音量.py
+# coding=gbk
+import os
+
+path = input('请输入视频所在文件夹：')
+os.chdir(path)
+os.system('@echo y|del *.xml')
+names = os.listdir(path)
+names_ = ''.join(names).split('.mp4')
+lenth = len(names_)-1
+names__ = names_[0:lenth]
+for name in names__:
+    order = 'ffmpeg -i "{}.mp4" -vn -filter:a "volume=0.01" "{}.mp3"'.format(name,name)
+    os.system(order)
+os.system('@echo y|del *.mp4')
+
+
+视频音频同时2倍速.py
+import os
+
+location = input('输入视频所在文件夹路径：')
+os.chdir(location)
+name_in = input('视频的名字(不加后缀，默认mp4，下同)：')
+name_out = input('输出视频的名字：')
+order = 'ffmpeg -i {}.mp4 -filter_complex "[0:v]setpts=0.5*PTS[v];[0:a]atempo=2.0[a]" -map "[v]" -map "[a]" {}.mp4'.format(name_in, name_out)
+os.system(order)
+
+
+连接mp3文件输出为out.mp3.py
+import os
+
+address = input('地址：')
+name = input('文件名（直接空格默认out.mp3）：')
+if name == '':
+    name = 'out'
+
+#name_index = address.rfind('\\')
+#name = address[name_index + 1:]
+
+
+
+os.chdir(address)
+lis = os.listdir()
+lis.sort(key=lambda x:int(x[:-4]))
+str_ = 'concat:' + '|'.join(lis)
+order = 'ffmpeg -i ' + '"{}"'.format(str_) + ' -acodec copy "{}".mp3'.format(name)
+os.system(order)
+#print(order)
+
+
+连接现代交换技术速课mp3文件递归合并.py
+import os
+
+
+def fun(address1, address2, address_out):
+    key = 0
+    concat = 'ffmpeg -i "concat:'
+    os.chdir(address2)
+    lis = os.listdir()
+
+    for li in lis:
+        if os.path.isdir(li) and key == 0:
+            now_address = os.getcwd()
+            next_address = now_address + '\\{}'.format(li)
+            last_address = now_address
+            fun(last_address, next_address, address_out)
+        elif os.path.isfile(li) or key == 1:
+            if '.mp3' in li:
+                lis.sort(key=lambda x: int(x[:-4]))
+                key = 1
+                concat += li + '|'
+    if key == 1:
+        out_name_index = address2.rfind('\\')
+        out_name = address2[out_name_index + 1:]
+        if out_name.isdigit():
+            out_name_index = address2[:out_name_index].rfind('\\')
+            out_name = address2[out_name_index + 1:]
+            out_name = ' '.join(out_name.split('\\'))
+        order = concat + '"' + ' -acodec copy "{}.mp3" && move "{}.mp3" {}'.format(out_name, out_name, address_out)
+        print('正在执行命令——{}'.format(order))
+        os.system(order)
+    os.chdir(address1)
+
+
+address_in = input('输入地址：')
+address_out = input('输出地址：')
+fun(address_in, address_in, address_out)
+
+
+递归扫描某目录内部所有文件并转移到此目录.py
+import os
+import sys
+
+file_list = []
+order_list = []
+origin_address = input('地址（一定是直接复制下来的，不能自己手打）：')
+os.chdir(origin_address)
+last_address = origin_address
+
+def fun(last_address):
+    lis = os.listdir()
+    if lis == []:
+        return
+    for li in lis:
+        if os.path.isdir(li):
+            last_address = os.getcwd()
+            os.chdir(li)
+            fun(os.getcwd())
+        elif os.path.isfile(li):
+            file_list.append(li)
+            now_address = os.getcwd()
+            order_list.append('chdir {} && move "{}" "{}"'.format(now_address, li, origin_address))
+        os.chdir(last_address)
+
+        
+fun(last_address)
+print('递归搜索到以下文件：\n{}'.format(file_list), end='\n\n')
+judge = input('是否转移到当前目录？y/n（直接回车默认为yes）：')
+if judge == 'y' or 'Y' or '':
+    os.system('&&'.join(order_list))
+else:
+    print('退出程序……')
+    sys.exit()
+# judge = input('所有文件已经转移到当前目录，是否删除空文件夹？（y/n）(直接回车默认yes)：')
+# if judge == 'y' or 'Y' or '':
+#     lis = os.listdir()
+#     for li in lis:
+#         if os.path.isdir(li):
+#             print('rmdir {}'.format(li))
+# else:
+#     print('退出程序……')
+#     sys.exit()
+
+
+递归搜集某文件夹及子文件夹所有.py或.txt文件内容到一个txt(123txt)里，方便查找笔记.py
+import os
+import sys
+import chardet
+
+origin_address = input('地址（一定是直接复制下来的，不能自己手打）：')
+address_list = [origin_address]
+
+def fun(next_address):
+    global origin_address
+    os.chdir(next_address)
+    lis = os.listdir()
+    for li in lis:
+        if os.path.isdir(li):
+            next_address = os.getcwd() + '\\{}'.format(li)
+            address_list.append(next_address)
+            fun(next_address)
+        else:
+            pass
+    os.chdir(origin_address)
+
+
+def encoding_type_detective(file_name):
+    f = open(file_name, 'rb')  # 由于chardet.detect只接收bytes型，所以用rb
+    content = f.read()
+    data_dict = chardet.detect(content)
+    return data_dict['encoding']
+
+
+def write(origin_address, address, file_type):
+    os.chdir(address)
+    lis = os.listdir()
+    for li in lis:
+        if os.path.isfile(li):
+            if file_type in li:
+                with open(li, 'r', encoding='utf-8', errors='ignore') as f_r:
+                    with open('{}\\123.txt'.format(origin_address), 'a', encoding='utf-8') as f_w:
+                        f_w.write(li + '\n\n\n' + f_r.read() + '\n\n\n')
+
+
+fun(origin_address)
+
+file_type = input('1.py 2.txt:')
+if file_type == '1':
+    file_type = '.py'
+elif file_type == '2':
+    file_type = '.txt'
+else:
+    print('输入有误，退出程序！')
+    sys.exit()
+
+print('递归搜索到以下文件夹，现将其中的{}文件内容写入123.txt并存放于路径{}中\n\n{}'.format(file_type, origin_address, address_list))
+
+os.chdir(origin_address)
+lis = os.listdir()
+if '123.txt' in lis:
+    os.remove('123.txt')
+
+for address in address_list:
+    write(origin_address, address, file_type)
+
+
+红包弹窗拦截.py
+from pyautogui import *
+from time import sleep
+while True:
+    location = locateOnScreen('c:\\users\\vh\\desktop\\desktop\\hongbao.png', confidence=0.97)
+    sleep(2)
+    if location:
+        click(center(location))
+        moveTo(2000, 300)
+        print('find one')
+
+
+高途_乐学喵自动化录课4.0.py
+# ①注意使用前需先随便用alt+shift+a截一个图然后保存到桌面，使得默认保存位置为桌面
+# ②注意桌面上不能有任何.png图片
+from pyautogui import *
+from time import sleep
+import subprocess
+import pytesseract
+from PIL import Image
+import os
+import sys
+import datetime
+
+
+def screenshot(address_0, img_name, x, y, x1, y1):
+    keyDown('alt')  # 快捷键调出截图工具
+    keyDown('shift')
+    press('a')
+    keyUp('alt')
+    keyUp('shift')
+    moveTo(x, y)  # 移到相应位置截图
+    dragTo(x1, y1)
+    keyDown('ctrl')  # 保存
+    press('s')
+    keyUp('ctrl')
+    press('enter')
+    sleep(0.5)  # 等待保存完毕
+
+    os.chdir(address_0)
+    # 重命名截图(之所以可以用*.png，是因为桌面上只有它一张png图片)
+    order = 'rename *.png {}.png'.format(img_name)
+    os.system(order)
+    if img_name < 20:  # 若为时间截图，放到time文件夹里
+        order = 'move {}.png {}\\time'.format(img_name, address_0)
+    else:  # 若为视频名截图，放到mp4_name文件夹里
+        order = 'move {}.png {}\\mp4_name'.format(img_name, address_0)
+    os.system(order)
+
+
+# 图片获取文字
+def orc(img_address, img_name, gt_or_lxm):
+    img = Image.open(img_address)  # 打开图片
+    if img_name < 20:
+        if gt_or_lxm == '1':  # 录高途
+            text = pytesseract.image_to_string(img)  # 识别时间截图字符串
+            fen, miao = text.split('/')[1].split(':')  # 从time_text中获取分、秒
+            text = int(fen) * 60 + int(miao)
+        else:
+            text = pytesseract.image_to_string(img)  # 识别时间截图字符串
+            shi, fen, miao = text.split(':')  # 从time_text中获取分、秒
+            text = int(shi) * 3600 + int(fen) * 60 + int(miao)
+    else:
+        text = pytesseract.image_to_string(img, lang='chi_sim')  # 识别视频名截图的文字
+        if gt_or_lxm == '1':
+            text = ''.join(text.split())  # 去除字与字间的空格
+        else:
+            text = '：'.join(text.split(':'))
+            text = ''.join(text.split())  # 去除字与字间的空格
+    return text
+
+
+# 文件夹初始化——以folder_name为名创建文件夹，该路径已存在该文件夹则跳过，若time、mp4_name文件夹已存在，清空它们
+def init_dir(address_0, folder_name, for_num):
+    os.chdir(address_0)
+    if not os.path.exists(folder_name):
+        os.mkdir(folder_name)
+    if folder_name == 'time' or folder_name == 'mp4_name':
+        os.chdir(address_0 + '\\' + folder_name)
+        order = '@echo y|del *.*'
+        os.system(order)
+    if folder_name == 'rec':
+        os.chdir(address_0 + '\\' + folder_name)
+        rec_listdir = os.listdir()
+        if rec_listdir:  # 桌面文件夹不为空(列表不为空即为真值)的话就把文件都移到“共享”文件夹
+            desktop_listdir = os.listdir(address_0)  # 桌面路径的所有文件
+            for li in rec_listdir:  # 如果rec文件夹中已经有文件与桌面的文件名相同，则改名再移出
+                new_name = li
+                while new_name in desktop_listdir:
+                    new_name = '{}_{}.mp4'.format(li.split('.')[0], for_num)
+                    for_num += 1
+                os.system('rename {} {}'.format(li, new_name))
+        order = 'move *.mp4 {}'.format(address_0)
+        os.system(order)
+
+
+def start_gt(address_0, for_num, x, y, gt_or_lxm):
+    #  第一次循环进行各文件夹的初始化并获取y值
+    if for_num == 1:
+        init_dir(address_0, 'rec', for_num)
+        init_dir(address_0, 'time', for_num)
+        init_dir(address_0, 'mp4_name', for_num)
+        now_khf_img_address = address_0 + '\\desktop\\khf.png'  # 第一课的”看回放“截图地址
+        now_khf_img_location = locateOnScreen(now_khf_img_address, confidence=0.98)
+        y = now_khf_img_location[1] - 170
+    time_img_name = for_num
+    mp4_name_img_name = for_num + 20  # for_num+20，是为了区分time的截图
+    # 获取视频名(课程标题)
+    screenshot(address_0, mp4_name_img_name, x, y, x + 741, y + 52)  # 获取视频名截图并保存在mp4_name文件夹内
+    mp4_name_img_address = address_0 + '\\mp4_name\\{}.png'.format(mp4_name_img_name)  # 视频名截图的所在地址
+    mp4_name = orc(mp4_name_img_address, mp4_name_img_name, gt_or_lxm)  # orc函数从mp4_name_img_name截图中识别mp4_name
+
+    click(x + 95, y + 176)  # 进入课堂
+    jrjsbz_img_address = address_0 + '\\desktop\\jrjsbz.png'  # “进入教室标志”截图地址
+    count = 0
+    while not locateOnScreen(jrjsbz_img_address, confidence=0.98):  # 找到标志后就退出循环，说明已经进入教室
+        count += 1
+        if count == 6:
+            break
+        if count == 2 or count == 4:
+            sleep(1)
+        continue
+    sleep(1)
+
+    # 检索是否有“夜深了”弹窗
+    for i in range(2):
+        location = locateOnScreen('C:\\Users\\Vh\\Desktop\\desktop\\night.png', confidence=0.98)
+        if location != None:
+            click(996, 694)  # 弹窗夜深了，点击取消开启护眼模式
+
+    sj_img_address = address_0 + '\\desktop\\sj.png'
+    locate_sj = locateOnScreen(sj_img_address, confidence=0.98)
+    center_sj = center(locate_sj)
+    x_sj = center_sj[0] + 20
+    y_sj = center_sj[1] - 20
+    x1_sj = x_sj + 140
+    y1_sj = y_sj + 40
+    screenshot(address_0, time_img_name, x_sj, y_sj, x1_sj, y1_sj)  # 获取视频总时间截图并保存在time文件夹内
+    time_img_address = address_0 + '\\time\\{}.png'.format(time_img_name)  # 时间截图的所在地址
+    time = orc(time_img_address, time_img_name, gt_or_lxm)
+    return [mp4_name, time]
+
+
+def start_lxm(address_0, for_num, x, y, zb_y_cen, gt_or_lxm):
+    zb_img_address = address_0 + '\\desktop\\zb.png'  # “直播”截图地址
+    zb_img_location = locateOnScreen(zb_img_address, confidence=0.98)
+
+    if for_num == 1:
+        init_dir(address_0, 'rec', for_num)
+        init_dir(address_0, 'time', for_num)
+        init_dir(address_0, 'mp4_name', for_num)
+        zb_y_cen = center(zb_img_location)[1]
+    y = zb_y_cen - 25
+    time_img_name = for_num
+    mp4_name_img_name = for_num + 20  # for_num+20，是为了区分time的截图
+    screenshot(address_0, mp4_name_img_name, x, y, x + 300, y + 50)  # 获取视频名截图并保存在mp4_name文件夹内
+    mp4_name_img_address = address_0 + '\\mp4_name\\{}.png'.format(mp4_name_img_name)  # 视频名截图的所在地址
+    mp4_name = orc(mp4_name_img_address, mp4_name_img_name, gt_or_lxm)  # orc函数从mp4_name_img_name截图中识别mp4_name
+    zb_x_cen = x - 30
+    click(zb_x_cen, zb_y_cen)  # 进入课堂
+    sleep(4)  # 等待进入课堂
+    click(952, 568)  # 点击确认进入课堂
+    sleep(7)  # 等待加载
+    click(976, 498)  # 隐藏ppt目录
+    sleep(0.5)
+    click(1644, 324)  # 点击“聊天列表”
+    sleep(0.5)
+    click(1870, 705)  # 点击“问答”下箭头将其隐藏
+    sleep(0.5)
+    click(674, 525)  # 点击视频中央，隐藏“全屏”按钮栏
+    sleep(0.5)
+    click(1634, 154)  # 点击老师人脸录像中央，同理隐藏按钮栏
+
+    kt_img_address = address_0 + '\\desktop\\kt.png'  # “快退”截图地址
+    kt_img_location = locateOnScreen(kt_img_address, confidence=0.98)
+    kt_x, kt_y = kt_img_location[:2]  # 获取快退x、y坐标
+    time_x = kt_x - 105
+    time_y = kt_y
+    time_x_ = time_x + 100
+    time_y_ = time_y + 40
+    screenshot(address_0, time_img_name, time_x, time_y, time_x_, time_y_)  # 获取视频总时间截图并保存在time文件夹内
+    time_img_address = address_0 + '\\time\\{}.png'.format(time_img_name)  # 时间截图的所在地址
+    time = orc(time_img_address, time_img_name, gt_or_lxm)
+
+    click(301, 1047)  # 点击开始按钮
+    return [mp4_name, time]
+
+
+def rec(mp4_name):
+    os.chdir(address_0 + '\\rec')
+    # 运用subprocess.Popen而不用os.system是因为后者cmd必须终止了程序才能继续运行，这样我们无法读秒
+    subprocess.Popen(
+        'ffmpeg -f dshow -rtbufsize 200M -thread_queue_size 500 -i audio="virtual-audio-capturer"' \
+                ' -f gdigrab -thread_queue_size 300 -i desktop -r 20 -b:v 150k -b:a 225k -ar 48000 -crf 30 "{}".mp4'.format(mp4_name))
+    sleep(1)  # 等待录屏窗口就绪
+    keyDown('alt')  # 隐藏录屏窗口
+    press('tab')
+    keyUp('alt')
+    moveTo(2000, 300)  # 把鼠标移到最右边防止影响视野
+
+
+def end(time, gt_or_lxm):
+    sleep(time)
+    keyDown('alt')
+    press('tab')
+    keyUp('alt')
+    sleep(0.5)
+    press('shift')
+    sleep(0.5)
+    press('q')
+    sleep(3)  # 等待录屏封装完成
+    if gt_or_lxm == '1':
+        click(50, 30)  # 按“离开教室”
+        moveTo(500, 0)  # 移开鼠标，防止一直触发左上角的流量监控
+        sleep(6)  # 等待离开教室完成
+    else:
+        sleep(3)  # 等待录屏封装完成后自动关闭录屏窗口
+        keyDown('ctrl')
+        press('w')
+        keyUp('ctrl')
+
+
+def find_next_lesson(address_0, for_num, now_class, last_class):
+    last_mp4_name_img_name = for_num + 20  # 上一课视频名截图文件名
+    last_mp4_name_img_address = address_0 + '\\mp4_name\\{}.png'.format(last_mp4_name_img_name)  # 上一课视频名截图地址
+    new_khf_img_address = address_0 + '\\desktop\\khf.png'  # 新一课的“看回放”截图地址
+    now_class_img_address = address_0 + '\\desktop\\{}.png'.format(now_class)  # “当前栏目”图片地址
+    last_class_img_address = address_0 + '\\desktop\\{}.png'.format(last_class)  # “上一栏目”图片地址
+    while True:
+        last_mp4_name_img_location = locateOnScreen(last_mp4_name_img_address, confidence=0.98)  # 上一课视频名截图的定位
+        if not last_mp4_name_img_location:  # 上一课的视频名截图没找到，考虑是高途刷新了，点击上箭头十次，开始往上找
+            for i in range(10):
+                press('up')
+        else:  # 上一课的视频名截图找到了
+            # 调用“找下一课”助手函数，减少代码臃肿
+            return find_next_lesson_assistant(last_mp4_name_img_location, last_mp4_name_img_address,
+                                              new_khf_img_address)
+        # 若已经检索到“当前栏目”图片，而还未被上一部分return，说明上一课在“上一栏目”中
+        now_class_location = locateOnScreen(now_class_img_address, confidence=0.98)
+        if now_class_location:
+            sleep(0.5)  # 让系统反应过来
+            click(center(now_class_location))  # 点击“当前栏目”中心点，关闭这一栏
+            while True:
+                press('up')  # 继续往上查找“上一栏目”图片
+                last_class_location = locateOnScreen(last_class_img_address, confidence=0.98)
+                if last_class_location:
+                    sleep(0.5)  # 让系统反应过来
+                    click(center(last_class_location))  # 点击“上一栏目”中心点，打开这一栏
+                    break
+            while True:
+                last_mp4_name_img_location = locateOnScreen(last_mp4_name_img_address, confidence=0.98)  # 上一课视频名截图的定位
+                if not last_mp4_name_img_location:
+                    for i in range(10):
+                        press('down')  # 继续往下查找
+                else:  # 若找到上一课视频名截图的定位
+                    return find_next_lesson_assistant(last_mp4_name_img_location, last_mp4_name_img_address,
+                                                      new_khf_img_address)
+
+
+def find_next_lesson_assistant(last_mp4_name_img_location, last_mp4_name_img_address, new_khf_img_address):
+    while last_mp4_name_img_location[1] > 373:  # 若距离上边沿大于373，下滑一格
+        press('down')
+        last_mp4_name_img_location = locateOnScreen(last_mp4_name_img_address, confidence=0.98)  # 更新上一课视频名截图的定位
+        '''确实是找到了上一课，也确实找到时y轴坐标大于373，所以下滑了一格，但是可能此时刚好是差不多到373临界位置，所以上一课
+        的视频名截图刚好上了去被遮住了，此时若无if跳出循环，则会导致while判断出错，因为location是None，而不能location[1]'''
+        if last_mp4_name_img_location == None:
+            press('up')  # 往上回一格
+            break
+    for i in range(4):
+        press('down')  # 再往下4格，让上一课的”看回放“消失，使得获得的是下一课的“看回放”坐标
+    sleep(1)  # 等待1秒，让电脑反应过来再下一步
+    new_khf_img_location = locateOnScreen(new_khf_img_address, confidence=0.98)
+    y = new_khf_img_location[1] - 170
+    return y
+
+
+def find_next_lesson_lxm(address_0, for_num):
+    last_mp4_name_img_name = for_num + 20  # 上一课视频名截图文件名
+    last_mp4_name_img_address = address_0 + '\\mp4_name\\{}.png'.format(last_mp4_name_img_name)  # 上一课视频名截图地址
+    zb_img_address = address_0 + '\\desktop\\zb.png'  # “直播”截图地址
+    for i in range(60):
+        last_mp4_name_img_location = locateOnScreen(last_mp4_name_img_address, confidence=0.98)  # 上一课视频名截图的定位
+        if not last_mp4_name_img_location:
+            press('down')
+            if i == 59:
+                print('无法定位下一课')
+                sys.exit()
+        else:
+            last_y = last_mp4_name_img_location[1]
+            while last_y > 553:
+                press('down')
+                last_y = locateOnScreen(last_mp4_name_img_address, confidence=0.98)[1]  # 更新上一个课程名称的y轴坐标
+            sleep(2)
+            all_zb_img_locations = list(locateAllOnScreen(zb_img_address, confidence=0.98))  # 获取所有“直播”坐标
+            count = 0
+            for location in all_zb_img_locations:
+                # 上一个课程名称的y坐标和当前所有直播坐标逐个相减比对，找出最接近的那个即为上一个课程名称前的“直播”
+                minus_judge = abs(location[1] - last_y)
+                if minus_judge < 35:
+                    break
+                count += 1
+                print('遍历all_zb的y坐标， 上一个课程名称y坐标， 相减：')
+                print(location[1], last_y, minus_judge)
+            print('最终选取：')
+            print(location[1], last_y, minus_judge)
+
+            next_zb_y_cen = center(all_zb_img_locations[count + 1])[1]  # 下一个“直播”的y中心坐标
+            y = next_zb_y_cen - 25
+            return [y, next_zb_y_cen]
+
+
+#  异常情况重命名视频——orc无法识别文字，返回了None，则视频名为.mp4只有后缀，若等下还有无法识别的，则还是.mp4，名字重复，录屏不会继续
+def out_abnormal_mp4(address_0, for_num):
+    os.chdir(address_0 + '\\rec')
+    lis = os.listdir()
+    if '.mp4' in lis:
+        order = 'rename .mp4 {}.mp4'.format(address_0, for_num)  # 以当前循环次数进行命名，永远不会重复
+        os.system(order)
+
+
+#  关机或睡眠
+def shut_down_or_sleep(judge):
+    keyDown('win')  # 返回桌面
+    press('d')
+    keyUp('win')
+    sleep(1)
+    click(955, 500)  # 点两次桌面，确认未选中桌面任何东西
+    sleep(0.5)
+    click(955, 500)
+    sleep(0.5)
+    keyDown('alt')  # alt+f4
+    press('f4')
+    keyUp('alt')
+    if judge == '2':
+        press('up')  # 按上键选择为“睡眠”
+    press('enter')  # judge=='1'，直接关机了
+
+
+if __name__ == '__main__':
+    gt_or_lxm = input('高途(1)or乐学喵(2)？：')
+    if gt_or_lxm == '1':  # 如果是录高途
+        info = input('高途更新到哪了？ 目标栏目？（如写：zxlx gsqh）(直接回车默认“如”的内容)：')
+        if info != '':
+            now_update, target = info.split()
+        else:
+            now_update = 'zxlx'
+            target = 'gsqh'
+    how_many = int(input('要录几个视频？：'))
+    judge = input('录完后关机：1，还是睡眠：2：(不输入则默认不操作)：')
+    stay = input('定时多少“时 分 秒”后开始录屏(直接回车默认立刻开始录屏)：')
+    if stay != '':
+        shi, fen, miao = map(int, stay.split())
+    else:
+        shi = 0;
+        fen = 0;
+        miao = 0
+    seconds = shi * 3600 + fen * 60 + miao
+    print('\n{}秒后开始运行录屏……'.format(seconds), end='\n\n')
+    sleep(seconds)
+    print('开始录屏……')
+    address_0 = 'C:\\Users\\vh\\Desktop'
+    # 录高途
+    if gt_or_lxm == '1':
+        sleep(3)  # 按”运行“后， 3秒时间切换到高途并把将录的课放到第一位(如何看是否第一位？，在当前屏幕中，这一课的”看回放“在第一位置)，然后程序开始
+        x, y = [93, 0]  # x，y是截图视频名的起点坐标，y赋初值0，后面程序才确定y的真正坐标
+        for_num = 1
+        time1 = 2  # 调试专用“录屏”时间——2秒
+        while for_num <= how_many:  # 设定录x个视频就关机或睡眠或什么也不做
+            out_abnormal_mp4(address_0, for_num)
+            mp4_name, time = start_gt(address_0, for_num, x, y, gt_or_lxm)
+            rec(mp4_name)
+            end(time, gt_or_lxm)
+            if for_num + 1 > how_many:
+                break  # 若下一次就要退出循环，则在此提前退出，不用先寻找下一课再用while的条件退出
+            sx_img_address = address_0 + '\\desktop\\sx.png'  # ”数学科“图片地址
+            yy_img_address = address_0 + '\\desktop\\yy.png'  # ”英语科“图片地址
+            # if locateOnScreen(sx_img_address, confidence=0.98):
+            #  y = find_next_lesson(address_0, for_num, now_update, target)
+            # elif locateOnScreen(yy_img_address, confidence=0.98):
+            y = find_next_lesson(address_0, for_num, now_update, target)
+            for_num += 1
+            # hour = int(datetime.datetime.now().strftime('%H'))# 抓取当前时间，若12:00则暂停，不影响舍友休息
+            # if hour == 12:
+            # time.sleep(3600 + 3600)  # 暂停2小时
+
+
+    # 录乐学喵
+    else:
+        sleep(3)  # 按”运行“后， 3秒时间切换到乐学喵相应页面
+        x, y, next_zb_y_cen = [756, 0, 0]
+        for_num = 1
+        time1 = 3  # 调试专用“录屏”时间——2秒
+        while for_num <= how_many:  # 设定录x个视频就关机或睡眠或什么也不做
+            out_abnormal_mp4(address_0, for_num)
+            mp4_name, time = start_lxm(address_0, for_num, x, y, next_zb_y_cen, gt_or_lxm)
+            rec(mp4_name)
+            end(time, gt_or_lxm)
+            if for_num + 1 > how_many:
+                break  # 若下一次就要退出循环，则在此提前退出，不用先寻找下一课再用while的条件退出
+            y, next_zb_y_cen = find_next_lesson_lxm(address_0, for_num)
+            for_num += 1
+    if judge == '1' or judge == '2':
+        shut_down_or_sleep(judge)
+
+
+高途_乐学喵视频重命名.py
+import os
+import sys
+
+choice = input('数学1、英语2、政治3：')
+address = input('地址(不填默认py文件当前位置)：')
+if address != '':
+    os.chdir(address)
+lis = os.listdir()
+order_list = []
+
+
+def xiaoguo(order_list):
+    print('以下为order的效果：')
+    for order in order_list:
+        print(order)
+    judge = input('是否确认rename？Y(或直接回车)/N：')
+    if judge == 'y' or judge == 'Y' or judge == '':
+        for order in order_list:
+            os.rename(order[0], order[1])
+    else:
+        sys.exit()
+if choice == '1':
+    key_word = ['高数', '线代', '零基础', '概率']
+    for li in lis:
+        for key in key_word:
+            if key in li:
+                new_name_ = '.'.join(li.split(key)[1].split('-'))
+                order = [li, new_name_]
+                order_list.append(order)
+        
+            
+    
+elif choice  == '2':
+    lis = os.listdir()
+    for li in lis:
+        if '讲' in li:
+            num = li.split('第')[1].split('讲')[0]
+            for i in range(len(li)):
+                if li[i] == '讲':
+                    if li[i + 1] == ' ':
+                        name = li[i + 2:]
+                    else:
+                        name = li[i + 1:]
+            new_name = num + '.' + name
+            order = [li, new_name]
+            order_list.append(order)
+            
+        
+elif choice == '3':
+    lis = os.listdir()
+    for li in lis:
+        if '：' in li:
+            name = li.split('：')[1]
+            num = li.split('：')[0].split('课时')[1]
+        
+            new_name = num + '.' + name
+            if '沐' in new_name or '怡' in new_name:
+                try:
+                    new_name = '讲'.join(new_name.split('沐'))
+                except:
+                    continue
+                try:
+                    new_name = '思'.join(new_name.split('怡'))
+                except:
+                    continue
+            if '技' in new_name:
+                start = new_name.find('技') + 1
+                end = new_name.rfind('0')
+                els = new_name[start:end]
+                new_name = '巧'.join(new_name.split(els))
+            order = [li, new_name]
+            order_list.append(order)
+else:
+    print('输入有误，退出程序！')
+    sys.exit()
+xiaoguo(order_list)
+
+
+
+高途录屏定时停止0.0.py
+import subprocess
+import time
+from pyautogui import *
+
+def end(ti):
+    time.sleep(ti)
+    keyDown('win')
+    press('D')
+    keyUp('win')
+    time.sleep(0.2)
+    keyDown('alt')
+    press('tab')
+    press('tab')
+    keyUp('alt')
+    time.sleep(0.2)
+    press('shift')
+    time.sleep(0.2)
+    press('q')
+
+def rec(max):
+    subprocess.Popen(
+                'ffmpeg -f dshow -rtbufsize 1000M -i audio="virtual-audio-capturer"'
+                ' -f gdigrab -i desktop -r 20 -b:v 150k -b:a 225k -ar 48000 -crf 30 rec{}.mp4'.format(max))
+
+if __name__ == '__main__':
+    fen, miao = map(int, input('结束时间(分 秒)：').split())
+    ti = fen * 60 + miao
+    address_0 = 'C:\\Users\\vh\\Desktop'
+    os.chdir(address_0)
+    if os.path.exists('rec'):
+        os.chdir('rec')
+    else:
+        os.mkdir('rec')
+        os.chdir('rec')
+    address = '{}\\rec'.format(address_0)
+    lis = os.listdir(address)
+    lis_ = []
+    max = 0
+    for i in lis:
+        if '.mp4' in i:
+            lis_.append(i)
+            num = i.split('.', 1)[0].split('rec')[1]
+            if num.isdigit():
+                if int(num) > max:
+                    max = int(num)
+    rec(max + 1)
+    end(ti)
+
+
+高途自动化录课1.0.py
+from pyautogui import *
+from time import sleep
+import subprocess
+import pytesseract
+from PIL import Image
+import os
+
+
+def screenshot(address_0, for_num, x, y, x1, y1):
+    keyDown('alt')  # 快捷键调出截图工具
+    keyDown('shift')
+    press('a')
+    keyUp('alt')
+    keyUp('shift')
+    moveTo(x, y)  # 移到相应位置截图
+    dragTo(x1, y1)
+    keyDown('ctrl')  # 保存
+    press('s')
+    keyUp('ctrl')
+    press('enter')
+    sleep(0.5)  # 等待保存完毕
+
+    os.chdir(address_0)
+    # 重命名截图(之所以可以用*.png，是因为桌面上只有它一张png图片)
+    order = 'rename *.png {}.png'.format(for_num)
+    os.system(order)
+    if for_num < 10:  # 若为时间截图，放到time文件夹里
+        order = 'move {}.png {}\\time'.format(for_num, address_0)
+    else:  # 若为视频名截图，放到file_name文件夹里
+        order = 'move {}.png {}\\file_name'.format(for_num, address_0)
+    os.system(order)
+
+
+# 图片获取文字
+def orc(img_address, for_num):
+    img = Image.open(img_address)  # 打开图片
+    if for_num < 10:
+        text = pytesseract.image_to_string(img)  # 识别时间截图字符串
+        fen, miao = text.split('/')[1].split(':')  # 从time_text中获取分、秒
+        text = int(fen) * 60 + int(miao)
+    else:
+        text = pytesseract.image_to_string(img, lang='chi_sim')  # 识别视频名截图的文字
+        text = text.split('\n')  # 下面一行的去除xx月xx日开课
+        text = ''.join(text[0].split())  # 去除字与字间的空格
+    return text
+
+
+# 文件夹初始化——以folder_name为名创建文件夹，该路径已存在该文件夹则跳过，若time、file_name文件夹已存在，清空它们
+def init_dir(address_0, folder_name):
+    os.chdir(address_0)
+    if not os.path.exists(folder_name):
+        os.mkdir(folder_name)
+    if folder_name == 'time' or folder_name == 'file_name':
+        os.chdir(address_0 + '\\' + folder_name)
+        order = '@echo y|del *.*'
+        os.system(order)
+
+
+def start(address_0, for_num):
+    #  第一次循环进行各文件夹的初始化
+    if for_num == 1:
+        init_dir(address_0, 'rec')
+        init_dir(address_0, 'time')
+        init_dir(address_0, 'file_name')
+    for_num_time = for_num
+    for_num_name = for_num + 10  # for_num+10，是为了区分time的截图
+    # 获取视频名(课程标题)
+    screenshot(address_0, for_num_name, 93, 331, 1030, 483)  # 获取视频名截图并保存在file_name文件夹内
+    img_name_address = address_0 + '\\file_name\\{}.png'.format(for_num_name)  # 视频名截图的所在地址
+    file_name = orc(img_name_address, for_num_name)
+
+    click(200, 590)  # 进入课堂
+    sleep(5)  # 等待进入课堂
+
+    screenshot(address_0, for_num_time, 168, 1022, 378, 1067)  # 获取视频总时间截图并保存在time文件夹内
+    img_time_address = address_0 + '\\time\\{}.png'.format(for_num)  # 时间截图的所在地址
+    time = orc(img_time_address, for_num)
+    return [file_name, time]
+
+
+def rec(file_name):
+    os.chdir(address_0 + '\\rec')
+    # 运用subprocess.Popen而不用os.system是因为后者cmd必须终止了程序才能继续运行，这样我们无法读秒
+    subprocess.Popen(
+        'ffmpeg -f dshow -rtbufsize 1000M -i audio="virtual-audio-capturer"'
+        ' -f gdigrab -i desktop -r 20 -b:v 150k -b:a 225k -ar 48000 -crf 30 {}.mp4'.format(file_name))
+    # 检索是否有“夜深了”弹窗
+    location = locateOnScreen('C:\\Users\\Vh\\Desktop\\desktop\\night.png')
+    if location != None:
+        click(996, 694)  # 弹窗夜深了，点击取消开启护眼模式
+    moveTo(2000, 300)  # 把鼠标移到最右边防止影响视野
+
+
+def end(time):
+    sleep(time)
+    keyDown('alt')
+    press('tab')
+    keyUp('alt')
+    sleep(0.5)
+    press('shift')
+    sleep(0.5)
+    press('q')
+    sleep(0.5)
+    click(50, 30)  # 按“离开教室”
+    for i in range(5):
+        click(1910, 1100)  # 点击右下角的下滑箭头五次，定位到下一课
+
+
+if __name__ == '__main__':
+    sleep(3)  # 按”运行“后， 3秒时间切换到高途，然后程序开始
+    address_0 = 'C:\\Users\\vh\\Desktop'
+    for for_num in range(1, 6):
+        file_name, time = start(address_0, for_num)
+        rec(file_name)
+        end(time)
+
+
+高途自动化录课2.0.py
+from pyautogui import *
+from time import sleep
+import subprocess
+import pytesseract
+from PIL import Image
+import os
+
+
+def screenshot(address_0, img_name, x, y, x1, y1):
+    keyDown('alt')  # 快捷键调出截图工具
+    keyDown('shift')
+    press('a')
+    keyUp('alt')
+    keyUp('shift')
+    moveTo(x, y)  # 移到相应位置截图
+    dragTo(x1, y1)
+    keyDown('ctrl')  # 保存
+    press('s')
+    keyUp('ctrl')
+    press('enter')
+    sleep(0.5)  # 等待保存完毕
+
+    os.chdir(address_0)
+    # 重命名截图(之所以可以用*.png，是因为桌面上只有它一张png图片)
+    order = 'rename *.png {}.png'.format(img_name)
+    os.system(order)
+    if img_name < 20:  # 若为时间截图，放到time文件夹里
+        order = 'move {}.png {}\\time'.format(img_name, address_0)
+    else:  # 若为视频名截图，放到mp4_name文件夹里
+        order = 'move {}.png {}\\mp4_name'.format(img_name, address_0)
+    os.system(order)
+
+
+# 图片获取文字
+def orc(img_address, img_name):
+    img = Image.open(img_address)  # 打开图片
+    if img_name < 20:
+        text = pytesseract.image_to_string(img)  # 识别时间截图字符串
+        fen, miao = text.split('/')[1].split(':')  # 从time_text中获取分、秒
+        text = int(fen) * 60 + int(miao)
+    else:
+        text = pytesseract.image_to_string(img, lang='chi_sim')  # 识别视频名截图的文字
+        text = ''.join(text.split())  # 去除字与字间的空格
+    return text
+
+
+# 文件夹初始化——以folder_name为名创建文件夹，该路径已存在该文件夹则跳过，若time、mp4_name文件夹已存在，清空它们
+def init_dir(address_0, folder_name):
+    os.chdir(address_0)
+    if not os.path.exists(folder_name):
+        os.mkdir(folder_name)
+    if folder_name == 'time' or folder_name == 'mp4_name':
+        os.chdir(address_0 + '\\' + folder_name)
+        order = '@echo y|del *.*'
+        os.system(order)
+
+
+def start(address_0, for_num, x, y):
+    #  第一次循环进行各文件夹的初始化并获取y值
+    if for_num == 1:
+        init_dir(address_0, 'rec')
+        init_dir(address_0, 'time')
+        init_dir(address_0, 'mp4_name')
+        now_khf_img_address = address_0 + '\\desktop\\khf.png'  # 第一课的”看回放“截图地址
+        now_khf_img_location = locateOnScreen(now_khf_img_address, confidence=0.95)
+        y = now_khf_img_location[1] - 170
+    time_img_name = for_num
+    mp4_name_img_name = for_num + 20  # for_num+20，是为了区分time的截图
+    # 获取视频名(课程标题)
+    screenshot(address_0, mp4_name_img_name, x, y, x + 741, y + 52)  # 获取视频名截图并保存在mp4_name文件夹内
+    mp4_name_img_address = address_0 + '\\mp4_name\\{}.png'.format(mp4_name_img_name)  # 视频名截图的所在地址
+    mp4_name = orc(mp4_name_img_address, mp4_name_img_name)  # orc函数从mp4_name_img_name截图中识别mp4_name
+
+    click(x + 95, y + 176)  # 进入课堂
+    sleep(5)  # 等待进入课堂
+
+    screenshot(address_0, time_img_name, 168, 1022, 378, 1067)  # 获取视频总时间截图并保存在time文件夹内
+    time_img_address = address_0 + '\\time\\{}.png'.format(time_img_name)  # 时间截图的所在地址
+    time = orc(time_img_address, time_img_name)
+    return [mp4_name, time]
+
+
+def rec(mp4_name):
+    os.chdir(address_0 + '\\rec')
+    # 运用subprocess.Popen而不用os.system是因为后者cmd必须终止了程序才能继续运行，这样我们无法读秒
+    subprocess.Popen(
+        'ffmpeg -f dshow -rtbufsize 1000M -i audio="virtual-audio-capturer"'
+        ' -f gdigrab -i desktop -r 20 -b:v 150k -b:a 225k -ar 48000 -crf 30 {}.mp4'.format(mp4_name))
+    sleep(2)
+    keyDown('alt')  # 隐藏录屏窗口
+    press('tab')
+    keyUp('alt')
+    # 检索是否有“夜深了”弹窗
+    location = locateOnScreen('C:\\Users\\Vh\\Desktop\\desktop\\night.png')
+    if location != None:
+        click(996, 694)  # 弹窗夜深了，点击取消开启护眼模式
+    moveTo(2000, 300)  # 把鼠标移到最右边防止影响视野
+
+
+def end(time):
+    sleep(time)
+    keyDown('alt')
+    press('tab')
+    keyUp('alt')
+    sleep(0.5)
+    press('shift')
+    sleep(0.5)
+    press('q')
+    sleep(2)
+    click(50, 30)  # 按“离开教室”
+    moveTo(500, 0)  # 移开鼠标，防止一直触发左上角的流量监控
+    sleep(5)  # 等待离开教室完成
+
+
+def find_next_lesson(address_0, for_num):
+    last_mp4_name_img_name = for_num + 20  # 上一课视频名截图文件名
+    last_mp4_name_img_address = address_0 + '\\mp4_name\\{}.png'.format(last_mp4_name_img_name)  # 上一课视频名截图地址
+    last_mp4_name_img_location = locateOnScreen(last_mp4_name_img_address, confidence=0.95)  # 上一课视频名截图的定位
+    new_khf_img_address = address_0 + '\\desktop\\khf.png'  # 新一课的”看回放“截图地址
+    # 若last_mp4_name_img_location非空，说明离开教室后检测到上一课视频名截图仍在屏幕上，说明高途没有刷新网页，滑到下一课即可
+    if last_mp4_name_img_location:
+        while last_mp4_name_img_location[1] > 373:  # 若距离上边沿大于373，需下滑才能找到下一课的定位了
+            click(1907, 1070)
+            last_mp4_name_img_location = locateOnScreen(last_mp4_name_img_address, confidence=0.95)  # 更新上一课视频名截图的定位
+        for i in range(4):
+            click(1907, 1070)  # 再往下4格，让上一课的”看回放“消失，使得获得的是下一课的”看回放“坐标
+        sleep(1)  # 等待1秒，让电脑反应过来再下一步
+        new_khf_img_location = locateOnScreen(new_khf_img_address, confidence=0.95)
+        y = new_khf_img_location[1] - 170
+    # last_mp4_name_img_location是空的，说明高途刷新了页面
+    else:
+        sx_img_address = address_0 + '\\desktop\\sx.png'  # ”数学科“图片地址
+        # yy_img_address = address_0 + '\\desktop\\yy.png'  # ”英语科“图片地址
+        # 若此时是数学科
+        if locateOnScreen(sx_img_address, confidence=0.95):
+            xdqh_img_address = address_0 + '\\desktop\\xdqh.png'  # “线性强化”图片地址
+            gsqh_img_address = address_0 + '\\desktop\\gsqh.png'  # ”高数强化“图片地址
+            while True:
+                for i in range(5):
+                    click(1913, 48)  # 点5次右上角箭头，然后查找一次”线代强化“图片
+                location = locateOnScreen(xdqh_img_address, confidence=0.95)
+                if location:  # location为真值(不为None)则进入if
+                    sleep(0.5)  # 让系统反应过来
+                    click(center(location))  # 点击“线性强化”中心点，关闭这一栏
+                    while True:
+                        click(1913, 48)  # 继续往上查找”高数强化“图片
+                        location = locateOnScreen(gsqh_img_address, confidence=0.95)
+                        if location:
+                            sleep(0.5)  # 让系统反应过来
+                            click(center(location))  # 点击“高数强化”中心点，打开这一栏
+                            break
+                    break
+        # else:  # 英语科的情况
+        while True:
+            click(1907, 1070)  # 往下查找
+            last_mp4_name_img_location = locateOnScreen(last_mp4_name_img_address, confidence=0.95)  # 上一课视频名截图的定位
+            if last_mp4_name_img_location:  # 若找到上一课视频名截图的定位
+                for i in range(15):  # 往下走15格，方便对下一课进行操作
+                    click(1907, 1070)
+                sleep(1)  # 稍等一会，让系统反应过来
+                new_khf_img_location = locateOnScreen(new_khf_img_address, confidence=0.95)
+                y = new_khf_img_location[1] - 170
+                break
+    return y
+
+def shut_down():
+    keyDown('win')  # 返回桌面
+    press('d')
+    keyUp('win')
+    sleep(1)
+    click(955, 500)  # 点两次桌面，确认未选中桌面任何东西
+    sleep(0.5)
+    click(955, 500)
+    keyDown('alt')  # alt+f4
+    press('f4')
+    keyUp('alt')
+    press('enter')
+    
+
+if __name__ == '__main__':
+    sleep(3)  # 按”运行“后， 3秒时间切换到高途并把将录的课放到第一位(如何看是否第一位？，在当前屏幕中，这一课的”看回放“在第一位置)，然后程序开始
+    address_0 = 'C:\\Users\\vh\\Desktop'
+    x, y = [93, 0]
+    for_num = 1
+    while True:
+        if for_num == 11:  # 录了10个视频就关机，否则一天刷太多视频不真实
+            shut_down()
+            break
+        mp4_name, time = start(address_0, for_num, x, y)
+        rec(mp4_name)
+        end(time)
+        y = find_next_lesson(address_0, for_num)
+        for_num += 1
+        
+
+
+高途自动化录课3.0.py
+# 注意使用前需先随便用alt+shift+a截一个图然后保存到桌面，使得默认保存位置为桌面
+from pyautogui import *
+from time import sleep
+import subprocess
+import pytesseract
+from PIL import Image
+import os
+
+
+def screenshot(address_0, img_name, x, y, x1, y1):
+    keyDown('alt')  # 快捷键调出截图工具
+    keyDown('shift')
+    press('a')
+    keyUp('alt')
+    keyUp('shift')
+    moveTo(x, y)  # 移到相应位置截图
+    dragTo(x1, y1)
+    keyDown('ctrl')  # 保存
+    press('s')
+    keyUp('ctrl')
+    press('enter')
+    sleep(0.5)  # 等待保存完毕
+
+    os.chdir(address_0)
+    # 重命名截图(之所以可以用*.png，是因为桌面上只有它一张png图片)
+    order = 'rename *.png {}.png'.format(img_name)
+    os.system(order)
+    if img_name < 20:  # 若为时间截图，放到time文件夹里
+        order = 'move {}.png {}\\time'.format(img_name, address_0)
+    else:  # 若为视频名截图，放到mp4_name文件夹里
+        order = 'move {}.png {}\\mp4_name'.format(img_name, address_0)
+    os.system(order)
+
+
+# 图片获取文字
+def orc(img_address, img_name):
+    img = Image.open(img_address)  # 打开图片
+    if img_name < 20:
+        text = pytesseract.image_to_string(img)  # 识别时间截图字符串
+        fen, miao = text.split('/')[1].split(':')  # 从time_text中获取分、秒
+        text = int(fen) * 60 + int(miao)
+    else:
+        text = pytesseract.image_to_string(img, lang='chi_sim')  # 识别视频名截图的文字
+        text = ''.join(text.split())  # 去除字与字间的空格
+    return text
+
+
+# 文件夹初始化——以folder_name为名创建文件夹，该路径已存在该文件夹则跳过，若time、mp4_name文件夹已存在，清空它们
+def init_dir(address_0, folder_name):
+    os.chdir(address_0)
+    if not os.path.exists(folder_name):
+        os.mkdir(folder_name)
+    if folder_name == 'time' or folder_name == 'mp4_name':
+        os.chdir(address_0 + '\\' + folder_name)
+        order = '@echo y|del *.*'
+        os.system(order)
+
+
+def start(address_0, for_num, x, y):
+    #  第一次循环进行各文件夹的初始化并获取y值
+    if for_num == 1:
+        init_dir(address_0, 'rec')
+        init_dir(address_0, 'time')
+        init_dir(address_0, 'mp4_name')
+        now_khf_img_address = address_0 + '\\desktop\\khf.png'  # 第一课的”看回放“截图地址
+        now_khf_img_location = locateOnScreen(now_khf_img_address, confidence=0.97)
+        y = now_khf_img_location[1] - 170
+    time_img_name = for_num
+    mp4_name_img_name = for_num + 20  # for_num+20，是为了区分time的截图
+    # 获取视频名(课程标题)
+    screenshot(address_0, mp4_name_img_name, x, y, x + 741, y + 52)  # 获取视频名截图并保存在mp4_name文件夹内
+    mp4_name_img_address = address_0 + '\\mp4_name\\{}.png'.format(mp4_name_img_name)  # 视频名截图的所在地址
+    mp4_name = orc(mp4_name_img_address, mp4_name_img_name)  # orc函数从mp4_name_img_name截图中识别mp4_name
+
+    click(x + 95, y + 176)  # 进入课堂
+    sleep(8)  # 等待进入课堂
+
+    # 检索是否有“夜深了”弹窗
+    for i in range(2):
+        location = locateOnScreen('C:\\Users\\Vh\\Desktop\\desktop\\night.png', confidence=0.97)
+        if location != None:
+            click(996, 694)  # 弹窗夜深了，点击取消开启护眼模式
+
+    screenshot(address_0, time_img_name, 168, 1022, 378, 1067)  # 获取视频总时间截图并保存在time文件夹内
+    time_img_address = address_0 + '\\time\\{}.png'.format(time_img_name)  # 时间截图的所在地址
+    time = orc(time_img_address, time_img_name)
+    return [mp4_name, time]
+
+
+def rec(mp4_name):
+    os.chdir(address_0 + '\\rec')
+    # 运用subprocess.Popen而不用os.system是因为后者cmd必须终止了程序才能继续运行，这样我们无法读秒
+    subprocess.Popen(
+        'ffmpeg -f dshow -rtbufsize 1000M -i audio="virtual-audio-capturer"'
+        ' -f gdigrab -i desktop -r 20 -b:v 150k -b:a 225k -ar 48000 -crf 30 {}.mp4'.format(mp4_name))
+    sleep(0.5)
+    keyDown('alt')  # 隐藏录屏窗口
+    press('tab')
+    keyUp('alt')
+    moveTo(2000, 300)  # 把鼠标移到最右边防止影响视野
+
+
+def end(time):
+    sleep(time)
+    keyDown('alt')
+    press('tab')
+    keyUp('alt')
+    sleep(0.5)
+    press('shift')
+    sleep(0.5)
+    press('q')
+    sleep(1)
+    click(50, 30)  # 按“离开教室”
+    moveTo(500, 0)  # 移开鼠标，防止一直触发左上角的流量监控
+    sleep(6)  # 等待离开教室完成
+
+
+def find_next_lesson(address_0, for_num, now_class, last_class):
+    last_mp4_name_img_name = for_num + 20  # 上一课视频名截图文件名
+    last_mp4_name_img_address = address_0 + '\\mp4_name\\{}.png'.format(last_mp4_name_img_name)  # 上一课视频名截图地址
+    new_khf_img_address = address_0 + '\\desktop\\khf.png'  # 新一课的”看回放“截图地址
+    now_class_img_address = address_0 + '\\desktop\\{}.png'.format(now_class)  # “当前栏目”图片地址
+    last_class_img_address = address_0 + '\\desktop\\{}.png'.format(last_class)  # “上一栏目”图片地址
+    while True:
+        last_mp4_name_img_location = locateOnScreen(last_mp4_name_img_address, confidence=0.97)  # 上一课视频名截图的定位
+        if not last_mp4_name_img_location:  # 上一课的视频名截图没找到，考虑是高途刷新了，点击上箭头十次，开始往上找
+            for i in range(10):
+                press('up')
+        else:  # 上一课的视频名截图找到了
+            # 调用“找下一课”助手函数，减少代码臃肿
+            return find_next_lesson_assistant(last_mp4_name_img_location, last_mp4_name_img_address, new_khf_img_address)
+        # 若已经检索到“当前栏目”图片，而还未被上一部分return，说明上一课在“上一栏目”中
+        now_class_location = locateOnScreen(now_class_img_address, confidence=0.97)
+        if now_class_location:
+            sleep(0.5)  # 让系统反应过来
+            click(center(now_class_location))  # 点击“当前栏目”中心点，关闭这一栏
+            while True:
+                press('up')  # 继续往上查找“上一栏目”图片
+                last_class_location = locateOnScreen(last_class_img_address, confidence=0.97)
+                if last_class_location:
+                    sleep(0.5)  # 让系统反应过来
+                    click(center(last_class_location))  # 点击“上一栏目”中心点，打开这一栏
+                    break
+            while True:
+                last_mp4_name_img_location = locateOnScreen(last_mp4_name_img_address, confidence=0.97)  # 上一课视频名截图的定位
+                if not last_mp4_name_img_location:
+                    for i in range(10):
+                        press('down')  # 继续往下查找
+                else:  # 若找到上一课视频名截图的定位
+                    return find_next_lesson_assistant(last_mp4_name_img_location, last_mp4_name_img_address, new_khf_img_address)
+
+
+def find_next_lesson_assistant(last_mp4_name_img_location, last_mp4_name_img_address, new_khf_img_address):
+    while last_mp4_name_img_location[1] > 373:  # 若距离上边沿大于373，下滑一格
+        press('down')
+        last_mp4_name_img_location = locateOnScreen(last_mp4_name_img_address, confidence=0.97)  # 更新上一课视频名截图的定位
+        '''确实是找到了上一课，也确实找到时y轴坐标大于373，所以下滑了一格，但是可能此时刚好是差不多到373临界位置，所以上一课
+        的视频名截图刚好上了去被遮住了，此时若无if跳出循环，则会导致while判断出错，因为location是None，而不能location[1]'''
+        if last_mp4_name_img_location == None:
+            press('up')  # 往上回一格
+            break
+    for i in range(4):
+        press('down')  # 再往下4格，让上一课的”看回放“消失，使得获得的是下一课的”看回放“坐标
+    sleep(1)  # 等待1秒，让电脑反应过来再下一步
+    new_khf_img_location = locateOnScreen(new_khf_img_address, confidence=0.97)
+    y = new_khf_img_location[1] - 170
+    return y
+
+
+#  异常情况重命名视频——orc无法识别文字，返回了None，则视频名为.mp4只有后缀，若等下还有无法识别的，则还是.mp4，名字重复，录屏不会继续
+def out_abnormal_mp4(address_0, for_num):
+    os.chdir(address_0 + '\\rec')
+    lis = os.listdir()
+    if '.mp4' in lis:
+        order = 'rename .mp4 {}.mp4'.format(address_0, for_num)  # 以当前循环次数进行命名，永远不会重复
+        os.system(order)
+
+
+# 录了10个视频电脑睡眠
+def shut_down_or_sleep(judge):
+    keyDown('win')  # 返回桌面
+    press('d')
+    keyUp('win')
+    sleep(1)
+    click(955, 500)  # 点两次桌面，确认未选中桌面任何东西
+    sleep(0.5)
+    click(955, 500)
+    sleep(0.5)
+    keyDown('alt')  # alt+f4
+    press('f4')
+    keyUp('alt')
+    if judge == '2':
+        press('up')  # 按上键选择为“睡眠”
+    press('enter')  # judge=='1'或其他，直接关机了
+
+
+if __name__ == '__main__':
+    how_many = int(input('要录几个视频？：'))
+    judge = input('录完后关机：1，还是睡眠：2：')
+    sleep(3)  # 按”运行“后， 3秒时间切换到高途并把将录的课放到第一位(如何看是否第一位？，在当前屏幕中，这一课的”看回放“在第一位置)，然后程序开始
+    address_0 = 'C:\\Users\\vh\\Desktop'
+    x, y = [93, 0]
+    for_num = 1
+    while for_num <= how_many:  # 设定录x个视频就睡眠
+        out_abnormal_mp4(address_0, for_num)
+        mp4_name, time = start(address_0, for_num, x, y)
+        rec(mp4_name)
+        end(time)
+        sx_img_address = address_0 + '\\desktop\\sx.png'  # ”数学科“图片地址
+        yy_img_address = address_0 + '\\desktop\\yy.png'  # ”英语科“图片地址
+        if locateOnScreen(sx_img_address, confidence=0.97):
+            y = find_next_lesson(address_0, for_num, 'glqh', 'gsqh')
+        elif locateOnScreen(yy_img_address, confidence=0.97):
+            y = find_next_lesson(address_0, for_num, 'sqjd', 'jcjd')
+        for_num += 1
+    shut_down_or_sleep(judge)
+
+
+高途视频下载器(wget多线程).py
+import os
+import wget
+import threading
+import time
+
+
+def fun():
+    global lock, f, desktop_path, key, name_list, download_path
+    lock.acquire()
+    info = f.readline()
+    if info == '':
+        key = 0
+        lock.release()
+        return
+    url, new_name = info.split(' ', 1)
+    new_name = new_name.strip()
+    old_name_index = url.rfind('/')
+    old_name = url[old_name_index + 1:]
+    name_list.append([old_name, new_name + '.mp4'])
+    lock.release()
+
+    wget.download(url, download_path)
+
+
+if __name__ == '__main__':
+    desktop_path = 'c:\\users\\vh\\desktop'
+    os.chdir(desktop_path)
+    download_path = input('下载到（直接回车默认下载到desktop下的rec文件夹）：')
+    if download_path == '':
+        download_path = desktop_path + '\\rec'
+    key = 1
+    name_list = []
+    f = open('url.txt', 'r', encoding='utf-8')
+    while key != 0:
+        threads = [threading.Thread(target=fun) for i in range(10)]
+        lock = threading.Lock()
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+    os.chdir(download_path)
+    for i in name_list:
+        os.rename(i[0], i[1])
+
+
+pdf截取中间某x页—y页.py
+from PyPDF2 import PdfFileWriter, PdfFileReader
+import os
+
+address, name_in, name_out = input('文件地址 输入文件名 输出文件名（输出文件放在输入文件目录下）(格式：c:\\xxx name_in name_out)：').strip().split()  # strip()防止手快在末尾多打一个空格
+os.chdir(address)
+start_page, end_page = map(int, input('开始页 结束页（数字间空格分开）：').split())
+
+pdf_reader = PdfFileReader("{}.pdf".format(name_in))
+pdf_writer = PdfFileWriter()
+
+for i in range(start_page - 1, end_page):
+  pdf_writer.addPage(pdf_reader.getPage(i))
+  
+with open("{}.pdf".format(name_out), "wb") as f_w:
+  pdf_writer.write(f_w)
+
+
+pdf转word转换器.py
+from pdf2docx import Converter
+import PySimpleGUI as sg
+
+
+def pdf2word(file_path):
+    file_name = file_path.split('.')[0]
+    doc_file = f'{file_name}.docx'
+    p2w = Converter(file_path)
+    p2w.convert(doc_file, start=0, end=None)
+    p2w.close()
+    return doc_file
+
+
+def main():
+    # 选择主题
+    sg.theme('DarkAmber')
+
+    layout = [
+        [sg.Text('pdfToword', font=('微软雅黑', 12)),
+         sg.Text('', key='filename', size=(50, 1), font=('微软雅黑', 10))],
+        [sg.Output(size=(80, 10), font=('微软雅黑', 10))],
+        [sg.FilesBrowse('选择文件', key='file', target='filename'), sg.Button('开始转换'), sg.Button('退出')]]
+    # 创建窗口
+    window = sg.Window("PDF转WORD", layout, font=("微软雅黑", 15), default_element_size=(50, 1))
+    # 事件循环
+    while True:
+        # 窗口的读取，有两个返回值（1.事件；2.值）
+        event, values = window.read()
+        print(event, values)
+
+        if event == "开始转换":
+
+            if values['file'] and values['file'].split('.')[1] == 'pdf':
+                filename = pdf2word(values['file'])
+                print('文件个数 ：1')
+                print('\n' + '转换成功！' + '\n')
+                print('文件保存位置：', filename)
+            elif values['file'] and values['file'].split(';')[0].split('.')[1] == 'pdf':
+                print('文件个数 ：{}'.format(len(values['file'].split(';'))))
+                for f in values['file'].split(';'):
+                    filename = pdf2word(f)
+                    print('\n' + '转换成功！' + '\n')
+                    print('文件保存位置：', filename)
+            else:
+                print('请选择pdf格式的文件哦!')
+        if event in (None, '退出'):
+            break
+
+    window.close()
+
+
+main()
+
+pdf转图片附属函数rename.py
+# 运行此py前务必先把“pdf转图片”主py文件运行窗口关掉，否则有占用
+import os
+
+address = 'c:\\users\\vh\\desktop'
+os.chdir(address)
+with open('1.txt', 'r') as f:
+    text = f.read()
+
+order = text[:-1]
+next_dir_index = int(text[-1])
+os.chdir(address + '\\{}'.format(next_dir_index))
+os.system(order)
+
+
+pdf转图片（中间某x页—y页）.py
+from pdf2image import convert_from_path
+import os
+
+
+def rename(address, next_dir_index):
+    same = '-'  # 删除从后往前数第一个相同字符same以及它前面的，保留后面的（重命名措施）
+    os.chdir(address + '\\{}'.format(next_dir_index))
+    lis = os.listdir()
+    rname = ''
+    for i in lis:
+        if same in i:
+            rsame_index = i.rfind(same)
+            new = i[rsame_index + 1:]
+            rname += 'rename {} {}&&'.format(i, new)
+    rname = rname[:-2]
+    rname += str(next_dir_index)
+    with open(address + '\\1.txt', 'w', encoding='utf-8') as f:
+        f.write(str(rname))
+
+address, name = input('地址 文件名：').strip().split()
+name += '.pdf'
+first_page, last_page = map(int, input('开始页 结束页：').strip().split())
+os.chdir(address)
+
+lis = os.listdir()
+find_max_num = []
+for li in lis:
+    if os.path.isdir(li):
+        try:
+            float(li)  # 使用float()方法转换数字，要是是数字不会报错，否则会报错
+            find_max_num.append(int(li))  # 是数字则把它加入这个列表暂存
+        except:
+            pass
+try:  # 若try出错，说明find_max_num为空，max函数无效了
+    next_dir_index = max(find_max_num) + 1
+except:
+    next_dir_index = 1
+os.mkdir(str(next_dir_index))
+
+image = convert_from_path(name, dpi=150, fmt='jpeg', output_folder=address + '\\{}'.format(next_dir_index), first_page=first_page,
+                          last_page=last_page, thread_count=3,
+                          poppler_path=r'D:\Program Files (x86)\poppler-0.67.0_x86\poppler-0.67.0\bin')
+
+rename(address, next_dir_index)
+
+
+主代码（在idle运行，没有进度条）.py
+# coding=gbk
+import requests
+import time
+import os
+
+
+def menu():
+    print('*'*10 + '欢迎来到ts文件批量下载并连接程序' + '*'*10, end='\n\n')
+    print('温馨提示：运行代码前请确保桌面有两个东西：in.txt、in。\n\n\t其中in.txt放ts所有下载网址，in为空文件夹')
+    print("\n\t而且，in.txt中，一行为一个下载网址，最后一个网址之后不要留'\\n'")
+    judge = input('\n\t确认无误输入y/Y运行：')
+    if judge == 'y' or judge == 'Y':
+        return
+    else:
+        print('\n\t输入非y/Y，退出程序！')
+        exit()
+    
+# 此函数曾在我调试bug时错删了我的ts文件，所以不如废置它了
+# 废置理由：
+# ①保证in一开始是空文件夹即可，没必要一开始便清空in文件夹，万一删错了呢
+# ②为防止用其中一种方法连接出现错误，故结束后先不删除in文件夹内的所有ts文件
+def del_file():
+    os.chdir('C:\\users\\vh-暖夏\\desktop\\in')
+    os.system('@echo y|del *.*')
+
+
+def ord_9632(i, length):  # ord(9632) == '■'，故以此作为函数命名
+    num = round((i / length) * 100)
+    return '■' * num
+
+
+def percent(i, length):
+    percent_ = format(round(i / length, 3) * 100, '.1f')
+    return str(percent_) + '%'
+
+
+def ts_download():
+    with open('C:\\users\\vh-暖夏\\desktop\\in.txt', 'r') as l:
+        url_list = l.read().split('\n')  # 读取ts文件下载地址
+    length = len(url_list)
+    j = 0
+    for i in range(length):
+        url = url_list[i]
+        res = requests.get(url)
+        with open('C:\\users\\vh-暖夏\\desktop\\in\\{}.ts'.format(i), 'wb') as f:
+            f.write(res.content)
+        if j - i == 0 or i == length - 1:
+            j += 1  # 每下载1个文件，打印一次进度
+            print('\n\t下载进度：{}'.format(percent(i + 1, length)))
+    print('\n\tts文件爬取完毕!')
+    return length
+
+
+class concat:
+# 注：此处self会自动将__init__代码放到主函数的位置，故不用传name和contact_method参数
+    def __init__(self): 
+        # 由于可能其中一种方法连接出来的视频有问题，所以供两种方法可选择：
+        if contact_method == '1':
+            print('\n\t正在使用第copy方法连接ts文件：')
+            self.ts_concat_copy(length, name)
+        elif contact_method == '2':
+            print('\n\t正在使用ffmpeg方法连接ts文件：')
+            self.ts_concat_ffmpeg(length, name)
+        # 若选择的方法有问题，可以运行同文件夹下的“两种方法连接ts”选择另一种方法再次连接
+
+
+    # ffmpeg -i "concat:01.mp4|02.mp4|03.mp4" -c copy out.mp4
+    def ts_concat_ffmpeg(self, length, name):
+        time.sleep(1)
+        s = ''
+        for i in range(length - 1):
+            s += '{}.ts|'.format(i)
+        s += '{}.ts'.format(length - 1)
+        order = 'ffmpeg -i "concat:{}" -c copy {}.mp4'.format(s, name)
+        os.chdir('C:\\users\\vh-暖夏\\desktop\\in')
+        os.system(order)
+        
+    # 运用cmd命令连接：copy /b *.ts name.mp4
+    def ts_concat_copy(self, length, name):
+        time.sleep(1)
+        str_ = ''
+        for i in range(length):
+            str_ += "{}.ts+".format(i)
+        # 去除最后一个加号
+        str1 = str_[:len(str_) - 1]  # 生成str1 = '0.ts+1.ts+...+n.ts'
+        order = 'copy /b {} {}.mp4'.format(str1, name)
+        os.chdir('C:\\users\\vh-暖夏\\desktop\\in')
+        os.system(order)
+        
+class move:
+    def __init__(self):
+        self.move(move_adress, name)
+        
+    def move(self, move_adress, name):
+        os.chdir('C:\\users\\vh-暖夏\\desktop\\in')
+        order = 'move {}.mp4 {}'.format(name, move_adress)
+        os.system(order)
+        if move_adress == 'C:\\users\\vh-暖夏\\desktop':
+            print('\n\t合成文件已移动到桌面！')
+        else:
+            print('\n\t合成文件已移动到指定位置')
+
+
+if __name__ == '__main__':
+    menu()
+    name = input('\n\t请输入输出文件名（不用写后缀）：')
+    contact_method = input('\n\t等下采用哪种方法连接？1.copy。2.ffmpeg。其他：不连接\n\t请选择：')
+    key = 0
+    if contact_method == '1' or contact_method == '2':
+        key = 1
+    if key == 1:
+        judge = input('\n\t连接完成后把文件移动到什么位置？1.指定位置。其他：desktop：')
+        if judge == '1':
+            move_adress = input('\n\t请输入目标位置：')
+        else:
+            move_adress = 'C:\\users\\vh-暖夏\\desktop'
+    length = ts_download()
+    if key == 1:
+        # 定义concat_变量属于类concat并自动运行__init__()
+        concat_ = concat()
+        # 定义move_变量属于move并自动运行__init__()
+        move_ = move()
+    print('\n\t全部完成！')
+
+
+主代码（在pycharm运行，下载有进度条）.py
+# coding=gbk
+import requests
+import time
+import os
+
+
+def menu():
+    print('*' * 10 + '欢迎来到ts文件批量下载并连接程序' + '*' * 10, end='\n\n')
+    print('温馨提示：运行代码前请确保桌面有两个东西：in.txt、in。\n\n\t其中in.txt放ts所有下载网址，in为空文件夹')
+    print("\n\t而且，in.txt中，一行为一个下载网址，最后一个网址之后不要留'\\n'")
+    judge = input('\n\t确认无误输入y/Y运行：')
+    if judge == 'y' or judge == 'Y':
+        return
+    else:
+        print('\n\t输入非y/Y，退出程序！')
+        exit()
+
+
+# 此函数曾在我调试bug时错删了我的ts文件，所以不如废置它了
+# 废置理由：
+# ①保证in一开始是空文件夹即可，没必要一开始便清空in文件夹，万一删错了呢
+# ②为防止用其中一种方法连接出现错误，故结束后先不删除in文件夹内的所有ts文件
+def del_file():
+    os.chdir('C:\\users\\vh-暖夏\\desktop\\in')
+    os.system('@echo y|del *.*')
+
+
+def ord_9632(i, length):  # ord(9632) == '■'，故以此作为函数命名
+    num = round((i / length) * 100)
+    return '■' * num
+
+
+def percent(i, length):
+    percent_ = format(round(i / length, 3) * 100, '.1f')
+    return str(percent_) + '%'
+
+
+def ts_download():
+    print()
+    with open('C:\\users\\vh-暖夏\\desktop\\in.txt', 'r') as l:
+        url_list = l.read().split('\n')  # 读取ts文件下载地址
+    length = len(url_list)
+    j = 0
+    for i in range(length):
+        url = url_list[i]
+        res = requests.get(url)
+        with open('C:\\users\\vh-暖夏\\desktop\\in\\{}.ts'.format(i), 'wb') as f:
+            f.write(res.content)
+        if j - i == 0 or i == length - 1:
+            j += 1  # 每下载1个文件，打印一次进度
+            print('\r\t下载进度：{}{}'.format(ord_9632(i + 1, length), percent(i + 1, length)), end='')
+    print('\n\n\tts文件爬取完毕!')
+    return length
+
+
+class concat:
+    # 注：此处self会自动将__init__代码放到主函数的位置，故不用传name和contact_method参数
+    def __init__(self):
+        # 由于可能其中一种方法连接出来的视频有问题，所以供两种方法可选择：
+        if contact_method == '1':
+            print('\n\t正在使用第copy方法连接ts文件：')
+            self.ts_concat_copy(length, name)
+        elif contact_method == '2':
+            print('\n\t正在使用ffmpeg方法连接ts文件：')
+            self.ts_concat_ffmpeg(length, name)
+        # 若选择的方法有问题，可以运行同文件夹下的“两种方法连接ts”选择另一种方法再次连接
+
+    # ffmpeg -i "concat:01.mp4|02.mp4|03.mp4" -c copy out.mp4
+    def ts_concat_ffmpeg(self, length, name):
+        time.sleep(1)
+        s = ''
+        for i in range(length - 1):
+            s += '{}.ts|'.format(i)
+        s += '{}.ts'.format(length - 1)
+        order = 'ffmpeg -i "concat:{}" -c copy {}.mp4'.format(s, name)
+        os.chdir('C:\\users\\vh-暖夏\\desktop\\in')
+        os.system(order)
+
+    # 运用cmd命令连接：copy /b *.ts name.mp4
+    def ts_concat_copy(self, length, name):
+        time.sleep(1)
+        str_ = ''
+        for i in range(length):
+            str_ += "{}.ts+".format(i)
+        # 去除最后一个加号
+        str1 = str_[:len(str_) - 1]  # 生成str1 = '0.ts+1.ts+...+n.ts'
+        order = 'copy /b {} {}.mp4'.format(str1, name)
+        os.chdir('C:\\users\\vh-暖夏\\desktop\\in')
+        os.system(order)
+
+
+class move:
+    def __init__(self):
+        self.move(move_adress, name)
+
+    def move(self, move_adress, name):
+        os.chdir('C:\\users\\vh-暖夏\\desktop\\in')
+        order = 'move {}.mp4 {}'.format(name, move_adress)
+        os.system(order)
+        if move_adress == 'C:\\users\\vh-暖夏\\desktop':
+            print('\n\t合成文件已移动到桌面！')
+        else:
+            print('\n\t合成文件已移动到指定位置')
+
+
+if __name__ == '__main__':
+    menu()
+    name = input('\n\t请输入输出文件名（不用写后缀）：')
+    contact_method = input('\n\t等下采用哪种方法连接？1.copy。2.ffmpeg。其他：不连接\n\t请选择：')
+    key = 0
+    if contact_method == '1' or contact_method == '2':
+        key = 1
+    if key == 1:
+        judge = input('\n\t连接完成后把文件移动到什么位置？1.指定位置。其他：desktop：')
+        if judge == '1':
+            move_adress = input('\n\t请输入目标位置：')
+        else:
+            move_adress = 'C:\\users\\vh-暖夏\\desktop'
+    length = ts_download()
+    if key == 1:
+        # 定义concat_变量属于类concat并自动运行__init__()
+        concat_ = concat()
+        # 定义move_变量属于move并自动运行__init__()
+        move_ = move()
+    print('\n\t全部完成！')
+
+
+按时间顺序更改ts名字为0、1、2、3…….py
+import os
+
+
+def get_file_list(file_path):
+    dir_list = os.listdir(file_path)
+    if not dir_list:
+        return
+    else:
+        '''注意，这⾥使⽤
+        表达式，将⽂件按照最后修改时间顺序升序排列
+        lambda
+        函数是获取⽂件最后修改时间
+         os.path.getmtime() 
+        函数是获取⽂件最后创建时间
+        os.path.getctime()'''
+        dir_list = sorted(dir_list, key=lambda x: os.path.getmtime(os.path.join(file_path, x)))
+    return dir_list
+
+
+address = input('ts文件位置：')
+os.chdir(address)
+list = get_file_list(address)
+for i in range(len(list)):
+    os.rename('{}'.format(list[i]), '{}'.format(str(i) + '.ts'))
+
+
+wget多线程爬取ts文件.py
+import os
+import wget
+import threading
+
+
+def fun():
+    global head, lock, f, re_key, count, name_list  # 全局变量，相当于C++中的引用
+
+    lock.acquire()  # 调用线程锁，使每个子线程排着队按顺序获取url.txt中的每行url
+    count += 1
+
+    text = f.readline().strip()
+    while '#' in text:
+        text = f.readline()
+    if text == '':
+        re_key = 0  # 若某子线程发现获取的url是空的，说明已经爬取结束了，为全局变量re_key赋值0，然后解开线程锁，让当前主线程下剩下的子线程继续获取“空”后返回，等消耗完剩下子线程后即可
+        lock.release()  # 这里解开线程锁是因为再往后读取都肯定是''了，所以解开，让剩下的子线程全部一拥而上可以快速消耗剩下子线程
+        return
+    url = f'{head}{text}'
+    file_name = count
+    print('正在下载：' + url)
+    lock.release()
+
+    print(f'当前子线程：{threading.current_thread().name}')
+    wget.download(url, ts_path + '\\' + f'{file_name}.ts')
+
+
+
+def ts_concat_ffmpeg(start, end, name):
+    s = ''
+    for i in range(start, end):
+        s += '{}.ts|'.format(i)
+    s += '{}.ts'.format(end)
+    order = 'ffmpeg -i "concat:{}" -c copy "{}.mp4"'.format(s, name)
+    os.system(order)
+
+
+if __name__ == '__main__':
+    desktop_path = 'c:\\users\\vh\\desktop'
+    os.chdir(desktop_path)
+    mk_key = 0
+    try:
+        os.mkdir('ts_path')
+        mk_key = 1
+    except:
+        pass
+    ts_path = 'c:\\users\\vh\\desktop\\ts_path'
+    os.chdir(ts_path)
+    if mk_key == 0:
+        os.system('del *.*')  # 初始化ts_path文件夹
+    os.chdir(desktop_path)
+
+    head = input('请求标头(没有则直接回车)：')  # 请求标头示例：https://dtliving-sz.dingtalk.com/live_hp/ Tips:若ts流下载地址只有后半部分，而没有这个“标头”的部分，则需写这个。
+    url_txt_path = input('url.txt文件地址（直接回车默认在桌面）：')
+    if url_txt_path == '':
+        url_txt_path = desktop_path
+
+    count = 0  # 数数下载到第几个ts文件
+    name_list = []
+    name = ''
+    connect = input('下载完成后是否连接为mp4文件？（直接回车默认连接）：')
+    if connect == '':
+        name = input('连接后的文件名（不加后缀，默认.mp4）：')
+    thread_num = int(input('每次调用子线程数：'))
+
+    f = open(f'{url_txt_path}\\url.txt', 'r', encoding='gb18030')
+    lock = threading.Lock()
+    re_key = 1
+    while re_key == 1:
+        threads = [threading.Thread(target=fun) for _ in range(thread_num)]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+        print('当前主线程结束，尝试进入下一线程……')
+
+    f.close()
+    print('re_key返回值为0，爬取结束！\n\n')
+    
+    if connect == '':
+        os.chdir(ts_path)
+        print('下面开始连接所有ts文件……\n')
+
+        ts_concat_ffmpeg(1, len(os.listdir()), name)
+
+        os.system('move "{}.mp4", {}'.format(name, desktop_path))
+        print(f'爬取成功，"{name}.mp4"文件已移动到桌面！')
+
+
+两种方法爬取m3u8加密视频.py
+import os
+import wget
+import requests
+
+
+def res_download(url, ts_path):
+    url_index = url.find('?')
+    url_ = url[:url_index]
+    name_index = url.rfind('/')
+    name = url_[name_index + 1:]
+
+    headers = {
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+                      '(KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.42'}
+    res = requests.get(url, headers=headers)
+    with open('{}\\{}'.format(ts_path, name), 'wb') as f:
+        f.write(res.content)
+
+
+def wget_download(url, ts_path, temp_path, count, key):
+    if key == '1':
+        wget.download(url, temp_path)
+        os.chdir(temp_path)
+        lis = os.listdir()
+        os.rename(''.join(lis), str(count) + '.ts')
+        os.system('move *.ts {}'.format(ts_path))
+    else:
+        wget.download(url, ts_path)
+
+def ts_concat_ffmpeg(start, end, name):
+    s = ''
+    for i in range(start, end - 1):
+        s += '{}.ts|'.format(i)
+    s += '{}.ts'.format(end - 1)
+    order = 'ffmpeg -i "concat:{}" -c copy "{}.mp4"'.format(s, name)
+    os.system(order)
+
+
+if __name__ == '__main__':
+    desktop_path = 'c:\\users\\vh\\desktop'
+    os.chdir(desktop_path)
+    try:
+        os.mkdir('temp_path')
+    except:
+        pass
+    try:
+        os.mkdir('ts_path')
+    except:
+        pass
+    temp_path = 'c:\\users\\vh\\desktop\\temp_path'
+    ts_path = 'c:\\users\\vh\\desktop\\ts_path'
+
+    head = input('请求标头：')
+    url_txt_path = input('url.txt文件地址（直接回车默认在桌面）：')
+    if url_txt_path == '':
+        url_txt_path = desktop_path
+    judge = input('使用哪种方法下载：1.requests。2.wget：')  # 如果猫抓抓到的ts文件复制它的链接在浏览器中打开后不能正常播放这一片段，说明requests下载失效，需用wget下载
+    connect = input('下载完成后是否连接为mp4文件？（直接回车默认连接）：')
+    if connect == '':
+        name = input('连接后的文件名（不加后缀，默认.mp4）：')
+    key = input('是否需要重命名ts文件名为n.ts、n+1.ts……（直接空格默认不需要）需要则输入1：')
+    if key == '1':
+        n = int(input('确定n.ts的初始n值：'))
+    os.chdir(url_txt_path)
+
+    count = n - 1
+    with open('url.txt', 'r', encoding='gb18030') as f:
+        while True:
+            count += 1
+            text = f.readline()
+            while '#' in text:
+                text = f.readline()
+            if text == '':
+                break
+            url = '{}{}'.format(head, text)
+            print('正在下载：' + url, end='')
+            if judge == '1':
+                res_download(url, ts_path)
+            elif judge == '2':
+                wget_download(url, ts_path, temp_path, count, key)
+                print('下载成功', end='\n\n')
+    if connect == '':
+        os.chdir(ts_path)
+        print('爬取结束！\n\n下面开始连接……\n')
+        lis = os.listdir()
+        lis.sort(key=lambda x: int(x[:-3]))
+        start = int(lis[0].split('.')[0])
+        end = int(lis[-1].split('.')[0])
+        ts_concat_ffmpeg(start, end, name)
+
+        os.system('move "{}.mp4", {}'.format(name, desktop_path))
+        os.system('del *.ts')
+
+
+
+两种方法连接ts.py
+# coding=gbk
+import os
+
+# ffmpeg -i "concat:01.ts|02.ts|03.ts" -c copy out.mp4（这种方法连接出来本质上就是mp4文件了，而且经过重新编码后文件可能会变小，所以推荐用ffmpeg连接）
+def ts_concat_ffmpeg(start, length, name):
+    s = ''
+    for i in range(start, length-1):
+        s += '{}.ts|'.format(i)
+    s += '{}.ts'.format(length-1)
+    order = 'ffmpeg -i "concat:{}" -c copy {}.mp4'.format(s, name)
+    print(order)
+    #os.system(order)
+
+# 运用cmd命令：copy /b *.ts name.mp4（这种方法连接出来的本质还是ts文件，只是改了后缀）
+def ts_concat_copy(start, length, name):
+    str_ = ''
+    for i in range(start, length):
+        str_ += "{}.ts+".format(i)
+    # 去除最后一个加号
+    str1 = str_[:len(str_) - 1]  # 生成str1 = '0.ts+1.ts+...+n.ts'
+    order = 'copy /b {} {}.mp4'.format(str1, name)
+    os.system(order)
+
+if __name__ == '__main__':
+    address = input('ts文件地址：')
+    os.chdir(address)
+    num = input('请输入ts文件第一个和最后一个编号（空格分隔）：')
+    start = int(num.split()[0])
+    length = int(num.split()[1]) + 1
+    name = input('输出文件名（不用写后缀）：')
+    judge = input('1.copy。2.ffmpeg。3.其他：退出：')
+    if judge == '1':
+        ts_concat_copy(start, length, name)
+    elif judge == '2':
+        ts_concat_ffmpeg(start, length, name)
+    else:
+       exit() 
+
+
+分批ts文件连接器.py
+import os
+
+# ts文件超过1000可用此.py工具分批连接ts文件
+path = input('ts文件地址：')
+os.chdir(path)
+start, end = map(int, input('开始编号 结束编号（空格分隔）：').split())
+name = input('输出文件名（不带后缀）：')
+s = ''
+count = 0
+for i in range(start, end + 1):
+    s += f'{i}.ts|'
+    if i % 1000 == 0:
+        count += 1
+        order = 'ffmpeg -i "concat:{}" -c copy "a{}.mp4"'.format(s, count)
+        os.system(order)
+        s = ''
+    if i == end:
+        count += 1
+        order = 'ffmpeg -i "concat:{}" -c copy "a{}.mp4"'.format(s, count)
+        os.system(order)
+        
+file = [f'a{i}' for i in range(1, count + 1)]
+
+li = open('list.txt', 'w')
+for fi in file:
+    li.write('file ' + "'" + '{}'.format(fi) + '.mp4' + "'\n")
+li.close()
+order = 'ffmpeg -f concat -i list.txt -c copy {}.mp4'.format(name)
+os.system(order)
+os.system('@echo y|del list.txt')
+
+

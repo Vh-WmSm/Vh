@@ -1,0 +1,4342 @@
+目录：
+***Day1 MySQL基础
+     **MySQL初步
+          *生成data目录
+          *data目录作用
+          *免安装版的注意事项
+          *免安装版my.ini的配置
+          *注册mysql的服务
+          *打开“服务”的三种方法：
+          *“服务”的含义
+          *启动、停止mysql服务
+          *mysql服务启动失败解决办法
+          *修改默认账户密码
+          *登录到mysql服务器
+          *退出登录mysql
+          *登录到远程的mysql服务器（连接别人的机子的）
+          *卸载mysql服务
+     **关系型数据库
+          *数据库的本质
+     **SQL初步
+          *SQL简介
+          *SQL通用语法
+          *SQL分类
+     **DDL命令（操作数据库、表的一类SQL语句）
+          *数据库操作
+          *表操作
+     **DML命令（对表中数据进行增删改）
+          *增
+          *改
+          *删
+     **DQL命令（查询数据库中表的数据）
+          *基础查询
+          *给字段起别名
+          *条件查询
+          *模糊查询
+          *通配符
+          *排序查询
+          *分组查询
+          *聚合函数
+          *分页查询
+
+***Day2 MySQL高级
+     **约束
+          *约束的概念
+          *约束的分类
+          *自增长：AUTO_INCREMENT
+          *添加约束的实际案例
+          *更改表对某字段的约束（建完表后）
+          *外键约束
+     **数据库设计
+          *数据库设计简介
+          *表关系之一对多（多对一）
+          *如何区分一对多（多对一）还是多对多？
+          *表关系之多对多
+          *表关系之一对一
+          *数据库设计案例
+     **多表查询
+          *笛卡尔积
+          *消除无效数据
+          *内连接（隐式、给表起别名、显式）
+          *外连接（左外、右外）
+          *子查询（单行单列、多行单列、多行多列）
+          *多表查询案例
+     **事务
+          *事务简介
+          *数据的临时修改与永久修改
+          *事务操作
+          *事务四大特征
+          *事务的默认提交方式
+
+***Day3 JDBC
+     **JDBC简介
+          *概念
+          *JDBC的必要性
+          *JDBC来由
+          *JDBC功能与好处
+          *JDBC本质
+          *JDBC与实现类
+          *MySQL驱动的意思
+          *如何使用JDBC接口编程？
+     ** JDBC快速入门
+          *大概流程
+          *代码实战
+     **JDBC API详解
+          *DriverManager —— 管理一组JDBC驱动程序的基本服务
+          *Connection（获取执行SQL的对象、管理事务）
+          *Statement —— 执行SQL语句
+          *ResultSet —— 查询数据库中表的数据
+          *SQL注入详解
+          *PreparedStatement —— 预防SQL注入
+          *PreparedStatement原理（暂略）
+     **数据库连接池（暂略）
+          *简介
+          *好处
+     **JDBC练习（暂略）
+
+***Day4 Maven
+     **Maven概述
+          *Maven是什么？
+          *Maven主要功能
+          *为什么要使用Maven？
+          *Maven文件目录结构
+          *标准化的构建流程
+          *依赖管理机制
+     **Maven简介
+          *仓库分类
+          *jar包导入过程
+          *搭建远程仓库的好处
+          *Maven的安装配置
+          *Maven常用命令
+          *Maven生命周期
+     **IDEA配置Maven
+          *IDEA配置Maven环境
+          *Maven坐标详解
+          *IDEA创建Maven项目
+          *IDEA导入Maven项目
+          *IDEA中运行Maven命令
+          *IDEA安装Maven小插件 —— Maven Helper
+          *IDEA中右边栏的DataBase载入本地数据库
+          *IDEA里的DataBase写SQL（与Navicat差不多）以及快捷命令（自动补全命令）
+          *IDEA在xxxMapper.xml写SQL语句时没有命令提示解决办法
+          *IDEA报错解决办法
+
+***Day5 Mybatis
+     **MyBatis概述
+          *什么是MyBatis?
+          *官方解释
+          *POJO含义
+          *什么是持久层？
+          *什么是框架？
+          *JDBC的缺点
+          *MyBatis如何简化JDBC
+     **MyBatis快速入门
+          *案例需求：查询user表中所有数据（步骤）
+          *案例实操（文件配置与代码实现）
+     **Mapper代理开发
+          *目的：
+          *使用Mapper代理方式步骤
+          *Mapper代理开发案例
+     **MyBatis核心配置文件
+          *概述
+          *MyBatis核心配置文件的顶层结构
+          *环境配置(environments)
+          *类型别名(typeAliases)
+          *MyBatis核心配置文件配置细节
+     **配置文件完成增删改查
+          *案例需求 —— 完成品牌数据的增删改查操作
+          *要完成的功能列表清单
+          *准备环境
+     **“查询所有数据”功能
+          *步骤
+          *Mapper.xml中对列名起别名的作用
+          *SQL片段的定义
+          *resultMap标签优化SQL片段
+     **"查看详情"功能
+          *步骤
+          *参数占位符
+          *parameterType（可以省略） 
+          *特殊字符串的处理
+     **条件查询
+          *多条件查询（含三种参数接收方法）
+          *多条件-动态条件查询（解决用户可能不会把所有条件都填写的情况）
+          *单条件-动态条件查询
+     **“添加”功能
+          *MyBatis的自动提交和手动提交
+          *添加数据后返回主键值
+     **“修改”功能
+          *修改全部字段
+          *修改动态字段（只修改某几个字段）
+     **“删除”功能
+          *删除一个
+          *批量删除
+     **MyBatis参数传递（暂略）
+     **注解完成增删改查（暂略）
+     **动态SQL（暂略）
+
+***Day6 HTML&CSS
+     **HTML介绍
+          *什么是HTML
+     **HTML快速入门
+          *基础标签
+          *HTML语言的松散性
+          *在IDEA新建HTML项目
+          *图片、音频、视频标签
+          *超链接标签
+          *列表标签
+          *表格标签
+          *布局标签
+          *表单标签
+          *表单项标签
+     **什么是CSS？
+          *概述：
+     **CSS导入方式
+          *内联样式：
+          *内部样式：
+          *外部样式：定义link标签，引入外部的css文件
+     **CSS选择器
+          *概念：选择器是选取需设置样式的元素（标签）
+          *元素选择器
+          *id选择器
+          *类选择器 —— 把在一个class里的都设置为同样样式
+     **CSS属性（到https://www.w3school.com.cn/的CSS查看文档即可；往下的JS、DOM文档也有）
+
+***Day7 JavaScript
+     **简介
+          *什么是JavaScript？
+          *JavaScript能做什么？
+     **JavaScript引入方式
+          *内部脚本：将JS代码定义在HTML页面中
+          *外部脚本：将内代码定义在外部JS文件中，然后引入到HTML页面中
+     **JavaScript基础语法
+          *书写语法
+          *输出语句
+          *变量
+          *数据类型
+          *运算符（解释==和===的区别）
+          *其他类型转为number
+          *其他类型转为boolean
+          *流程控制语句
+          *函数
+     **JavaScript常用对象
+          *Array对象
+          *Array对象属性
+          *Array对象方法
+          *String
+          *自定义对象
+     **BOM对象
+          *全称：Browser Object Model —— 浏览器对象模型
+          *作用：JavaScript将浏览器的各个组成部分封装为对象
+          *组成：
+          *Window —— 浏览器窗口对象
+          *灯的切换案例分析
+          *History —— 历史记录对象
+          *Location —— 地址栏对象
+     **DOM
+          *全称：Document Object Model —— 文档对象模型
+          *作用：将标记语言的各个组成部分封装为对象
+          *DOM是W3C（万维网联盟）的标准
+     **DOM Element对象、Attributes对象
+          *获取方法 —— 使有Document对象的方法来获取
+          *常用HTML Element对象的使用
+          *常用的DOM Attributes对象的使用
+          *小结
+     **事件监听
+          *简介 —— HTML事件是发生在HTML元素上的“事情”。
+          *作用 —— Javascript可以在事件被侦测到时执行代码
+          *事件绑定
+          *常见事件
+          *案例：表单验证
+     **正则表达式
+          *概念:正则表达式定义了字符串组成的规则
+          *语法
+          * —— 零个或多个
+          *test(str)方法
+
+***Day8 —— HTTP&Tomcat&Servlet
+     **Web核心简介
+          *什么是JavaWeb？
+          *JavaWeb技术栈
+          *Web核心学习路径和方向
+     **HTTP协议
+          *概念：HyperText Transfer Protocol，超文本传输协议，规定了浏览器和服务器之间数据传输的规则
+          *HTTP协议特点
+     **HTTP请求数据格式:
+          *常见的HTTP请求头:
+          *GET请求和POST请求区别:
+     **HTTP响应数据格式
+          *响应状态码分类
+          *常见的HTTP响应头:
+     **Web服务器 - Tomcat
+          *Tomcat简介
+          *Tomcat基本使用
+          *Tomcat各个目录的介绍
+          *解决Tomcat控制台乱码问题
+          *验证Tomcat是否启动成功
+          *关闭Tomcat
+     **Tomcat的配置
+          *配置
+          *启动时可能出现的问题:
+          *拓展：如何根据端口号找到相应正在运行的程序？
+          *Tomcat部署项目与访问
+          *pom.xml中<packaging>打包方式介绍
+     **IDEA中创建Maven Web项目
+          *Web项目结构：
+          *开始在IDEA创建项目（用/不用骨架）
+     **IDEA中方便快捷地使用Tomcat
+          *问题痛点
+          *解决办法
+     **Servlet快速入门
+          *简介
+          *Servlet实现步骤：
+     **Servlet执行流程
+     **Servlet生命周期
+     **Servlet方法介绍
+     **Servlet体系结构
+          *简介
+          *Servlet继承HttpServlet实战案例
+          *MyHttpServlet案例实战
+     **Servlet urlPattern配置
+          *精确匹配
+          *目录匹配
+          *扩展名匹配
+          *任意匹配
+          *任意匹配的/和/*区别:
+          *优先级：精确 > 目录 > 扩展名 > /* > /
+     **XML配置方式编写Servlet
+          *注解配置与XML配置
+
+***Navicat软件使用
+     **外键
+          *如何直观查看表与表之间的链接
+
+***IDEA软件使用
+     **代码快捷操作
+          *模版介绍
+          *快速写出main方法 —— main + enter
+          *快速写出for循环 —— fori + enter
+          *System.out.println();快捷操作
+          *用.var快速定义类和类对象（自动分配变量名）
+          *快速替换某个区域的所有变量名A为变量名B
+     **快捷键
+          *删除一行 —— ctrl + d（自己设置）
+          *复制当前行 —— ctrl + alt + 向下箭头（自己设置）
+          *补全代码快捷键 —— alt + /
+          *添加注释和取消注释 —— ctrl + /
+          *消除报错警告 —— alt + enter
+          *生成构造方法、getter、setter、toString等方法 —— alt + Ins
+          *Maven项目里，pom.xml文件中依赖模板、插件模板的快速插入 —— alt + Ins
+          *查看一个类的层级关系（继承关系）—— ctrl + H
+          *定位到哪个类的方法 —— ctrl + B 或 ctrl + 鼠标左键
+          *列编辑模式及使用技巧 —— shift + alt + Ins（进入列编辑模式）
+     **Settings
+          *IDEA自动import的设置
+          *解决IDEA的ctrl + /注释总在行首开始的问题
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+***Day1 MySQL基础
+**MySQL初步
+*生成data目录
+mysqld --initialize-insecure --user=mysql
+
+*data目录作用
+以后建立的数据库、表都会在data文件夹下，所以要使用MySQL，生成data目录这一步必不可少
+
+*免安装版的注意事项
+解压后不可放在有中文的路径
+
+*免安装版my.ini的配置
+[mysqld]
+# 设置3306端口
+port=3306
+# 设置mysql的安装目录
+basedir=D:\\Program Files\mysql-8.0.33-winx64  # 切记此处一定要用双斜杠
+# 设置mysql数据库的数据的存放目录
+datadir=D:\\Program Files\mysql-8.0.33-winx64\data   # data目录之后初始化会自动创建
+# 允许最大连接数
+max_connections=200
+# 允许连接失败的次数。这是为了防止有人从该主机试图攻击数据库系统
+max_connect_errors=10
+# 服务端使用的字符集默认为UTF8
+character-set-server=utf8mb4
+# 创建新表时将使用的默认存储引擎
+default-storage-engine=INNODB
+# 默认使用“mysql_native_password”插件认证
+default_authentication_plugin=mysql_native_password
+[mysql]
+# 设置mysql客户端默认字符集
+default-character-set=utf8mb4
+[client]
+# 设置mysql客户端连接服务端时默认使用的端口
+port=3306
+default-character-set=utf8mb4
+
+*注册mysql的服务
+mysqld -install —— 让MySQL成为计算机管理里面的一个服务
+（注册后，我们的计算机就称为一个mysql数据库服务器了）
+
+*打开“服务”的三种方法：
+1.win + x打开计算机管理
+2.ctrl + shift + esc打开任务管理器，打开最后一页“服务”，再左下角打开“服务”
+3.cmd或“运行”写services.msc，回车
+
+*“服务”的含义
+“服务”的意思，就是让这台计算机成为一个mysql服务器
+
+*启动、停止mysql服务
+net start mysql —— 启动
+net stop mysql —— 停止
+
+*mysql服务启动失败解决办法
+法一：
+检查环境变量是否把bin路径放到path，且路径不能有中文
+法二：
+重新检查my.ini是否配置，删除data目录，后重新运行初始化命令
+法三：
+mysqld --remove
+mysqld --install
+重新安装mysql服务
+法四：
+重启电脑
+法五：
+访问https://cn.dll-files.com/vcruntime140_1.dll.html
+下载VCRUNTIME140_1.DLL最新版本
+解压后打开文件夹，把里面的文件放到mysql的bin目录下
+再尝试net start mysql
+
+*修改默认账户密码
+mysqladmin -u root password 1234 —— 开了一个超级管理员的用户，并设置密码1234
+注意：需先启动mysql服务再执行这个
+
+*登录到mysql服务器
+mysql -uroot -p —— 连接到本机的mysql服务器
+（bin目录下有一个mysql.exe，这是一个客户端，通过这个客户端，可以和“服务”里的mysql服务器通信）
+（也可以和远程的mysql服务器通信）
+
+*退出登录mysql
+exit或quit
+
+*登录到远程的mysql服务器（连接别人的机子的）
+mysql -uroot -p1234 -h127.0.0.1(写要连接到的那个ip地址) -P3360(端口号)
+（Tips:127.0.0.1是本机回环地址，等价于localhost）
+
+*卸载mysql服务
+1.mysqld -remove mysql —— 把mysql在“服务”里移除
+2.删除mysql目录
+3.删除相关的环境变量
+（如果删除后，服务里还存在mysql，则在cmd执行：sc delete mysql）
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**关系型数据库
+建立在关系模型基础上的数据库，是由多张能互相连接的二维表组成的数据库
+（通过表存储数据的就叫关系型数据库，不通过表存的就叫非关系型数据库）
+优点：
+1.都是使用表结构，格式一致，易于维护
+2.使用通用的SQL语言操作，使用方便，可用于复杂查询
+3.数据存储在磁盘中，安全
+
+*数据库的本质
+数据库是mysql的data目录下的文件夹（如create database db1;命令就会在data目录下新建一个db1的文件夹），然后一个数据库下面可以存放多个数据表，每个表里可以存多个数据
+（“数据表”是文件(.frm)、“数据”也是文件(.MYD)）
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**SQL初步
+*SQL简介
+1.Structured Query Language —— 结构化查询语言，一门操作关系型数据库的编程语言
+2.定义了操作所有关系型数据库的统一标准
+3.操作不同的数据库可能有一些不同的地方，称为“方言”
+
+*SQL通用语法
+1.单行或多行书写，分号结尾（未分号回车会出现“->”让你继续写，分号后命令会一起执行）
+2.MySQL数据库的SQL语句不区分大小写，关键字建议用大写
+3.注释：
+单行注释：--(空格)（注释内容）、#（注释内容）
+多行注释：/*（注释内容）*/
+
+*SQL分类
+1.DDL（Data Definition Language）数据定义语言，用来定义数据库对象：数据库，表，列等
+2.DML（Data Manipulation Language）数据操作语言，用来对数据库中表的数据进行增删改
+3.DQL（Data Query Language）数据查询语言，用来查询数据库中表的记录（数据）
+4.DCL（Data Contro Language）数据控制语言用来定义数据库的访问权限和安全级别，及创建用户
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**DDL命令（操作数据库、表的一类SQL语句）
+*数据库操作
+SHOW DATABASES; —— 查询 
+（初始查询到的是mysql自带的数据库，一般不会操作他们，需自己创建我们自己的数据库）
+
+CREATE DATABASE 数据库名称; —— 创建数据库     eg:  create database db1;
+CREATE DATABASE IF NOT EXISTS 数据库名称; —— 创建数据库（判断，如果不存在则创建）
+
+DROP DATABASE 数据库名称; —— 删除数据库
+DROP DATABASE IF EXISTS 数据库名称; —— 删除数据库（判断，如果存在则删除）
+
+USE 数据库名称; —— 使用数据库
+SELECT DATABASE(); —— 查看当前正在使用的数据库
+
+*表操作
+SHOW TABLES; —— 查看当前数据库的所有表名称
+
+DESC 表名; —— 查看某表的整体结构信息（其中Field一列是字段(表的表头一行)、Type是类型）
+
+CREATE TABLE 表名称("回车"
+->第一个字段名 第一个字段类型,"回车"
+->第二个字段名 第二个字段类型,"回车"
+->第三个字段名 第三个字段类型"回车"
+->); —— 创建表
+
+DROP TABLE 表名; —— 删除表
+DROP TABLE IF EXISTS 表名; —— 删除表时判断表是否存在
+
+ALTER TABLE 表名 RENAME TO 新的表名; —— 修改表名
+ALTER TABLE 表名 ADD 字段名 数据类型; —— 添加一个字段
+ALTER TABLE 表名 MODIFY 字段名 新数据类型; —— 修改数据类型
+ALTER TABLE 表名 CHANGE 字段名 新字段名 新字段数据类型; —— 修改字段和数据类型
+ALTER TABLE 表名 DROP 字段名; —— 删除字段
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ **MySQL的数据类型
+1.数值（整数、小数）
+eg: score double(总长度，小数点后保留的位数) -> score double(5, 2) --- 说明整数部分最大三位，小数2位
+
+2.日期
+eg: birthday date
+
+3.字符串
+name char(最大字符串长度) —— 定长字符串
+（定长，多余空间自动补0）
+（存储性能高，以空间换时间）
+（若有一个字段已经确定长度，如“性别”，则可用char(1)）
+
+name varchar(最大字符串长度) —— 变长字符串
+（先计算实际空间，再以实际空间存入数据，但数据的实际长度不可超过最大字符串长度）
+（存储性能低，以时间换空间）
+
+~~~更多数据类型详见“MySQL数据类型.png”
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**DML命令（对表中数据进行增删改）
+*增
+INSERT INTO 表名(字段名1，字段名2，……) VALUES(值1，值2，……); —— 给指定字段添加数据
+INSERT INTO 表名 VALUES(值1，值2，……); —— 给全部字段添加数据
+INSERT INTO 表名(字段名1，字段名2，……) VALUES(值1，值2，……), (值1，值2，……)...; —— 批量添加数据
+INSERT INTO 表名 VALUES(值1，值2，……), (值1，值2，……)...; —— 给所有字段添加数据，字段名的列表可以省略
+（不建议在java开发中省略，方便字段与值一一对照着写，避免写错）
+（Tips：值中的字符串可以用单引号也可以用双引号，这种规定是为了将来在用JDBC接口写代码时，""中继续得嵌套""的情况，而""中嵌套''是允许的）
+
+*改
+UPDATE 表名 SET 字段名1 = 值1, 字段名2 = 值2, ... WHERE 条件;
+（注意：若不加条件，则所有的行数据都会修改！）
+正确修改范例：
+eg:
+需求：将jack的性别改为女
+update stu set sex = '女' where name = 'jack';
+
+*删
+DELETE FROM 表名 WHERE 条件;
+（如条件是：where name  = 'jack'，则会把jack这一行的数据删除）
+（注意：如果不加条件，则会将表中所有数据全部删除！）
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**DQL命令（查询数据库中表的数据）
+*基础查询
+SELECT 字段名1, 字段名2, ……, from 表名; —— 查看某些字段的列，而隐藏其他列
+SELECT * FROM 表名; —— 查询所有数据
+（但是在开发中不要使用*，应把名字全部写出来，方便查看*到底代表哪些字段，也方便给每个字段名添加注释）
+
+SELECT DISTINCT 字段名 FROM 表名; —— 利用distinct关键字查询数据
+（去除相同数据。如查询表上学生都有来自哪个省的，那么重复的省就可以去除了）
+
+*给字段起别名
+SELECT 字段名1 AS 字段名1别名, 字段名2 AS 字段名2别名 from 表名; —— 利用as关键字查询
+（这样在显示时，不显示该字段名，而显示该字段的别名）
+（Tips：AS可以省略，但字段名和字段别名之间至少有一个空格）
+
+*条件查询
+（更多条件运算符见“条件运算符.png”）
+SELECT * FROM 表名 WHERE age > 20 && age < 30; —— 查询年龄大于20且小于30岁的学生信息
+（"&&"建议写为"AND"）
+（以上需求也可改为BETWEEN AND语句: SELECT * FROM 表名 WHERE age BETWEEN 20 AND 30;）
+（日期也可以用大小进行比较：eg: BETWEEN '1998-09-01' and '1999-09-01'）
+
+SELECT * FROM 表名 WHERE age = 18; —— 查询年龄等于18岁的学生信息
+（注意：SQL里的等值判断用一个"="就行）
+
+SELECT * FROM 表名 WHERE age <> 18; ——（不等号判断："!="或"<>"）（建议使用"<>"）
+
+SELECT * FROM 表名 WHERE age = 18 or age = 20; —— （或判断："||"或"or"）（建议使用"or"）
+SELECT * FROM 表名 WHERE age in (18, 20); —— （"或"的简化写法）
+
+SELECT * FROM STU WHERE english is null; —— 查询英语成绩为“空”的学生
+（注意：null值的比较不能使用=、!=，需要使用is、is not）
+
+*模糊查询
+*通配符
+_ —— 匹配单个任意字符
+% —— 匹配多个任意字符
+SELECT * FROM STU WHERE name  LIKE '马%'; —— 查询姓“马”的学生信息
+SELECT * FROM STU WHERE name  LIKE '_花%'; —— 查询第二个字是“花”的学生信息
+SELECT * FROM STU WHERE name  LIKE '%花%'; —— 查询名字中包含“德”的学生信息（现实中最常用）
+
+*排序查询
+ASC —— 升序（默认值）
+DESC —— 降序
+SELECT * FROM 表名 ORDER BY age —— 查询学生信息，按照年龄升序排列
+SELECT * FORM 表名 RODER BY math  DESC —— 查询学生信息，按照数学成绩降序排列
+
+SELECT * FORM 表名 RODER BY math  DESC, english ASC; —— 查询学生信息，按照数学成绩降序排列，如果数学成绩一样，再按照英语成绩升序排列
+（注意：如果有多个排序条件，当前边的条件值一样时，才会根据第二条件进行排序）
+
+*分组查询
+“分组”解释：把数据按照某一个条件归类然后针对每一类进行统计和分析的操作
+（如：把学生分为“男”和“女”两类，然后分别计算二者平均分）
+
+先了解：
+*聚合函数
+概念：将一列数据（一个字段的数据）作为一个整体，进行纵向计算
+count(字段名) —— 统计数量
+max(字段名) —— 求最大值
+min(字段名) —— 求最小值
+sum(字段名) —— 求和
+avg(字段名) —— 求平均值
+
+聚合函数语法：SELECT 聚合函数名(字段名) FROM 表名;
+
+SELECT COUNT(name) FROM 表名; —— 统计班级一共有多少个学生 
+（注意：count不统计null值，所以如果用score字段来统计的话，若某个学生的成绩为null则会漏统计该生）
+（建议用*来统计，即：COUNT(*)，这样一来，只要这行有一个数据不是null，就能把这一行统计上（而且*会让COUNT自动选择速度最快的那一列进行统计））
+（COUNT(*)得到的是一个字段为“count(*)”，数据为“统计结果”的一个虚拟表，所以这个表后也可以跟一个别名如：COUNT(*) count）
+
+SELECT MAX(english) FROM stu; —— 统计英语成绩的最低分
+（已知英语成绩有个同学为null，但最低分不会是null）
+
+（综上：null值不参与所有聚合函数的运算！）
+
+分组查询语法
+SELECT 查询的字段列表 FROM 表名 WHERE 分组前限定条件 GROUP BY 分组字段名 HAVING 分组后条件过滤;
+（注意：分组之后，查询的字段为聚合函数和分组字段，查询其他字段无任何意义。）
+（如：以男女分组，那么若查询的字段写了name，而“男”这组和“女”这组不应该有一个共同的名字，所以查到的name没有意义）
+
+SELECT sex, AVG(math), COUNT(*) FROM 表名 GROUP BY sex; —— 查询男同学和女同学各自的数学平均分，以及各自的人数
+
+SELECT sex, AVG(math), COUNT(*) FROM 表名 WHERE math > 70 GROUP BY sex;  —— 查询男同学和女同学各自的数学平均分，以及各自人人数，要求：分数低于70分的不参与分组
+（分组之前进行条件判断，所以WHERE写在GROUP BY前）
+
+SELECT sex, AVG(math), COUNT(*) FROM 表名 WHERE math > 70 GROUP BY sex HAVING COUNT(*) > 2; —— 查询男同学和女同学各自的数学平均分，以及各自人人数，要求：分数低于70分的不参与分组，分组之后人数大于2
+（分组之后进行条件的筛选，所以HAVING写在GROUP BY后）
+
+WHERE和HAVING区别：
+1.执行时机不一样：where是分组之前进行限定，不满足where条件，则不参与分组，而having是分组之后对结果进行过波。
+2.可判断的条件不一样：where不能对聚合函数进行判断，having可以。（因为，执行顺序：WHERE > 聚合函数 > HAVING）
+
+*分页查询
+目的：若数据有几万行，那么不适宜把数据全部罗列到一个页面上展示给用户，应用分页的办法
+（分页后内存消耗小，用户体验更佳）
+
+分页查询语法
+SELECT 字段列表 FROM 表名 LIMIT 起始索引, 查询条目数;
+起始索引：从0开始
+计算公式：起始索引 = (当前页码 - 1) * 每页显示的条数
+Tips：
+分页查询LIMIT是MySQl数据库的方言，Oracle分页查询使用rownumber，SQLserver分页查询使用top
+
+SELECT * FROM stu LIMIT 0, 3; —— 从0开始查询，查询3条数据
+SELECT * FROM stu LIMIT 0, 3; —— 每页显示3条数据，查询第1页数据
+SELECT * FROM stu LIMIT 3, 3; —— 每页显示3条数据，查询第2页数据
+SELECT * FROM stu LIMIT 6, 3; —— 每页显示3条数据，查询第3页数据
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+***Day2 MySQL高级
+**约束
+*约束的概念
+1.约束是作用于表中列上的规则，用于限制加入表的数据
+2.约束的存在保证了数据库中数据的正确性、有效性和完整性
+
+*约束的分类
+NOT NULL —— 非空约束（保证列中所有数据不能有null值）
+UNIQUE —— 唯一约束 （保证列中所有数据各不相同）
+PRIMARY KEY —— 主键约束（主键是一行数据的唯一标识，要求非空且唯一）
+CHECH —— 检查约束（保证列中的值满足某一条件）
+DEFAULT —— 默认约束（保存数据时，未指定值则采用默认值（该位置写default才用默认值（我这儿不给值会报错），若给null，则就是null））
+FOREIGN KEY —— 外键约束（外键用来让两个表的数据之间建立链接，保证数据的一致性和完整性）
+
+Tips：MySQL不支持检查约束
+
+*自增长：AUTO_INCREMENT
+（当列是数字类型且唯一约束时就可用auto_increment）
+（写了auto_increment后，经老师测试，该位置不给值或给null都可以执行成功（我写null可以，但不给值会报错），并自增长来填充该位置）
+
+*添加约束的实际案例
+CRERAT ETRBLE emp（ -- emp指的是employee —— 雇员
+    id INT PRIMARY KEY auto_increment, --员工id，主键且自增长
+    ename VARCHAR(50) NOT NULL UNIQUE，--员工姓名，非空并且唯一（若有两个约束，则用空格隔开就行）
+    joindate DRTE NOT NULL, --入职日期，非空
+    salary DOUBLE(7, 2) NOT NULL，--工资，非空
+    bonus DOUBLE(7, 2) DEFRAULT 0 --奖金，如果没有奖金默认为0
+);
+
+*更改表对某字段的约束（建完表后）
+ALTER TABLE 表名 MODIFY 字段名 数据类型 NOT NULL; —— 添加对某字段的非空约束
+ALTER TABLE 表名 MODIFY 字段名 数据类型; —— 删除对某字段的非空约束
+
+ALTER TABLE 表名 MODIFY 字段名 数据类型 UNIQUE; —— 添加对某字段的唯一约束
+ALTER TABLE 表名 DROP  INDEX 字段名; —— 删除对某字段的唯一约束
+
+ALTER TABLE 表名 ADD PRIMARY KEY(字段名); —— 添加对某字段的主键约束
+ALTER TABLE 表名 DROP PRIMARY KEY; —— 删除对某字段的主键约束
+
+ALTER TABLE 表名 ALTER 列名 SET DEFAULT 默认值; —— 添加对某字段的默认约束
+ALTER TABLE 表名 ALTER 列名 DROP DEFAULT; —— 删除对某字段的默认约束
+
+注意：凡事不符合约束的DML增、改操作，都会报错，不能成功！
+
+*外键约束
+外键用来让两个表的数据之间建立链接，保证数据的一致性和完整性
+（如：现有“员工表”与“研发部表”，其中员工现实中是属于研发部的，没有约束时，这两个表在数据库中是独立的，则可直接删除研发部表，这不合理）
+（“研发部表”——主表；“员工表”——从表）
+
+CONSTRAINT 外键名称 FOREIGN KEY(外键字段名) REFERENCES 主表(主表字段名); —— 建表时添加外键约束
+eg:
+CREATE TABLE 主表dept(  -- dept指的是department —— 部门
+     id int primary key auto_increment,
+);
+CREATE TABLE 从表名emp(
+    id int primary key auto_increment,
+  dep_id int, --员工同数字说明同部门，而且若该数字是1，则添加外键后，属于1的所有员工就链接到了主表的部门1
+
+   -- 添加外键dep_id，关联dept表的id主键
+   CONSTRAINT fk_emp_dept FOREIGN KEY(dep_id) REFERENCES dept(id)
+);
+Tips：
+1.外键名一般用fk开头，即foreign key的缩写，然后后面写两个关联的表名，这样就知道谁和谁有关联了
+2.外键约束在从表写，所以需先创建主表
+3.同理，添加数据时应先添加主表数据，再添加从表数据
+4.若需删除主表，则需先清空从表
+
+ALTER TABLE 表名 ADD CONSTRAINT 外键名称 FOREIGN KEY(外键字段名) REFERENCES 主表(主表字段名); —— 建完表后添加外键约束
+
+ALTER TABLE 表名 DROP ROREIGN KEY 外键名称; —— 删除约束
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**数据库设计
+*数据库设计简介
+1.软件的研发步骤
+见“软件的研发步骤.png”
+
+2.数据库设计的概念
+a.数据库设计就是根据业务系统的具体需求，结合我们所选用的DBMS，为这个业务系统构造出最优的数据存储模型。
+b.建立数据库中的表结构以及表与表之间的关联关系的过程。
+c.有哪些表?表里有哪些字段？表和表之间有什么关系？
+
+3.数据库设计的步骤
+需求分析（数据是什么？数据具有哪些属性？数据与属性的特点是什么）
+逻辑分析（通过ER图对数据库进行逻辑建模，不需要考虑我们所选用的数据库管理系统）（ER图见“ER图.png”）
+物理设计（根据数据库自身的特点把逻辑设计转换为物理设计）
+维护设计（1.对新的需求进行建表；2.表优化）
+
+*表关系之一对多（多对一）
+部门 和 员工
+（一个部门对应多个员工，一个员工对应一个部门）
+实现方式：在“多”的一方建立外键，指向“一”的一方的主键
+eg:（已在外键约束一节有实际例子）
+
+*如何区分一对多（多对一）还是多对多？
+正着反着说都能说得通是前提，若正反只有一个“多”字，说明是一对多，若都有“多”字，说明是多对多，
+
+*表关系之多对多
+商品 和 订单
+（一个商品对应多个订单(一个商品被多个用户购买(多个订单))，一个订单包含多个商品(一个用户一次购买多个商品)）
+实现方式：建立第三张中间表，中间表至少包含两个外键，分别关联两方主键
+eg:
+-- 订单表
+CREATE TABLE tb_order(
+    id int primary key auto_increment,
+    payment double(10, 2),
+    pament_type TINYINT,
+    status TINYINT
+);
+-- 商品表
+CREATE TABLE tb_goods(
+    id int primary key auto_increment,
+    title varchar(100),
+    price double(10, 2)
+);
+-- 订单商品中间表
+CREATE TABLE tb_order_goods(
+    id int primary key auto_increment,
+    order_id int,
+    goods_id int,
+    count int
+);
+-- 建完表后，添加外键
+ALTER TABLE tb_order_goods ADD CONSTRAINT fk_order_id FOREIGN KEY(order_id) REFERENCES tb_order(id);
+ALTER TABLE tb_order_goods ADD CONSTRAINT fk_goods_id FOREIGN KEY(goods_id) REFERENCES tb_goods(id);
+
+*表关系之一对一
+（是比较特殊的关系，在业务系统中比较少见，但在生活中比较常见，如：身份证与人）
+一对一关系多用于表拆分，将一个实体中经常使用的字段放一张表，不经常使用的字段放另一张表，用于提升查询性能
+eg: 用户(QQ资料卡里的经常看见（使用）的) 和 用户详情(QQ的个人详细资料)
+经常被看见的数据放到A表里，而“个人说明”这些不需经常看见的详细数据放到B表里，可以提高查表效率
+实现方式：在任意一方加入外键，关联另一方的主键，并且设置外键为唯一（UNIQUE）
+
+*数据库设计案例
+歌曲页面：
+四个表：专辑、曲目、用户、短评
+表关系：
+专辑 -> 曲目（一对多）
+专辑 -> 短评（一对多）
+专辑 <-> 用户（多对多）
+用户 -> 短评（一对多）
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**多表查询
+概念：从多张表查询数据
+
+*笛卡尔积
+（有A，B两个集合，取A，B所有的组合情况）
+如果直接用这条语句：SELECT * FROM 表1，表2;，则会产生笛卡尔积，如表1有3行数据，表二有2行数据，则这样运行后会产生3*2 = 6条数据，这样会产生很多无效的数据
+eg:
+表一小明（外键1）属于表二的部门1，小光（外键3）属于表二的部门2，小亮（外键3）属于表二的部门2，则SELECT * FROM emp，dept;后
+小明      部门1
+小明      部门2 -- 无效数据
+小光      部门1 -- 无效数据
+小光      部门2
+小亮      部门1 -- 无效数据
+小亮      部门2
+
+*消除无效数据
+SELECT * FROM emp，dept WHERE emp.dep_id = dept.did; -- 其中dep_id是emp(员工)表的外键，did是dept(部门)表的部门编号
+
+*内连接（隐式、给表起别名、显式）
+概念：相当于查询A、B交集的数据
+1.隐式内连接：
+格式：SELECT 字段列表 FROM 表1, 表2... WHERE 条件; -- 也就是上方“消除无效数据”一节的语句
+
+eg: 查询emp表的name，gender。dept表的dname
+SELECT emp.name, emp.gender, dept.dname FROM emp, dept WHERE emp.dep_id = dept.did;
+
+2.给表起别名：
+SELECT t1.name, t1.gender, t2.dname FROM emp t1, dept t2 WHERE t1.dep_id = t2.did; -- 只需在from处声明别名后，表的名字就改了，然后要把别的地方也改为t1、t2
+
+3.显式内连接：
+格式：SELECT 字段列表 FROM 表1 INNER JOIN 表2 ON 条件; -- 其中INNER可省略不写，直接JOIN即可
+SELECT * FROM emp JOIN dept ON emp.dep_id = dept.did; -- 效果同上方“消除无效数据”一节的语句一致
+
+*外连接（左外、右外）
+1.左外连接：相当于查询A表所有数据和交集部分数据
+格式：SELECT 字段列表 FROM 表1 LEFT OUTER JOIN 表2 ON 条件; -- OUTER可省略
+
+2.右外连接：相当于查询B表所有数据和交集部分数据
+格式：SELECT 字段列表 FROM 表1 RIGHT OUTER JOIN 表2 ON 条件; -- OUTER可省略
+
+*子查询（单行单列、多行单列、多行多列）
+概念：在一个查询里嵌套了一个查询
+
+子查询根据查询结果不同，作用不同：
+1.单行单列
+概念：作为条件值，使用=!=><等进行条件判断
+格式：SELECT 字段列表 FROM 表 WHERE 字段名 = (子查询);
+
+eg: --查询工资高于小明的员工信息
+分步走：
+SELECT salary FROM emp WHERE name = '小明'; -- 先查询并获取小明的工资（假设查到为3600）
+SELECT * FROM emp WHERE salary > 3600; -- 查询工资高于3600的所有员工
+合二为一：
+SELECT * FROM emp WHERE salary > (SELECT salary FROM emp WHERE name = '小明');
+
+2.多行单列
+概念：作为条件值，使用in等关键字进行条件判断
+格式：SELECT 字段列表 FROM 表 WHERE 字段名 IN (子查询);
+
+eg: -- 查询'财务部'和'市场部'所有员工信息
+SELECT * FROM emp  WHERE dep_id  IN (SELECT did FROM dept WHERE dname = '财务部' OR dname = '市场部');
+
+3.多行多列
+概念：作为虚拟表
+格式：SELECT 字段列表 FROM (子查询) WHERE 条件;
+
+eg: -- 查询入职日期是'2011-11-11'之后的员工信息和部门信息
+SELECT * FROM emp WHERE join_date > '2011-11-11'; -- 获取一张条件是入职日期'2011-11-11'之后的员工新表（查出来是多行多列的，可作为虚拟表与别的表进行多表查询）
+SELECT * FROM (SELECT * FROM emp WHERE join_date > '2011-11-11') t1, dept WHERE t1.dep_id = dept.did; -- 隐式内连接查询入职日期'2011-11-11'之后的员工虚拟表里所对应的部门信息
+
+*多表查询案例
+需求
+①查询所有员工信息。查询员工编号，员工姓名，工资，职务名称，职务描述
+SELECT emp.id, emp.ename, emp.salary, job.jname, job.description FROM emp, job WHERE emp.job_id = job.id; -- 隐式内连接
+SELECT emp.id, emp.ename, emp.salary, job.jname, job.description FROM emp INNER JOIN job ON emp.job_id = job.in; -- 显式内连接
+
+②查询员工编号，员工姓名，工资，职务名称，职务描述，部门名称，部门位置
+SELECT emp.id, emp.ename, emp.salary, job.jname, job.description, dept.dname, dept.loc FROM emp, job WHERE emp.job_id = job.id and dept.id = emp.dept_id; -- 隐式内连接
+SELECT emp.id, emp.ename, emp.salary, job.jname, job.description, dept.dname, dept.loc FROM emp INNER JOIN job ON emp.job_id = job.id INNER JOIN dept ON dept.id = emp.dept_id; -- 显式内连接
+
+③查询员工姓名，工资，工资等级
+SELECT emp.ename, emp.salary, t2.grade FROM emp, salarygrade t2 WHERE emp.salary >= t2.losalary and emp.salary <= t2.hisalary;
+
+④查询员工姓名，工资，职务名称，职务描述，部门名称，部门位置，工资等级
+SELECT emp.ename, emp.salary, job.jname, job.description, dept.dname, dept.loc, t2.grade
+FROM 
+    emp 
+INNER JOIN job ON emp.job_id = job.id 
+INNER JOIN dept ON dept.id = emp.dept_id 
+INNER JOIN salarygrade t2 ON emp.salary BETWEEN t2.losalary AND t2.hisalary;
+
+⑤查询出部门编号、部门名称、部门位置、部门人数
+SELECT dept.id, dept.dname, dept.loc, t1.count 
+FROM
+    dept, (SELECT dept_id, count(*) count FROM emp group by dept_id) -- COUNT(*) count是给COUNT(*)这个字段为”COUNT(*)“，数据为”计算结果“的虚拟表起了个别名count
+WHERE dept.id = t1.dept_id
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**事务
+*事务简介
+1.数据库的事务（Transaction）是一种机制、一个操作序列，包含了一组数据库操作命令
+2.事务把所有的命令作为一个整体一起向系统提交或撤销操作请求，即这一组数据库命令要么同时成功，要么同时失败
+3.事务是一个不可分割的工作逻辑单元
+
+*数据的临时修改与永久修改
+临时修改：数据只在本地被修改，但未被提交到服务器上，别的客户端登入服务器查看该数据是未被修改状态
+永久修改：数据在本地被修改，且已经被提交到服务器上，别的客户端登入服务器查看该数据是已被修改状态
+
+*事务操作
+需求：转账操作（李四和张三分别有1000，这时，李四转账500给张三）
+步骤：
+1.查询李四余额是否大于等于500（略）
+2.李四金额 -500
+3.张三余额 +500
+操作：
+INSERT INTO account(name, money) VALUES('张三', 1000), ('李四', 1000); -- 为表添加数据
+未采用事务时：
+UPDATE account SET money = money - 500 WHERE name = '李四';
+（若过程中出现异常，导致只执行了李四-500，张三+500未执行，则会平白无故蒸发了500元，所以要用事务来避免）
+UPDATE account SET money = money + 500 WHERE name = '张三'; 
+采用事务时：
+BEGIN; -- 开启事务（或用START TRANSACTION）
+UPDATE account SET money = money - 500 WHERE name = '李四';
+（若过程中出现异常,因为开启了事务，所以李四的money不会被真正-500，只是临时的，需要等我们手动COMMIT提交或ROLLBACK回滚）
+UPDATE account SET money = money + 500 WHERE name = '张三'; 
+COMMIT; -- 如果过程完全正常，则执行，提交修改，让临时修改变成永久修改
+ROLLBACK;-- 如果过程中出现异常，则执行回滚，使临时修改的数据回到修改前的值
+
+*事务四大特征
+（面试常问到，只需回答ACID即可）
+原子性（Atomicity）：事务是不可分割的最小操作单位，要么同时成功，要么同时失败
+一致性（Consistency）：事务完成时，必须使所有的数据都保持一致状态
+隔离性（lsolation）：多个事务之间，操作的可见性
+持久性（Durability）：事务一旦提交或回滚，它对数据库中的数据的改变就是永久的
+
+*事务的默认提交方式
+查询事务的默认提交方式：
+SELECT @@autocommit; -- MySQL中默认是1（默认自动提交，即给MySQL输入一条命令语句，如果该语句非处在事务中，则会立刻自动执行(永久修改)，当然若处在事务中就是临时修改）
+修改事务的默认提交方式：
+SET @@autocommit = 0; -- 修改为默认手动提交（则此时给MySQL输入一条命令语句，只是临时修改，需要我们手动COMMIT才会永久修改）
+注意：Oracle数据库不同与MySQL，它默认是手动提交的，所以为Oracle写SQL语句时，要记住把命令手动COMMIT才会永久修改
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+***Day3 JDBC
+**JDBC简介
+*概念
+JDBC就是使用Java语言操作关系型数据库的一套API（Application Programming Interface —— “程序之间的接口”，即“程序之间的合约”）
+全称：（Java Data Base Connectivity）Java数据库连接
+
+*JDBC的必要性
+关系型数据库有很多很多(MySQL、Oracle、DB2……)，每种的底层实现细节都不一样，如果公司要求换数据库存储数据，那么就要新学一个数据库的操作，这样非常不方便
+
+*JDBC来由
+于是Sun公司就写了一套Java代码，起了个名就叫JDBC
+
+*JDBC功能与好处
+JDBC就定义了操作所有关系型数据库的规则，即用同一套Java代码，操作不同的关系型数据库
+各数据库厂商使用相同的接口，Java代码不需要针对不同数据库分别开发
+可随时更换底层数据库，访问数据库的Java代码基本不变
+
+*JDBC本质
+在Java里，规则就是“接口”，所以JDBC的本质是一套标准接口
+官方（sun公司）定义的一套操作所有关系型数据库的规则，即接口，各个数据库厂商去实现这套接口，提供数据库驱动jar包
+我们可以使用这套接口（JDBC）编程，真正执行的代码是驱动jar包中的实现类
+这种编程，叫“面向接口编程”
+
+*JDBC与实现类
+Sun公司没有给每个数据库定义实现类，只是定义了JDBC接口，但是每种数据库都希望能被Java操作，所以他们分别定义了自己对于JDBC的实现类，那么这些实现类实现JDBC接口后就可以操作自己的数据库了
+
+*MySQL驱动的意思
+实现类又称“驱动”，所以“写一个MySQL驱动”就是“写一个MySQL针对于JDBC的实现类的jar包”
+
+*如何使用JDBC接口编程？
+找到对应的数据库驱动jar包，导入到自己的项目中即可调用相应接口。要更换数据库时，只需更换项目中的数据库的驱动jar包即可
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+** JDBC快速入门
+*大概流程
+1.注册驱动
+Class.forName("com.mysql.jdbc.Driver"); //Java的反射相关内容
+2.获取连接
+Connection conn = DriverManager.getConnection(url, username, password);
+3.定义SQL语句
+String sql = "update...";
+4.获取执行SQL对象
+Statement stmt = conn.createStatement();
+5.执行SQL
+stmt.executeUpdate(sql);
+6.处理返回结果
+7.释放资源
+
+*代码实战
+（首先，新建一个项目，并在项目新建一个与src文件夹并列的文件夹“lib”，然后把jar包放到lib文件夹里，然后右键jar包，Add as Library，
+选择jar包生效的范围(Module Library---模块内)，选择后直接OK即可，然后在src新建包和文件，可以开始写代码）
+
+package com.sio.Study.JDBC;
+
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+
+public class JDBCDemo {
+    public static void main(String[] args) throws Exception {
+        //1.注册驱动
+       // Class.forName("com.mysql.jdbc.Driver"); //MySql 5之后的驱动jar包，这行可以不写，自动加载jar包中META-INF/services/java.sql.Driver文件中的驱动类
+
+        //获取连接
+        String url = "jdbc:mysql://127.0.0.1:3306/db1";//语法：jdbc:mysql://ip地址(域名):端口号/数据库名称?参数键值对1&参数键值对2...
+				             //细节：如果连接的是本机的mysql服务器，并且mysql服务默认端口是3306，则url可以简写为：jdbc:mysql:///数据库名称?参数键值对
+					       //这样运行后会发现有红色的警告信息，它是希望我们用ssl的安全连接方式，但需经复杂的配置过程，如果不想用，想关闭这种警告，则需加上?useSSL=false）
+        String username = "root";
+        String password = "123456";
+        Connection conn = DriverManager.getConnection(url, username, password); //getConnection方法，返回对应的Connection对象
+
+        //3.定义SQL
+        String sql = "update stu set name = '小亮' where name = 'rose'";
+
+        //4.获取执行SQL的对象Statement
+        Statement stmt = conn.createStatement();
+
+        //5.执行SQL
+        int count = stmt.executeUpdate(sql);//用count接收“受影响的行数”（不同的语句返回值有不同，详见下方的*statement，此处“受影响的行数”指的是DML语句）
+
+        //6.处理结果
+        System.out.println(count);
+
+        //7.释放资源
+        stmt.close();//后生成的对象先关闭
+        conn.close();
+    }
+}
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**JDBC API详解
+*DriverManager —— 管理一组JDBC驱动程序的基本服务
+（DriverManager的细节请查看上方“代码实战”中的注释）
+
+*Connection（获取执行SQL的对象、管理事务）
+Connection(数据库连接对象)
+作用：
+1.获取执行SQL的对象：
+普通执行SQL对象 --- 常用
+Statement createStatement()
+预编译SQL执行SQL对象：防止SQL注入 --- 常用
+PreparedStatement prepareStatement(sql)
+执行存储过程的对象 --- 不常用
+CalableStatement prepareCall(sql)
+
+2.管理事务
+（回顾：MySQL事务管理）
+JDBC事务管理：
+Connection接口中定义了3个对应的方法
+开启事务：setAutoCommit(boolean autoCommit)：true为自动提交任务；false为手动提交事务，即为开启事务
+提交事务：commit()
+回滚事务：rollback()
+eg:
+package com.sio.Study.JDBC;
+
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+
+public class JDBCDemo {
+    public static void main(String[] args) throws Exception {
+        String url = "jdbc:mysql:///db1?useSSL=false";
+        String username = "root";
+        String password = "123456";
+        Connection conn = DriverManager.getConnection(url, username, password);
+
+        //定义SQL
+        String sql1 = "update stu set score = 64 where name = 'jack'";
+        String sql2 = "update stu set score = 71 where name = 'john'";
+        Statement stmt = conn.createStatement();
+        try {
+            //开启事务
+            conn.setAutoCommit(false);
+
+            //执行SQL
+            int count1 = stmt.executeUpdate(sql1);//用count接收“受影响的行数”
+            int count2 = stmt.executeUpdate(sql2);//用count接收“受影响的行数”
+
+            //处理结果
+            System.out.println(count1);
+            System.out.println(count2);
+
+            //提交事务
+            conn.commit();
+        } catch (Exception e) {
+
+            //回滚事务
+            conn.rollback();
+            throw new RuntimeException(e);
+        }
+        stmt.close();
+        conn.close();
+    }
+}
+
+*Statement —— 执行SQL语句
+int executeUpdate(sql):执行DML、DDL语句 ---------- （回顾：DML命令（对表中数据进行增删改）、DDL命令（操作数据库、表的一类SQL语句））
+返回值：（1）DML语句影响的行数（2）DDL语句执行后，执行成功也可能返回0
+
+ResultSet executeQuery(sql)：执行DQL语句 ---------- （DQL命令（查询数据库中表的数据））
+返回值：ResultSet结果集对象
+（其中“Query”意思是“查询”）
+（ResultSet放到下一节解释）
+
+//int executeUpdate(sql)案例
+
+package com.sio.Study.JDBC;
+
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+
+//eg: DML命令
+public class JDBCDemo {
+    @Test //这个@Test是单元测试方法的意思，作用：可以把主函数删掉，就写这个，然后运行时就右键这代码 -> run testDML()即可运行。而且@Test可以写多个，如下方继续测试DDL
+    //（@Test需要安装Junit和JUnitGenerator插件，注意JUnitGenerator插件社区免费版搜不出来的）
+    //（安装好后重启IDEA，然后写@Test，alt + enter选择add junit to path即可）
+    public void testDML() throws Exception {
+        String url = "jdbc:mysql:///db1?useSSL=false";
+        String username = "root";
+        String password = "123456";
+        Connection conn = DriverManager.getConnection(url, username, password);
+        //定义SQL
+        String sql1 = "update stu set score = 73 where name = 'jack'";
+        Statement stmt = conn.createStatement();
+
+        //执行SQL
+        int count = stmt.executeUpdate(sql1);//用count接收“受影响的行数”
+        //处理结果
+        if(count > 0) {//通过“受影响的行数”是否大于0来判断修改是否成功，返回给前端页面给用户看到
+            System.out.println("成功！");
+        }else{
+            System.out.println("失败！");
+        }
+        stmt.close();
+        conn.close();
+    }
+}
+
+//eg: DDL命令
+    @Test
+public void testDML() throws Exception {
+        String url = "jdbc:mysql:///db1?useSSL=false";
+        String username = "root";
+        String password = "123456";
+        Connection conn = DriverManager.getConnection(url, username, password);
+        //定义SQL
+        String sql = "drop database db2";
+        Statement stmt = conn.createStatement();
+
+        //执行SQL
+        int count = stmt.executeUpdate(sql);//此处如是删除数据库，则执行后返回是0，所以不能用count是否大于0来判断是否成功，一般来说，DDL命令的执行没有报错就是成功
+        
+        stmt.close();
+        conn.close();
+    }
+}
+
+*ResultSet —— 查询数据库中表的数据
+ResultSet(结果集对象)作用：
+封装了DQL查询语句的结果
+ResultSet stmt.executeQuery(sql):执行DQL语句，返回ResultSet对象 ---------- 类比：之前执行DML、DDL语句时，是返回一个数，可以用count接收（且使用的方法是executeUpdate()），而执行DQL语句(使用的方法是executeQuery())则返回ResultSet对象
+
+获取查询结果
+两类方法：
+boolean next():（1）将光标（游标）从当前位置往下移动一行（2）判断当前行是否为有效行
+返回值：
+true：有效行，当前行有数据
+false：无效行，当前行没有数据
+
+xxx getXxx(参数)：获取数据
+其中：
+“xxx”：数据类型；如：int getInt(参数); String getString(参数)
+“参数”：int：列的编号，从1开始；Stirng：列的名称 //两种参数方式，二选一即可，效果一致（Java里的两种不同的重载形式）
+
+使用步骤：
+1.游标向下移动一行，并判断改行是否有数据：next()
+2.获取数据：getXxx(参数)
+
+格式：
+//循环判断游标是否是最后一行末尾
+while(rs.next()){
+    //获取数据
+    rs.getXxx(参数);
+}
+
+eg:
+package myproject.study.JDBC;
+
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+public class JDBC_DEMO{
+    public static void main(String[] args) throws Exception {
+        String url = "jdbc:mysql:///db1?useSSL=false";
+        String username = "root";
+        String password = "123456";
+        Connection conn = DriverManager.getConnection(url, username, password); //getConnection方法，返回对应的Connection对象
+        String sql = "select * from stu";
+        Statement stmt = conn.createStatement();
+
+        //此时sql是DQL语句，所以吧executeUpdate方法换成executeQuery方法，其返回值是一个ResultSet对象
+        ResultSet rs = stmt.executeQuery(sql);
+        //每次循环光标往下走，并接收其返回值，若为false说明光标指向空行，即读取结束，退出循环
+        while(rs.next()){
+            /*
+            法一：“参数”位置写列标号（注意从1开始）
+            int id = rs.getInt(1);
+            String name = rs.getString(2);
+            double score = rs.getDouble(3);
+            */
+            //法二：“参数”位置写字段名
+            //两种方法输出结果一致
+            int id = rs.getInt("id");
+            String name = rs.getString("name");
+            double score = rs.getDouble("score");
+            System.out.printf(id + " " + name + " " + score);
+            System.out.println();
+            /*
+            控制台输出结果如下：
+            1 jack 62.1
+            2 rose 90.0
+             */
+        }
+        //7.释放资源
+        rs.close();//后生成的对象先关闭
+        stmt.close();
+        conn.close();
+    }
+}
+
+*SQL注入详解
+
+案例：接收用户输入的用户名和密码，查询数据库，然后输出登录成功或失败
+package com.sio.Study.JDBC;
+
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+public class JDBCDemo {
+    public static void main(String[] args) throws Exception {
+        String url = "jdbc:mysql:///db1?useSSL=false";
+        String username = "root";
+        String password = "123456";
+        Connection conn = DriverManager.getConnection(url, username, password);
+
+        //接收用户输入的用户名和密码
+        String name = "jack";
+        String pwd = "123";
+
+        //定义SQL
+        String sql = "select * from tb_user where username = '" + name + "' and password = '" + pwd + "'";
+
+        //获取stmt对象
+        Statement stmt = conn.createStatement();
+
+        //执行SQL
+        ResultSet rs = stmt.executeQuery(sql);
+
+        //判断是否登录成功
+        if (rs.next()) {
+            System.out.println("登录成功！");
+        } else {
+            System.out.println("登录失败！");
+        }
+        rs.close();
+        stmt.close();
+        conn.close();
+    }
+}
+//控制台输出
+//登陆成功！
+
+
+SQL注入：
+SQL注入是通过操作输入来修改事先定义好的SQL语句，用以达到执行代码对服务器进行攻击的方法
+案例：
+package com.sio.Study.JDBC;
+
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+public class JDBCDemo {
+    public static void main(String[] args) throws Exception {
+        String url = "jdbc:mysql:///db1?useSSL=false";
+        String username = "root";
+        String password = "123456";
+        Connection conn = DriverManager.getConnection(url, username, password);
+
+        //接收用户输入的用户名和密码
+        String name = "随便写的用户名";
+        String pwd = "' or '1' = '1";//写SQL注入语句
+
+        //定义SQL
+        String sql = "select * from tb_user where username = '" + name + "' and password = '" + pwd + "'";
+
+        //获取stmt对象
+        Statement stmt = conn.createStatement();
+
+        //执行SQL
+        ResultSet rs = stmt.executeQuery(sql);
+
+        //判断是否登录成功
+        if (rs.next()) {
+            System.out.println("登录成功！");
+        } else {
+            System.out.println("登录失败！");
+        }
+        rs.close();
+        stmt.close();
+        conn.close();
+    }
+}
+//控制台输出
+//登陆成功！
+
+原因就在字符串拼接处：
+select * from tb_user where username = '随便写的用 户名' and password = '' or '1' = '1'//通过某些特殊的输入，修改了SQL语句，此处or '1' = '1'为恒等式，所以where条件就变true了
+
+*PreparedStatement —— 预防SQL注入
+作用：预编译SQL语句并执行，预防SQL注入的问题
+步骤：
+1.获取PreparedStatement对象
+//SQL语句中的参数值，使用?占位符替代
+String sql "select * from user where username = ? and password = ?";
+//通过Connection 对象获取，并传入对应的sql语句
+PreparedStatement pstmt = conn.prepareStatement(sql);
+
+2.设置参数值
+PreparedStatement对象：setXxx(参数1, 参数2): 给?赋值
+“Xxx”：数据类型; 如setInt(参数1, 参数2)
+“参数”：参数1：?的位置编号，从1开始；参数2：?的值
+
+3.执行SQLexecuteUpdate();/executeQuery(); --- 不需要再传递sql
+
+eg:
+package com.sio.Study.JDBC;
+
+
+import java.sql.*;
+
+public class JDBCDemo {
+    public static void main(String[] args) throws Exception {
+        String url = "jdbc:mysql:///db1?useSSL=false";
+        String username = "root";
+        String password = "123456";
+        Connection conn = DriverManager.getConnection(url, username, password);
+
+        //接收用户输入的用户名和密码
+        String name = "jack";
+        String pwd = "123";//写SQL注入语句
+
+        //定义SQL
+        String sql = "select * from tb_user where username = ? and password = ?";
+
+        //获取pstmt对象
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+
+        //设置?的值
+        pstmt.setString(1, name);
+        pstmt.setString(2, pwd);
+
+        //执行SQL
+        ResultSet rs = pstmt.executeQuery();
+
+        //判断是否登录成功
+        if (rs.next()) {
+            System.out.println("登录成功！");
+        } else {
+            System.out.println("登录失败！");
+        }
+        rs.close();
+        pstmt.close();
+        conn.close();
+    }
+}
+//控制台输出
+//登陆成功！
+
+*PreparedStatement原理（暂略）
+PreparedStatement的好处：
+1.预编译SQL，性能更高
+2.把敏感字符进行转义
+如：把字符串拼接部分的单引号前方都添加了“转义号” —— \
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**数据库连接池（暂略）
+*简介
+1.数据库连接池是个容器，负责分配、管理数据库连接（Connection）
+2.它人允许应用程序重复使用一个现有的数据库连接，而不是再重新建立一个
+3.释放空闲时间超过最大空闲时间的数据库连接来避免因为没有释放数据库连接而引起的数据库连接遗漏
+
+*好处
+1.资源重用
+2.提升系统响应速度
+3.避免数据库连接遗漏
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**JDBC练习（暂略）
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+***Day4 Maven
+**Maven概述
+*Maven是什么？
+Maven是专门用于管理和构建Java项目的工具
+
+*Maven主要功能
+1.提供了一套标准化的项目结构
+2.提供了一套标准化的构建流程（编译，测试，打包，发布……）
+3.提供了一套依赖管理机制
+
+*为什么要使用Maven？
+不同的IDE之间，项目结构不一样，不通用，Maven有标准化项目结构的作用
+不同的IDE，如：eclipse、myeclipse、IntelliJ IDEA(就是现在用的IDEA的全称)
+Maven提供了一套标准化的项目结构，所有IDE使用Maven构建的项目结构完全一样，所有IDE创建的Maven项目可以通用
+
+*Maven文件目录结构
+~项目名称
+    ~src --- 源代码和测试代码目录
+        ~main --- 源代码目录
+            ~java --- 源代码Java文件目录
+            ~resources --- 源代码配置文件目录
+            ~webapp --- Web项目核心目录
+        ~test --- 测试代码目录
+            ~java --- 测试代码Java文件目录
+            ~resources --- 测试代码配置文件目录
+    m pom.xml --- 项目核心配置文件
+
+*标准化的构建流程
+1.编译    2.测试    3.打包（打包为jar包）    4.发布
+可见，若项目复杂，这样的流程就显得很繁琐
+而Maven提供了一套简单的命令来完成项目的构建（如：直接右键，Run Maven -> package就能直接把项目打包成jar包）
+
+*依赖管理机制
+依赖管理其实就是管理你项目所依赖的第三方资源（jar包、插件…）
+（回顾：当前导入MySQL驱动jar包到IDEA的过程：1.下载jar包    2.复制jar包到项目    3.将jar包加入到工作环境）
+可见，如果项目复杂，jar包会非常多，这个工作就很繁琐，且下载jar包是一件很痛苦的事情
+Maven提供了一套依赖管理机制：
+1.Maven使用标准的坐标配置来管理各种依赖
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Maven简介
+*仓库分类
+1.本地仓库(Local Repository)：自己计算机上的一个目录
+2.中央仓库(Central Repository)：由Maven团队维护的全球唯一的仓库（地址：https://repo1.maven.org/maven2/）
+3.远程仓库（私服）(Remote Repository)：一般由公司团队搭建的私有仓库
+
+*jar包导入过程
+当项目中使用坐标引入对应依赖jar包后：
+先搜索本地仓库 -> 若有，直接引用 -> 若本地没有 -> 到中央仓库自动下载到本地仓库 -> 下次另一个项目使用它时就可在本地仓库导入了
+
+若已搭建私服：
+先搜索本地仓库 -> 若有，直接引用 -> 若本地没有 -> 到远程仓库查找 -> 若没有 -> 到中央仓库下载到私服仓库 -> 私服仓库传递jar包给本地仓库
+
+*搭建远程仓库的好处
+中央仓库在国外，访问速度慢，一般来说，搭建私服仓库后利用空余时间把中央仓库的jar包全下载到私服仓库，然后以后直接访问私服仓库速度就快很多了
+
+*Maven的安装配置
+1.解压apache-maven-3.x.x.rar既安装完成（最好把解压后的Maven文件夹放在一个除C盘没有中文的路径）
+2.配置环境变量MAVEN_HOME为安装路径的bin目录
+3.配置本地仓库：修改安装目录下conf -> settings.xml中的<localRepository>为一个指定目录（本地仓库未配置时默认路径为：C:\Users\(用户名)\.m2）
+4.配置阿里云私服：修改conf -> settings.xml中的<mirrors>标签，为其添加如下子标签：
+<mirror>
+<id>alimaven</id>
+<name>aliyun maven</name>
+<url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+<mirrorOf>central</mirrorOf>
+</mirror>
+注意：
+1.配置时要把<localRepository>   </localRepository>和<mirror>...复制到不在“多行注释”的范围内，若写在了注释内，则配置无效
+2.mirror要放在mirrors标签内部
+
+*Maven常用命令
+compile：编译 —— 编译且生成target文件夹（内包含编译后的.class文件）（第一次运行此命令会从设置好的阿里云私服下载compile对应的插件）
+clean：清理 —— 删除target文件夹
+test：测试 —— 把test目录的测试用例执行一下
+package：打包 —— 打包且生成target文件夹（内包含jar包（jar包用压缩软件打开可发现里面是.class文件））
+install：安装 —— 将这个项目安装到本地仓库去
+
+*Maven生命周期
+1.Maven构建项目生命周期描述的是一次构建过程经历经历了多少个事件
+2.Maven对项目构建的生命周期划分为3套
+clean：清理工作 —— pre-clean -> clean -> post-clean（其中pre-clean指prepare准备清理；post-clean的post副词意思是“在...之后”所以意思是“清理后”）
+default：核心工作，例如编译，测试，打包，安装等 —— compile -> test -> package -> install
+site：产生报告，发布站点等 —— pre-site -> site -> post-site
+意思是：同一生命周期内，执行后边的命令，前边的所有命令会自动执行（如执行install，前三个步骤会按顺序一步步执行）
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**IDEA配置Maven
+*IDEA配置Maven环境
+（打开IDEA的设置，搜索Maven，会发现IDEA已经内置集成了一个Maven，不配也行，但为了方便还是要配置我们电脑上安装的Maven）
+配置步骤：
+1.选择IDEA中File-->Settings
+2.搜索Maven
+3.设置IDEA使用本地安装的Maven（主目录即可）
+4.设置User Settings File，选择我们配置好的conf里的settings.xml文件
+5.看下方的Local repository是否自动改变，若没改变，说明settings.xml文件的本地仓库配置有问题，请检查
+
+*Maven坐标详解
+什么是坐标?
+1.Maven中的坐标是资源的唯一标识
+2.使用坐标来定义项目或引入项目中需要的依赖
+Maven坐标主要组成
+1.groupld：定义当前Maven项目隶属组织名称（通常是域名反写，例如：com.itheima）
+2.artifactld：定义当前Maven项目名称（通常是模块名称，例如order-service、goods-service）
+3.version：定义当前项目版本号
+
+*IDEA创建Maven项目
+1.创建新项目，选择Maven，写一个Maven项目名
+2.点击Artifact Coordinates，更改GroupId为com.sio
+3.剩下两个坐标可不用管，Finish即可
+
+*IDEA导入Maven项目
+1.选择右侧Maven面板，点击+号
+2.选中对应项目的pom.xml文件，双击即可
+3.如果没有Maven面板，选择
+View -> Appearance -> Tool Window Bars
+
+*IDEA中运行Maven命令
+1.选择右侧Maven面板
+2.点开Lifecycle，里面的命令双击就可以用了
+
+*IDEA安装Maven小插件 —— Maven Helper
+好处：
+1.可在项目名出直接右键，选择Run Maven运行Maven命令
+2.可Debug Maven，断点调试
+安装方法：
+在Settings的Plugins处搜索后安装即可
+
+*IDEA中右边栏的DataBase载入本地数据库
+按+号 -> Data Source -> MySQL，配置好后按Test Connection，没问题则按OK即可
+
+*IDEA里的DataBase写SQL（与Navicat差不多）以及快捷命令（自动补全命令）
+点击某个表，然后按那个小笔（Source Editor）
+sel、ins等都会引出快捷命令
+
+*IDEA在xxxMapper.xml写SQL语句时没有命令提示解决办法
+1.检查是否连接到IDEA里的DataBase
+2.先写一句SQL命令，atl + enter，选择Inject language or reference选项，选择MySQL即可
+
+*IDEA报错解决办法
+~载入本地数据库时按Test Connection报错
+Server returns invalid timezone. Go to ‘Advanced’ tab and set ‘serverTimezone’ property manually
+~到my.ini文件的[mysqld]下方设置时区default-time_zone='+08:00'，然后重启mysql服务
+
+~java: 程序包org.apache.ibatis.io不存在的解决办法
+~点击IDEA右边栏的Maven按钮，点击M字样，输入mvn idea:module等待重新下载完成即可
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+***Day5 Mybatis
+**MyBatis概述
+*什么是MyBatis?
+1.MyBatis是一款优秀的持久层框架，用于简化JDBC开发
+2.MyBatis本是Apache的一个开源项目iBatis，2010年这个项目由apache software foundation迁移到了googlecode，并且改名为MyBatis。2013年11月迁移到Github
+3.官网：https://mybatis.org/mybatis-3/zh/index.html
+
+*官方解释
+MyBatis是一款优秀的持久层框架，它支持自定义SQL、存储过程以及高级映射。
+MyBatis免除了几乎所有的JDBC代码以及设置参数和获取结果集的工作。
+MyBatis可通过简单的XML或注解来配置和映射原始类型、接口和JavaPOJO（Plain Old Java Objects，普通老式Java对象）为数据库中的记录。
+
+*POJO含义
+POJO全称为：Plain Ordinary Java Object，即简单普通的java对象。
+一般用在数据层映射到数据库表的类，类的属性与表字段一一对应。
+
+*什么是持久层？
+1.负责将数据到保存到数据库的那一层代码、
+2.JavaEE三层架构：表现层（做页面展示）、业务层（做逻辑处理）、持久层（对数据进行持久化(将数据保存到数据库去)）
+
+*什么是框架？
+1.框架就是一个半成品软件，是一套可重用的：通用的、软件基础代码模型
+2.在框架的基础之上构建软件编写更加高效规范、通用、可扩展
+（简单说就是：把别人写好的模版我们再拿来写、拿来用、在其基础上进行改进开发，站在巨人的肩膀上）
+
+*JDBC的缺点
+1.硬编码
+若有一点点需求的变动，就要改动代码，那么就意味着要重新打包、重新运行等
+（如：获取Connection连接这块，若使用的不是db1了，若uname不是root了，若密码改了，就要把代码进行改动了）
+（如：SQL语句这块，若到时候要改动SQL语句，就要重新改变代码，重新定义SQL语句）
+所以这种硬编码很麻烦，维护性较差
+
+2.操作繁琐
+需手动设置参数，需手动封装结果集，操作繁琐
+
+*MyBatis如何简化JDBC
+1.把硬编码写到一个配置文件里
+2.把操作繁琐的内容自动完成
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**MyBatis快速入门
+*案例需求：查询user表中所有数据（步骤）
+1.创建user表，添加数据
+
+2.创建模块，导入坐标
+    a.创建Maven项目，MyBatis官网的“入门”可知导入坐标的方法，依赖代码复制到pom.xml 文件中即可，版本号位置删除x.x.x后会弹出选项，选择一个版本号即可（老师选了当前的最高版本））
+    （注意：dependency外面还有一个dependencies包着，因为还要写其他的依赖）
+    b.导完MyBatis的依赖后，还需导入mysql驱动，groupId写mysql，artifactId写mysql-connector-java，version选一个（老师选了5.1.46）（查看自己的mysql版本号的命令：select version() form dual;）
+    c.还需导入junit单元测试的依赖groupId和artifactId都写junit，version选一个（老师选了当前的最高版本），scope写test
+    d.再导入logback的信息，在准备好的pom.xml文件复制过来就行（复制内容是<!--.添加slf4j日志api.-->的dependency内容）
+    e.再把准备好的logback.xml文件复制到工程目录的src -> main -> resources目录中
+    （d、e两项“准备好的文件”放在JavaWeb的课程配套资料里）
+
+3.编写MyBatis核心配置文件（替换连接信息解决硬编码问题 ）
+    a.查看官网“入门”里的教程，学着他，在resources下新建一个文件mybatis-config.xml，然后把他的实例复制过来
+    b.配置数据库连接信息，更改${driver}部分为com.mysql.jdbc.Driver（新版本MySQL驱动可能是com.mysql.cj.jdbc.Driver）、URL处改为jdbc:mysql:///数据库名?useSSL=false、username为root、密码为1234
+
+4.编写SQL映射文件-->统一管理sql语句，解决硬编码问题
+    a.在resources下新建一个xxxMapper.xml文件（xxx是要操作的表的名字，Mapper是“映射”的意思）（例：UserMapper.xml）
+    b.查看官网“入门”里映射部分教程，把他的内容复制过来
+    c.namespace：名称空间，随便写一个名，但不能不写，老师写成了<mapper namespace="test">
+    （namespace里可以定义select、update、delete等等，那么以后增删改查的操作写在这个文件这个位置即可）
+    （select里的id是下方语句(例：select * from tb_user;)的唯一标识符(例：selectAll)，resultType是对应的返回结果的类型，包装成什么类型就写什么类型，现在需要包装成user类型）
+    d.在java目录下新建Java Class为com.sio.pojo.User，然后创建User这个类，然后resultType处就写com.xxx.pojo.User即可
+    e.把UserMapper.xml文件名写在mybatis-config.xml最下面的<mapper resource="UserMapper.xml"/> —— 加载sql映射文件
+
+5.编码
+    a.定义POJO类（pojo包下定义一个User类）
+   （POJO的含义上方*POJO含义已经介绍）
+   （定义步骤：1.用“private 数据类型 字段名”的格式对应写出各个字段的变量
+		   2.alt + Ins在下方插入Getter and Setter和toString()）
+
+    b.在java -> com -> sio下新建一个MyBatisDemo为主类，写出主方法格式，然后在此文件里继续进行下一步
+    c.加载核心配置文件（官网复制），获取SqlSessionFactory对象（Factory说明是一个“工厂”的设计模式）
+    d.获取SqlSession对象，执行SQL语句
+    e.释放资源
+
+*案例实操（文件配置与代码实现）
+创建表：
++------+----------+----------+--------+
+| id   | username | password | addr   |
++------+----------+----------+--------+
+|    1 | 张三     | 123      | 北京   |
+|    2 | 李四     | 322      | 海南   |
++------+----------+----------+--------+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+src -> main -> java -> com -> sio -> pojo下的User类：
+package com.sio.pojo;
+
+public class User {
+        private int id;
+        private String username;
+        private String password;
+        private String addr;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getAddr() {
+        return addr;
+    }
+
+    public void setAddr(String addr) {
+        this.addr = addr;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", addr='" + addr + '\'' +
+                '}';
+    }
+}
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+与pojo平级的MyBatisDemo测试类：（运行时运行这个）
+package com.sio;
+
+import com.sio.pojo.User;
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
+public class MyBatisDemo {
+    public static void main(String[] args) throws IOException {
+        //加载mybatisd的核心配置文件，获取SqlSessionFactory
+        String resource = "mybatis-config.xml";
+        InputStream inputStream = Resources.getResourceAsStream(resource);
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+
+        //获取SqlSession对象，用它来执行SQL
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+
+        //执行sql
+        List<User> users = sqlSession.selectList("test.selectAll");
+
+        //打印集合
+        System.out.println(users);
+
+        //释放资源
+        sqlSession.close();
+    }
+}
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+resources目录下的logback.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!--
+        CONSOLE ：表示当前的日志信息是可以输出到控制台的。
+    -->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%level] %blue(%d{HH:mm:ss.SSS}) %cyan([%thread]) %boldGreen(%logger{15}) - %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.itheima" level="DEBUG" additivity="false">
+        <appender-ref ref="Console"/>
+    </logger>
+
+
+    <!--
+
+      level:用来设置打印级别，大小写无关：TRACE, DEBUG, INFO, WARN, ERROR, ALL 和 OFF
+     ， 默认debug
+      <root>可以包含零个或多个<appender-ref>元素，标识这个输出位置将会被本日志级别控制。
+      -->
+    <root level="DEBUG">
+        <appender-ref ref="Console"/>
+    </root>
+</configuration>
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+resources目录下的mybatis-config.xml：
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql:///db1?useSSL=false"/>
+                <property name="username" value="root"/>
+                <property name="password" value="1234"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <mapper resource="UserMapper.xml"/>
+    </mappers>
+</configuration>
+   
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+resources目录下的UserMapper.xml：
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="test">
+    <select id="selectAll" resultType="com.sio.pojo.User">
+        select * from tb_user
+    </select>
+</mapper>
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+运行结果如下：
+[User{id=1, username='张三', password='123', addr='北京'}, User{id=2, username='李四', password='322', addr='海南'}]
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Mapper代理开发
+*目的：
+1.解决原生方式中的硬编码
+如：//执行sql
+        List<User> users = sqlSession.selectList("test.selectAll"); --- 其中的test.selectAll也是硬编码
+2.简化后期执行SQL
+如：test.selectAll中的selectAll需要到该文件下去查这个功能对应的id是什么，若功能多了后，查找比较麻烦
+//获取接口代理对象
+UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+//执行方法，其实就是执行SQL语句
+List<User> users = userMapper.selectAll(); 
+（这样写代码，IDEA里面会有提示（代码补全功能，可快速选择映射好的语句），写起来比较方便）
+
+*使用Mapper代理方式步骤
+1.定义与SQL映射文件同名的Mapper接口(在java -> com.sio.mapper下 -> UserMapper接口类)，并且将Mapper接口和SQL映射文件(指UserMapper.xml)放置在同一目录下
+（但是配置文件一般都集中放在resources，所以不把resources中的UserMapper.xml放到com.sio.mapper下，而是
+在resources创建一个文件夹层级目录为com/sio/mapper，然后把UserMapper.xml放进去即可，
+这样一来，编译就会自动把UserMapper接口类和UserMapper.xml配置文件放在一起了）
+（注意：resources里没有“包”这一说，而是创建文件夹，所以不能写成com.sio.mapper，应写成com/sio/mapper
+否则文件夹名就以com.sio.mapper命名了，而com/sio/mapper则是分层级的。二者本质不同，但显示效果一致）
+
+2.设置SQL映射文件的namespace属性为Mapper接口全限定名
+例如：<mapper namespace="com.sio.mapper.UserMapper">
+
+3.在Mapper接口中定义方法，方法名就是SQL映射文件中sql语句的id，并保持参数类型和返回值类型一致
+UserMapper.java接口类中定义User selectAll(); // 注意要先import com.sio.pojo.User;这个类
+事实上定义User selectAll();只能返回一个User对象，所以应改为List<User> selectAll();这样就会返回一个集合，里面放了多个User对象（要import java.util.List;）
+（<select id="selectAll" resultType="com.sio.pojo.User">，可见，返回值类型就是User）
+
+4.修改mybatis-comfig.xml配置文件中的mapper路径
+<mapper resource="UserMapper.xml"/> 改为 <mapper resource="com/sio/mapper/UserMapper.xml"/>
+（路径可直接右键UserMapper.xml -> 复制路径 -> 来自内容根的路径）
+
+5.编码
+    a.在java -> com -> sio下新建一个MyBatisDemo2为主类
+    b.通过SqlSession的getMapper方法获取Mapper接口的代理对象
+    （UserMapper userMapper = sqlSession.getMapper(UserMapper.class);）
+    c.调用对应方法完成sql的执行（List<User> users = userMapper.selectAll();）
+
+细节：如果Mapper接口名称和SQL映射文件名称相同，并在同一目录下，则可以使用包扫描的方式简化SQL负射文件的加载
+（以后xxxMapper.xml文件会很多，所以在mybatis-config.xml配置文件中的<mapper resource="com/sio/mapper/UserMapper.xml"/>
+一个个加载映射文件非常麻烦，所以用包扫描方式，把它改为<package name="com.sio.mapper"/>即可把这个包内的所有Mapper.xml文件都加载了）
+（这是Mybatis核心配置文件的最后一个结构：映射器，下方“MyBatis核心配置文件的顶层结构”会看到）
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Mapper代理开发案例
+mybatis-config.xml配置文件
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <typeAliases>
+        <package name="com.sio.pojo"/>
+    </typeAliases>
+    <environments default="development">
+        <!--开发库环境-->
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <!--数据库连接池-->
+            <dataSource type="POOLED">
+                <!--数据库连接信息-->
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql:///db1?useSSL=false"/>
+                <property name="username" value="root"/>
+                <property name="password" value="1234"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <package name="com.sio.mapper"/>
+    </mappers>
+</configuration>
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+UserMapper.xml配置文件
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sio.mapper.UserMapper">
+    <select id="selectAll" resultType="user"> --- 这个改为user下面*类型别名(typeAliases)会讲
+        select * from tb_user
+    </select>
+</mapper>
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+MyBatisDemo2主类：
+package com.sio;
+
+import com.sio.mapper.UserMapper;
+import com.sio.pojo.User;
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
+public class MyBatisDemo2 {
+    public static void main(String[] args) throws IOException {
+        //加载mybatisd的核心配置文件，获取SqlSessionFactory
+        String resource = "mybatis-config.xml";
+        InputStream inputStream = Resources.getResourceAsStream(resource);
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+
+        //获取SqlSession对象，用它来执行SQL
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+
+        //获取UserMapper接口代理对象
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+
+        //执行方法
+        List<User> users = userMapper.selectAll();
+
+        //打印集合
+        System.out.println(users);
+
+        //释放资源
+        sqlSession.close();
+    }
+}
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**MyBatis核心配置文件
+*概述
+官方描述：MyBatis的配置文件包含了会深深影响MyBatis行为的设置和属性信息
+可见，mybatis-config.xml文件中，配置数据库连接信息只是environments里dataSource的配置，而可以在这个.xml文件中配置的内容远不止于此
+
+*MyBatis核心配置文件的顶层结构
+configuration（配置）
+    properties（属性）
+    settings（设置）
+    typeAliases（类型别名）
+    typeHandlers（类型处理器）
+    objectFactory（对象工厂）
+    plugins（插件）
+    environments（环境配置）
+        environment（环境变量）
+            transactionManager（事务管理器）
+            dataSource（数据源）
+    databaseldProvider（数据库厂商标识）
+    mappers（映射器）
+
+*环境配置(environments)
+MyBatis可以配置成适应多种环境，这种机制有助于将SQL映射应用于多种数据库之中，现实情况下有多种理由需要这么做。
+例如，开发、测试和生产环境需要有不同的配置;或者想在具有相同Schema的多个生产数据库中使用相同的SQL映射。还有许多类似的使用场景。
+eg:
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--
+    environments: 配置数据库连接环境信息。可以配置多个environment，通过对应的default属性切换不同的environment
+    -->
+    <environments default="development">
+        <!--开发库环境-->
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <!--数据库连接池-->
+            <dataSource type="POOLED">
+                <!--数据库连接信息-->
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql:///db1?useSSL=false"/>
+                <property name="username" value="root"/>
+                <property name="password" value="1234"/>
+            </dataSource>
+        </environment>
+
+        <!--测试库环境-->
+        <environment id="test">
+            <transactionManager type="JDBC"/>
+            <!--数据库连接池-->
+            <dataSource type="POOLED">
+                <!--数据库连接信息-->
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql:///db1?useSSL=false"/>
+                <property name="username" value="root"/>
+                <property name="password" value="1234"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <package name="com.sio.mapper"/>
+    </mappers>
+</configuration>
+
+*类型别名(typeAliases)
+在UserMapper.xml的resultType中写com.sio.pojo.User很麻烦，但也可以配置这个类型别名
+如在environments标签上方写标签 --- 注意，一定是在environments上方写，理由下面说
+<typeAliases>
+     <package name="com.sio.pojo"/>
+</typeAliases>
+<environments default="development">
+那么就给pojo里面的所有实体类起了个别名，那么在UserMapper.xml中的resultType中写user（或User）就可以了
+
+同时，typeAliases已经默认有
+
+*MyBatis核心配置文件配置细节
+配置各个标签时，需要遵守前后顺序。（这就是为什么typeAliases要写在environments上面）
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**配置文件完成增删改查
+*案例需求 —— 完成品牌数据的增删改查操作
+
+*要完成的功能列表清单
+1.查询
+    查询所有数据
+    查看详情
+    条件查询
+2.添加
+3.修改
+    修改全部字段
+    修改动态字段
+4.删除
+    删除一个
+    批量删除
+
+*准备环境
+    数据库表tb_brand
+    实体类Brand —— 在pojo包下创建
+    测试用例 —— 在与main目录平级的test目录下的java -> com.sio.test ->MyBatisTest（测试类）
+    安装MyBatisX插件
+        MybatisX是一款基于IDEA的快速开发插件，为效率而生
+        主要功能：
+        XML和接口方法相互跳转（点击蓝鸟(mapper接口)跳转到红鸟(SQL的映射文件)）（红鸟是MyBatis的logo，蓝鸟是MybatisX的logo）
+        根据接口方法生成statement（在UserMapper.java文件写一个新的方法，会报错，然后按alt + enter，插件会自动帮我们在UserMapper.xml里创建对应的映射配置）
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**“查询所有数据”功能
+*步骤
+1.编写接口方法：Mapper接口
+    参数：无
+    结果：List<Brand>
+2.编写SQL语句：SQL映射文件
+3.执行方法，测试
+
+BrandMapper.java文件写入映射方法：
+List<Brand> selectAll();
+
+BrandMapper.xml的写入情况在下方介绍
+
+运行结果：
+[Brand{id=1, brandName='null', companyName='null', ordered=5, description='好吃不上火', status=0}, Brand{id=2, brandName='null', companyName='null', ordered=100, description='华为致力于把数字世界带入每个人、每个家庭、每个组织，构建万物互联的智能世界', status=1}, Brand{id=3, brandName='null', companyName='null', ordered=50, description='are you ok', status=1}]
+可见，brandName和companyName与是null
+原因：数据库表的字段名称和实体类的属性名称不一样，则不能自动封装数据
+
+*Mapper.xml中对列名起别名的作用
+解决方法：起别名（对不一样的列名起别名，让别名和实体类的属性名一样）
+在BrandMapper.xml里把SQL语句改为
+select id, brand_name as brandName, company_name as companyName, ordered, description, status 
+from tb_brand;（其中as可省略）
+缺点：每次查询都要定义一次别名
+
+*SQL片段的定义
+
+解决方法：定义SQL片段
+即把BrandMapper.xml改为如下：
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sio.mapper.BrandMapper">
+
+
+    <sql id="brand_column">
+        id, brand_name brandName, company_name companyName, ordered, description, status
+    </sql>
+    <select id="selectAll" resultType="brand">
+        select <include refid="brand_column"/>
+        from tb_brand;
+    </select>
+</mapper>
+缺点：把查询的字段规定死了，若想只查前两个字段，则需重新定义SQL片段，不够灵活
+
+*resultMap标签优化SQL片段
+解决方法：使用resultMap把字段与字段别名做一个映射关系
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sio.mapper.BrandMapper">
+
+    <!--
+    id：唯一标识
+    type：映射的类型，支持别名
+    -->
+    <resultMap id="brandResultMap" type="brand">
+        <!--
+        有两种子标签
+        id：完成主键字段的映射
+            column：表的列名
+            property：实体类的属性名
+        result：完成一般字段的映射
+            column：表的列名
+            property：实体类的属性名
+        -->
+        <result column="brand_name" property="brandName"/>
+        <result column="company_name" property="companyName"/>
+    </resultMap>
+    <select id="selectAll" resultMap="brandResultMap">
+        select *
+        from tb_brand;
+    </select>
+</mapper>
+
+resultMap使用小结：
+1.定义<resuLtMap>标签
+2.在<seLect>标签中，使用resultMap属性替换resutLtType属性
+
+**"查看详情"功能
+*步骤
+1.编写接口方法：Mapper接口
+    参数：id
+    结果：Brand
+2.编写SQL语句：SQL映射文件
+3.执行方法，测试
+
+BrandMapper.java文件：
+Brand selectById(int id);
+
+BrandMapper.xml文件：
+<!--
+    查看详情：根据Id查询
+    -->
+    <select id="selectById" resultMap="brandResultMap">
+        select *
+        from tb_brand
+<!--
+*参数占位符
+  1.#{}：会将其替换为?，为了防止SQL注入
+  2.${}：拼sqL。会存在SQL注入问题
+  3使用时机：
+     参数传递的时候：#{]
+     表名或者列名不固定的情况下：${}，会存在SQL注入问题              
+-->
+        where id = #{id};
+    </select>
+</mapper>
+
+*parameterType（可以省略） 
+例：<select id="selectById" parameterType="int" resultMap="brandResultMap">
+
+*特殊字符串的处理
+如“小于号(<)” —— 因为小于号是xml文件的标签开头，所以直接写会报错
+解决方法：
+1.转义字符 —— 把小于号写成  &lt;
+2.CDATA区 —— IDEA里写一个CD，自动弹出CDATA的格式，然后在里面写<即可
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**条件查询
+*多条件查询（含三种参数接收方法）
+BrandMapper.xml文件：
+<select id="selectByCondition" resultMap="brandResultMap">
+        select *
+        from tb_brand
+        where status = #{status}
+          and company_name like #{companyName}
+          and brand_name like #{brandName};
+    </select>
+
+参数接收方法：
+1.散装参数：需要使用BParam（"SQL参数占位符名称"）
+BrandMapper.java文件：
+List<Brand> selectByCondition(@Param("status") int status,
+                                  @Param("companyName") String companyName,
+                                  @Param("brandName") String brandName);
+MyBatisTest.java测试主方法：
+@Test
+    public void testSelectByCondition() throws IOException {
+        //模拟接收参数
+        int status = 0;
+        String companyName = "三只";
+        String brandName = "松鼠";
+
+        //处理参数
+        companyName = "%" + companyName + "%";
+        brandName = "%" + brandName + "%";
+
+        //加载mybatisd的核心配置文件，获取SqlSessionFactory
+        String resource = "mybatis-config.xml";
+        InputStream inputStream = Resources.getResourceAsStream(resource);
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+
+        //获取SqlSession对象，用它来执行SQL
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+
+        //获取UserMapper接口代理对象
+        BrandMapper brandMapper = sqlSession.getMapper(BrandMapper.class);
+
+        //执行方法
+        List<Brand> brands = brandMapper.selectByCondition(status, companyName, brandName);
+        System.out.println(brands);
+
+        //释放资源
+        sqlSession.close();
+    }
+
+2.实体类封装参数（对象参数）：只需要保证saL中的参数名和实体类属性名对应上，即可设置成功
+BrandMapper.java文件：
+List<Brand>selectByCondition(Brand brand);
+MyBatisTest.java测试主方法：
+@Test
+    public void testSelectByCondition() throws IOException {
+        //模拟接收参数
+        int status = 0;
+        String companyName = "三只";
+        String brandName = "松鼠";
+
+        //处理参数
+        companyName = "%" + companyName + "%";
+        brandName = "%" + brandName + "%";
+
+        //封装对象
+        Brand brand = new Brand();
+        brand.setStatus(status);
+        brand.setCompanyName(companyName);
+        brand.setBrandName(brandName);
+
+        //加载mybatisd的核心配置文件，获取SqlSessionFactory
+        String resource = "mybatis-config.xml";
+        InputStream inputStream = Resources.getResourceAsStream(resource);
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+
+        //获取SqlSession对象，用它来执行SQL
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+
+        //获取UserMapper接口代理对象
+        BrandMapper brandMapper = sqlSession.getMapper(BrandMapper.class);
+
+        //执行方法
+        List<Brand> brands = brandMapper.selectByCondition(brand);
+        System.out.println(brands);
+
+        //释放资源
+        sqlSession.close();
+    }
+
+3.map集合参数（只需要保证SQL中的参数名和map集合的键的名称对应上，即可设置成功）
+BrandMapper.java文件：
+List<Brand>selectByCondition(Map map);
+MyBatisTest.java测试主方法：
+ @Test
+    public void testSelectByCondition() throws IOException {
+        //模拟接收参数
+        int status = 0;
+        String companyName = "三只";
+        String brandName = "松鼠";
+
+        //处理参数
+        companyName = "%" + companyName + "%";
+        brandName = "%" + brandName + "%";
+
+        //使用map集合封装
+        Map map = new HashMap();
+        map.put("status", status);
+        map.put("companyName", companyName);
+        map.put("brandName", brandName);
+
+        //加载mybatisd的核心配置文件，获取SqlSessionFactory
+        String resource = "mybatis-config.xml";
+        InputStream inputStream = Resources.getResourceAsStream(resource);
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+
+        //获取SqlSession对象，用它来执行SQL
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+
+        //获取UserMapper接口代理对象
+        BrandMapper brandMapper = sqlSession.getMapper(BrandMapper.class);
+
+        //执行方法
+        List<Brand> brands = brandMapper.selectByCondition(map);
+        System.out.println(brands);
+
+        //释放资源
+        sqlSession.close();
+    }
+当前实现的bug：
+SQL语句不灵活，若用户只给其中一个条件，则其他两个位置都是NULL，那么NULL and NULL and xxx结果肯定是false，查不出东西来
+
+
+*多条件-动态条件查询（解决用户可能不会把所有条件都填写的情况）
+即：SQL语句会随着用户的输入或外部条件的变化而变化，称为动态SQL
+MyBatis的这些标签为动态SQL提供了支撑：
+if、choose（when，otherwise）、trim（where，set）、foreach
+
+1.if：条件判断
+    test：逻辑表达式
+BrandMapper.xml文件：
+<select id="selectByCondition" resultMap="brandResultMap">
+        select *
+        from tb_brand
+        where
+        <if test="status != null">
+            status = #{status}
+        </if>
+        <if test="companyName != null and companyName != ''">
+            and company_name like #{companyName}
+        </if>
+        <if test="brandName != null and brandName != ''">
+            and brand_name like #{brandName};
+        </if>
+    </select>
+存在问题：    
+若status是null，那么SQL语句就变成了where    and xxx and xxx，where后直接跟了and，SQL语法出错了
+解决方法：
+1.在where后加一个恒等式如：1 = 1，然后status处改为and status = #{status}，这样一来，即使status为null，SQL语句也是where 1 = 1  and  xxx and xxx是符合语法的
+2.用MyBatis的<where>标签替换where关键字
+如：
+    <select id="selectByCondition" resultMap="brandResultMap">
+        select *
+        from tb_brand
+        <where>
+            <if test="status != null">
+                status = #{status}
+            </if>
+            <if test="companyName != null and companyName != ''">
+                and company_name like #{companyName}
+            </if>
+            <if test="brandName != null and brandName != ''">
+                and brand_name like #{brandName}
+            </if>
+        </where>
+    </select>
+这个<where>标签可以帮我们自动去除无效的"and"
+
+*单条件-动态条件查询
+BrandMapper.xml文件：
+<select id="selectByConditionSingle" resultMap="brandResultMap">
+   select *
+   from tb_brand
+   where
+   <choose><!--类似于switch-->
+       <when test="status !- null"><!--类似于case-->
+           status = #{status}
+       </when>
+       <when test="companyName != null and companyName != ''">
+           and company_name like #{companyName}
+       </when>
+       <when test="brandName != null and brandName != ''">
+           and brand_name like #{brandName}
+       </when>
+   </choose>
+</select>
+
+BrandMapper.java文件：
+List<Brand> selectByConditionSingle(Brand brand);
+
+MyBatisTest.java测试主方法：
+ @Test
+    public void testSelectByConditionSingle() throws IOException {
+        //模拟接收参数
+        int status = 0;
+        String companyName = "三只";
+        String brandName = "松鼠";
+
+        //处理参数
+        companyName = "%" + companyName + "%";
+        brandName = "%" + brandName + "%";
+
+        //封装对象
+        Brand brand = new Brand();
+        brand.setStatus(status);
+        //brand.setCompanyName(companyName);//注释掉，模拟用户只选择了status查询
+        //brand.setBrandName(brandName);
+
+        //加载mybatisd的核心配置文件，获取SqlSessionFactory
+        String resource = "mybatis-config.xml";
+        InputStream inputStream = Resources.getResourceAsStream(resource);
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+
+        //获取SqlSession对象，用它来执行SQL
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+
+        //获取UserMapper接口代理对象
+        BrandMapper brandMapper = sqlSession.getMapper(BrandMapper.class);
+
+        //执行方法
+        List<Brand> brands = brandMapper.selectByConditionSingle(brand);
+        System.out.println(brands);
+
+        //释放资源
+        sqlSession.close();
+    }
+
+存在问题：
+若用户什么条件都不选，则SQL语句变成了select * from tb_brand where
+where后面什么都没有，语法错误了
+解决方法：
+1.用<otherwise>标签（类似于default的标签）：
+<select id="selectByConditionSingle" resultMap="brandResultMap">
+   select *
+   from tb_brand
+   where
+   <choose><!--类似于switch-->
+       <when test="status !- null"><!--类似于case-->
+           status = #{status}
+       </when>
+       <when test="companyName != null and companyName != ''">
+           and company_name like #{companyName}
+       </when>
+       <when test="brandName != null and brandName != ''">
+           and brand_name like #{brandName}
+       </when>
+       <otherwise><!--类似于default-->
+           1 = 1
+       </otherwise>
+   </choose>
+</select>
+2.用<where>标签包裹
+<select id="selectByConditionSingle" resultMap="brandResultMap">
+        select *
+        from tb_brand
+        <where>
+            <choose><!--类似于switch-->
+                <when test="status != null"><!--类似于case-->
+                    status = #{status}
+                </when>
+                <when test="companyName != null and companyName != ''">
+                    and company_name like #{companyName}
+                </when>
+                <when test="brandName != null and brandName != ''">
+                    and brand_name like #{brandName}
+                </when>
+            </choose>
+        </where>
+    </select>
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**“添加”功能
+BrandMapper.java：
+void add(Brand brand);
+
+BrandMapper.xml
+<insert id="add">
+   insert into tb_brand (brand_name, company_name, ordered, description, status)
+   values (#{brandName}, #{companyName}, #{ordered}, #{description}, #{status});
+</insert>
+
+MyBatisTest.java测试主方法：
+ @Test
+    public void testAdd() throws IOException {
+        //模拟接收参数
+        int status = 1;
+        String companyName = "波导手机";
+        String brandName = "波导";
+        String description = "手机中的战斗机";
+        int ordered = 100;
+
+        //封装对象
+        Brand brand = new Brand();
+        brand.setStatus(status);
+        brand.setCompanyName(companyName);
+        brand.setBrandName(brandName);
+        brand.setDescription(description);
+        brand.setOrdered(ordered);
+
+        //加载mybatisd的核心配置文件，获取SqlSessionFactory
+        String resource = "mybatis-config.xml";
+        InputStream inputStream = Resources.getResourceAsStream(resource);
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+
+        //获取SqlSession对象，用它来执行SQL
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+
+        //获取UserMapper接口代理对象
+        BrandMapper brandMapper = sqlSession.getMapper(BrandMapper.class);
+
+        //执行方法
+        brandMapper.add(brand);
+
+        //释放资源
+        sqlSession.close();
+    }
+
+*MyBatis的自动提交和手动提交
+存在问题：
+数据不是永久修改，并没有真正保存到数据库中
+问题原因：
+MyBatis开启了手动提交：Setting autocommit to false，而我们没有手动提交，修改内容自动回滚了
+解决方法：
+1.手动提交事务
+如下：
+//执行方法
+   brandMapper.add(brand);
+//提交事务
+sqlSession.commit();
+
+2.获取SqlSession对象时，参数填入true
+如下：
+//获取SqlSession对象，用它来执行SQL
+SqlSession sqlSession = sqlSessionFactory.openSession(true);
+
+//获取UserMapper接口代理对象
+BrandMapper brandMapper = sqlSession.getMapper(BrandMapper.class);
+
+//执行方法
+brandMapper.add(brand);
+
+//释放资源
+sqlSession.close();
+
+*添加数据后返回主键值
+需求：在数据添加成功后，需要获取插入数据库数据的主键的值
+比如：添加订单和订单项
+1.添加订单
+2.添加订单项，订单项中需要设置所属订单的id
+
+BrandMapper.xml修改：
+<insert id="add1" useGeneratedKeys="true" keyProperty="id">
+     insert into tb_brand (brand_name, company_name, ordered, description, status)
+     values (#{brandName}, #{companyName}, #{ordered}, #{description}, #{status});
+</insert>
+
+MyBatisTest.java测试主方法：
+//执行方法
+brandMapper.add1(brand);
+
+//返回主键id值
+Integer id = brand.getId();
+System.out.println(id);
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**“修改”功能
+*修改全部字段
+BrandMapper.java：
+int update(Brand brand);
+
+BrandMapper.xml：
+<update id="update">
+   update tb_brand
+   set brand_name   = #{brandName},
+       company_name = #{companyName},
+       ordered      = #{ordered},
+       description  = #{description},
+       status       = #{status}
+   where id = #{id};
+</update>
+
+MyBatisTest.java测试主方法：
+@Test
+public void update() throws IOException {
+   //模拟接收参数
+   int status = 1;
+   String companyName = "修改公司名";
+   String brandName = "修改品牌";
+   String description = "修改描述";
+   int ordered = 100;
+
+   //模拟用户要修改的id
+   int id = 1;
+
+   //封装对象
+   Brand brand = new Brand();
+   brand.setStatus(status);
+   brand.setCompanyName(companyName);
+   brand.setBrandName(brandName);
+   brand.setDescription(description);
+   brand.setOrdered(ordered);
+
+   //封装id到对象
+   brand.setId(id);
+
+   //加载mybatisd的核心配置文件，获取SqlSessionFactory
+   String resource = "mybatis-config.xml";
+   InputStream inputStream = Resources.getResourceAsStream(resource);
+   SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+
+   //获取SqlSession对象，用它来执行SQL
+   SqlSession sqlSession = sqlSessionFactory.openSession(true);
+
+   //获取UserMapper接口代理对象
+   BrandMapper brandMapper = sqlSession.getMapper(BrandMapper.class);
+
+   //执行方法并接收“影响的行数”
+   int count = brandMapper.update(brand);
+   System.out.println(count);
+
+   //释放资源
+   sqlSession.close();
+}
+
+*修改动态字段（只修改某几个字段）
+BrandMapper.xml：
+<update id="update1">
+   update tb_brand
+   <set>
+       <if test="brandName != null and brandName != ''">
+           brand_name = #{brandName},
+       </if>
+       <if test="companyName != null and companyName != ''">
+           company_name = #{companyName},
+       </if>
+       <if test="ordered != null">
+           ordered = #{ordered},
+       </if>
+       <if test="description != null and description != ''">
+           description = #{description},
+       </if>
+       <if test="status != null">
+           status = #{status},
+       </if>
+       where id = #{id};
+   </set>
+</update>
+
+MyBatisTest.java测试主方法：
+//封装对象
+Brand brand = new Brand();
+brand.setStatus(status);
+brand.setCompanyName(companyName);
+//brand.setBrandName(brandName);//注释掉，只剩下status，模拟用户只需要修改status和公司名
+//brand.setDescription(description);
+//brand.setOrdered(ordered);
+brand.setId(id);
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**“删除”功能
+*删除一个
+BrandMapper.xml：
+<delete id="delete">
+   delete
+   from tb_brand
+   where id = #{id};
+</delete>
+
+MyBatisTest.java测试主方法：
+@Test
+    public void delete() throws IOException {
+        //模拟接收参数
+        int id = 7;
+
+        //加载mybatisd的核心配置文件，获取SqlSessionFactory
+        String resource = "mybatis-config.xml";
+        InputStream inputStream = Resources.getResourceAsStream(resource);
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+
+        //获取SqlSession对象，用它来执行SQL
+        SqlSession sqlSession = sqlSessionFactory.openSession(true);
+
+        //获取UserMapper接口代理对象
+        BrandMapper brandMapper = sqlSession.getMapper(BrandMapper.class);
+
+        //执行方法并接收打印“影响的行数”
+        int count = brandMapper.delete(id);
+        System.out.println(count);
+
+        //释放资源
+        sqlSession.close();
+    }
+
+*批量删除
+方法：
+1.单个删除基础上用for循环逐个删除
+MyBatisTest.java测试主方法：
+@Test
+public void delete1() throws IOException {
+   //模拟接收参数
+   int[] ids = new int[100];
+   ids[0] = 8;
+   ids[1] = 9;
+
+   //加载mybatisd的核心配置文件，获取SqlSessionFactory
+   String resource = "mybatis-config.xml";
+   InputStream inputStream = Resources.getResourceAsStream(resource);
+   SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+
+   //获取SqlSession对象，用它来执行SQL
+   SqlSession sqlSession = sqlSessionFactory.openSession(true);
+
+   //获取UserMapper接口代理对象
+   BrandMapper brandMapper = sqlSession.getMapper(BrandMapper.class);
+
+   //执行方法并接收和累计“影响的行数”
+   int count = 0;
+   for (int i = 0; ids[i] != 0; i++, count++)
+       brandMapper.delete(ids[i]);
+
+   //打印“影响的行数”
+   System.out.println(count);
+
+   //释放资源
+   sqlSession.close();
+}
+
+2.利用foreach循环标签，写一个delete from tb_brand where id in (?, ?, ?)的SQL语句
+BrandMapper.java：
+int deleteByIds(@Param("ids") int[] ids);
+
+BrandMapper.xml：
+小括号优化前：
+<delete id="deleteByIds">
+   delete from tb_brand
+   where id in(
+   <foreach collection="ids" item="id" separator=",">
+       #{id}
+   </foreach>
+   );
+</delete>
+小括号优化后：
+<delete id="deleteByIds">
+   delete from tb_brand
+   where id in
+   <foreach collection="ids" item="id" separator="," open="(" close=")">
+       #{id}
+   </foreach>
+   ;
+</delete>
+
+mybatis会将数组参数，封装为一个Map集合
+默认：array = 数组
+使用@Param注解改变map集合的默认key的名称
+以上是用@Param注解
+以下使用默认的array可以不写注解：
+BrandMapper.java：
+int deleteByIds(int[] ids);
+
+BrandMapper.xml：
+<delete id="deleteByIds">
+   delete from tb_brand
+   where id in
+   <foreach collection="array" item="id" separator="," open="(" close=")">
+       #{id}
+   </foreach>
+   ;
+</delete>
+
+MyBatisTest.java测试主方法：
+@Test
+public void deleteByIds() throws IOException {
+   //模拟接收参数
+   int[] ids = {3, 5};
+
+   //加载mybatisd的核心配置文件，获取SqlSessionFactory
+   String resource = "mybatis-config.xml";
+   InputStream inputStream = Resources.getResourceAsStream(resource);
+   SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+
+   //获取SqlSession对象，用它来执行SQL
+   SqlSession sqlSession = sqlSessionFactory.openSession(true);
+
+   //获取UserMapper接口代理对象
+   BrandMapper brandMapper = sqlSession.getMapper(BrandMapper.class);
+
+   //执行方法并接收打印“影响的行数”
+   int count  = brandMapper.deleteByIds(ids);
+   System.out.println(count);
+
+   //释放资源
+   sqlSession.close();
+}
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**MyBatis参数传递（暂略）
+MyBatis接口方法中可以接收各种各样的参数，MyBatis底层对于这些参数进行不同的封装处理方式
+单个参数：
+    POJO类型
+    Map集合
+    Collection
+    List
+    Array
+    其它类型
+多个参数
+MyBatis提供了ParamNameResolver类来进行参数封装
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**注解完成增删改查（暂略）
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**动态SQL（暂略）
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+***Day6 HTML&CSS
+**HTML介绍
+*什么是HTML
+HTML是一门语言，所有的网页都是用HTML这门语言编写出来的
+HTML（Hyper Text Markup Language）：超文本标记语言
+    超文本：超越了文本的限制，比普通文本更强大。除了文字信息，还可以定义图片、音频、视频等内容
+    标记语言：由标签构成的语言
+HTML运行在浏览器上，HTML标签由浏览器来解析
+HTML标签都是预定义好的。例如：使用<img>展示
+W3C标准：网页主要由三部分组成
+    结构：HTML
+    表现：CSS
+    行为：JavaScript
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**HTML快速入门
+<html>
+    <head>
+        <title>html快速入内</title>
+    </head>
+    <body>
+        <font color="red">乾坤未定，你我皆是黑马~</font>
+    </body>
+</htm1>
+
+*基础标签
+<h1> - <h6> —— 定义标题，h1最大，h6最小
+eg:<h1>标题h1</h1>
+
+<font> —— 定义文本的字体、字体尺寸、字体颜色（已过时，以后会用CSS控制样式）
+eg:<font face="楷体" size="5" color="#ff0000"（或rgb(255，0，0)）>黑马</font>
+
+<b> —— 定义粗体文本
+<br> —— 定义换行（一般不用这个，而是用p标签把两段话分别包裹）
+eg:搜索“<b>个人信息</b>”发现<br>
+
+<i> —— 定义斜体文本
+<u> —— 定义文本下划线
+<center> —— 定义文本居中
+<p> —— 定义段落
+<hr> —— 定义水平线
+
+*HTML语言的松散性
+如：<font face="楷体" size="5" color="#ff0000"（或rgb(255，0，0)）>黑马</font>
+<font face="楷体" size="5" color=#ff0000>黑马
+这种没加""和没写</font>也是可以正常显示的
+
+*在IDEA新建HTML项目
+删除src目录，创建一个html目录，里面创建html文件即可
+<!DOCTYPE html> —— html5标识
+
+*图片、音频、视频标签
+img：定义图片
+    src：规定显示图像的URL（统一资源定位符）
+    height：定义图像的高度
+    width：定义图像的宽度
+audio：定义音频。支持的音频格式：MP3、WAV、OGG
+    src：规定音频的URL
+    controls：显示播放控件
+video：定义视频。支持的音频格式：MP4，WebM、OGG
+    src：规定视频的URL
+    controls：显示播放控件
+
+<img> —— 定义图片
+eg:<img src="a.jpg" width="20%" height="400"></img>
+尺寸单位：1.px：像素  2.占页面的百分比
+资源路径：1.绝对路径：完整路径  2.相对路径：相对位置关系./a.jpg or a.jpg
+
+<audio> —— 定义音频
+eg:<audio src="b.mp3" controls="controls"></audio>
+（因为HTML语法的松散性，所以写成<audio src="b.mp3" controls></audio>也可以）
+
+<video> —— 定义视频
+eg:<video src="c.mp4" controls width="500" height="300"></vedio>
+
+*超链接标签
+<a> —— 定义超链接，用于链接到另一个资源
+href：指定访问资源的URL
+target：指定打开资源的方式
+    _self：在当前页面打开，不设置target属性，默认是_self
+    _blank：在空白页面打开
+eg:<a href="www.baidu.com" target="_blank">百度</a>
+
+*列表标签
+<ol> —— 定义有序号列表（order list）
+   type —— 设置序号的样式 eg:type="A" --- A、B、C
+<ul> —— 定义无序号列表（unorder list）--- 用圆点在开头来显示每个列表项（以后可用CSS把圆点去除）
+<li> —— 定义列表项
+
+*表格标签
+table：定义表格
+    border：规定表格边框的宽度（给表格添加边框）eg:border="1"
+    width：规定表格的宽度
+    cellspacing：规定单元格之间的空白 eg:cellspacing="0"
+tr：定义行
+    align：定义表格行的内容对齐方式
+th：定义表头单元格
+td：定义单元格
+    rowspan：规定单元格可横跨的行数（纵向合并单元格）
+    eg:<td rowspan="2"></td>
+    colspan：规定单元格可横跨的列数（横向合并单元格）
+
+eg:
+<body>
+<table border="1" cellspacing="0" width="500">
+    <tr>
+        <th>序号</th>
+        <th>品牌logo</th>
+        <th>品牌名称</th>
+        <th>企业名称</th>
+    </tr>
+    <tr align="center">
+        <td>010</td>
+        <td><img src="../img/三只松鼠.png" width="60" height="50" ></td>
+        <td>三只松鼠</td>
+        <td>三只松鼠</td>
+    </tr>
+</table>
+</body>
+
+*布局标签
+<div> —— 定义HTML文档中的一个区域部分
+（占满这整行，所以写两个<div>我是div</div>会换行显示）
+<span> —— 用于组合行内元素
+（这行用到哪就占到哪，所以写两个<span>我是span</span>不会换行显示而是连在一起显示）
+
+他们没有任何样式，经常与CSS一起使用，用来布局网页
+
+*表单标签
+登陆窗口、注册窗口就是表单（用来收集用户输入的信息，让用户一点按钮就把数据发送到后端）
+
+表单：在网页中主要负责数据采集功能，使用<form>标签定义表单
+表单项（元素）：不同类型的input元素、下拉列表、文本域等
+
+<form> —— 定义表单
+    action —— 指定表单数据提交到的URL（写"#"是提交到本网页页面，以后可以改为服务器的URL）
+        （表单数据要想被提交，则必须指定其name属性）
+    method —— 规定用于发送表单数据的方式
+        get：默认值，请求参数会拼接在URL后面。大小有限制为4KB
+        post：请求参数会在http请求协议的请求体中。大小无限制
+<input> —— 定义表单项，通过type属性控制输入形式
+     type取值：
+     text —— 默认值。定义单行的输入字段
+     password —— 定义密码字段（用密文展示）
+     radio —— 定义单选按钮（男、女选项）
+     checkbox —— 定义复选框（爱好：旅游、电影、游戏（可多选））
+     file  ——定义文件上传按钮
+     hidden —— 定义隐藏的输入字段（把属于该表单的id隐藏到表单里一起发送到服务器）
+
+     submit —— 定义提交按钮，提交按钮会把表单数据发送到服务器
+     value —— 定义提交按钮的名字，默认是“提交”二字
+
+     reset —— 定义重置按钮，重置按钮会清除表单中的所有数据
+     button —— 定义可点击按钮
+
+<label> —— 为表单项定义标注
+<select> —— 定义下拉列表
+<option> —— 定义下拉列表的列表项
+    value —— 若写了value值，则提交时提交value值，若没写则提交<option>xxx</option>中间的xxx
+<textarea> —— 定义文本域
+    cols —— 定义列数
+    rows —— 定义行数
+        
+eg:
+<form action="#" method="post">
+    <input type="text" name="username">
+    <input type="submit">
+</form>
+
+*表单项标签
+<input> —— 定义表单项，通过type属性控制输入形式
+<select> —— 定义下拉列表
+<textarea> —— 定义文本域
+eg:
+<body>
+<form action="#" method="post">
+    <input type="hidden" name="id" value="123">
+
+    <label for="username">用户名：</label>
+    <input type="text" name="username" id="username"><br>
+    <label for="password">密码：</label>
+    <input type="password" name="password" id="password"><br>
+    性别：
+    <input type="radio" name="gender" value="1">男
+    <input type="radio" name="gender" value="2">女
+    <br>
+    爱好：
+    <input type="checkbox" name="hobby" value="1">旅游
+    <input type="checkbox" name="hobby" value="2">电影
+    <input type="checkbox" name="hobby" value="3">游戏
+    <br>
+    头像：
+    <input type="file">
+    <br>
+    城市：
+    <select name="city">
+        <option value="beijing">北京</option>
+        <option value="shanghai">上海</option>
+        <option value="gauangzhou">广州</option>
+    </select>
+    <br>
+    个人描述：
+    <textarea cols="20" rows="5" name="desc">
+
+    </textarea>
+    <br>
+    <br>
+    <input type="submit" value="注册">
+    <input type="reset" value="重置">
+    <input type="button" value="一个按钮">
+</form>
+</body>
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**什么是CSS？
+*概述：
+1.CSS是一门语言，用于控制网页表现
+CSS（Cascading Style Sheet）：层叠样式表
+2.W3C标准：网页主要由三部分组成
+    结构：HTML
+    表现：CSSN
+    行为：JavaScript
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**CSS导入方式
+CSS导入HTML的三种方式
+*内联样式：
+在标签内部使用style属性，属性值是css属性键值对（用得较少）
+    <div style="color:red">Hello CSS~</div>
+*内部样式：
+定义<style>标签，在标签内部定义css样式
+    <style type='"text/css">
+    div{
+        color:red;
+    </style>
+eg:
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        span {        ---- 这是选择器，下一节会介绍
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <span>hello css</span>
+</body>
+*外部样式：定义link标签，引入外部的css文件
+    <link rel="stylesheet" href="demo.css">
+        rel="stylesheet" —— 以后会有很多link标签，那么指定rel为stylesheet才能让浏览器知道这个link指向的是一个css文件
+eg:
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="../css/cssdemo.css" rel="stylesheet">
+</head>
+<body>
+<p>hello css</p>
+</body>
+
+**CSS选择器
+*概念：选择器是选取需设置样式的元素（标签）
+div{
+     color: red;
+}
+分类
+*元素选择器
+    元素名称{color: red;}
+    eg:div{color: red;}
+*id选择器
+    #id属性值{color: red;}
+    eg:#name{color: red;}
+       <div id="name">hello css2</div>
+*类选择器 —— 把在一个class里的都设置为同样样式
+    .class属性值{color: red;}
+    eg:.cls{color: red;}
+       <div class="cls">hello css3</div>
+注意：谁选择的范围越小，谁就生效
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**CSS属性（到https://www.w3school.com.cn/的CSS查看文档即可；往下的JS、DOM文档也有）
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+***Day7 JavaScript
+**简介
+*什么是JavaScript？
+Javascript是一门跨平台、面向对象的脚本语言，来控制网页行为的，它能使网页可交互
+W35标准：网页主要由三部分组成
+    结构：HTML
+    表现：CSS
+    行为：JavaScript
+Javascript和Java是完全不同的语言，不论是概念还是设计。但是基础语法类似。
+Javascript（简称：JS）在1995年由Brendan Eich发明，并于1997年成为一部ECMA（欧洲计算机协会）标准。
+（浏览器的脚本语言都必须遵守这个标准）
+ECMAScript6（ES6）是最新的JavaScript版本（发布于2015年）。
+
+*JavaScript能做什么？
+1.改变HTML文本的内容
+2.改变图像的src属性值
+eg:按“开灯”按钮，换成灯亮的图片；按“关灯”按钮，换成灯灭的图片
+3.能够进行表单验证
+eg:验证注册时用户名、密码等是否重复、合法等，若合法，在旁边显示对勾，若不合法，旁边给出红色警告
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**JavaScript引入方式
+*内部脚本：将JS代码定义在HTML页面中
+eg:弹出警告框
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script>
+        alert("hello js")
+    </script>
+</head>
+提示：
+在HTML文档中可以在任意地方，放置任意数量的<script>
+（可以放head里，可以放body里，也可以单独放在外面）
+（一般把脚本置于<body>元素的底部(即body内部的底部)，可改善显示速度，因为脚本执行会拖慢显示）
+
+*外部脚本：将内代码定义在外部JS文件中，然后引入到HTML页面中
+外部文件jsdemo.js:
+alert("hello js");
+引入外部js文件：
+<script src="../js/jsdemo.js"></script>
+注意：
+1.外部脚本不能包含<script>标签
+2.<script>标签不能自闭合（形如：<script src="../js/jsdemo.js"/>是不能生效的）
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**JavaScript基础语法
+*书写语法
+1.区分大小写：与Java一样，变量名、函数名以及其他一切东西都是区分大小写的
+2.每行结尾的分号可有可无（写上更严谨）
+3.注释：
+    单行注释：//注释内容
+    多行注释：/*注释内容*/
+4.大括号表示代码块
+if(count == 3){
+    alert(count);
+}
+
+*输出语句
+1.使用window.alert()写入警告框（window.可省略）
+2.使用document.write()写入HTML输出
+3.使用console.1og()写入浏览器控制台
+    window.alert("hello JS~");//弹出警告框
+    document.write("hello JS~");//写入HTML
+    console.log("hello JS~");//写入浏览器的控制台（F12打开开发者工具 -> Console）
+
+*变量
+1.JavasScript中用var关键字（variable的缩写）来声明变量
+    var test = 20;
+    test = "张三";
+（var的作用域：全局）
+eg:{ --- 定义局部代码块
+     var age = 20;
+}
+alert(age); --- 可以成功访问到
+2.Javascript是一门弱类型语言，变量可以存放不同类型的值
+3.变量名需要遵循如下规则：
+    组成字符可以是任何字母、数字、下划线（_）或美元符号（$）
+    数字不能开头
+    建议使用驼峰命名
+4.ECMAScript 6新增了let关键字来定义变量。它的用法类似于var，但是所声明的变量，只在let关键字所在的代码块内有效，且不允许重复声明
+eg:{ --- 定义局部代码块
+     let age = 20;
+}
+alert(age); --- 不能访问到，会报错，在开发者工具的控制台(Console)里看得到
+5.ECMAScript 6新增了const关键字，用来声明一个只读的常量。一旦声明，常量的值就不能改变。
+const PI = 3.14;
+PI = 3; --- 报错，常量的值不能改变
+
+*数据类型
+var test = 20;
+Javascript中分为：原始类型和引用类型
+5种原始类型：
+    number：数字（整数、小数、NaN(Not a Number)）
+    string：字符、字符串，单双引皆可（在JS里，字符串可以用单引号括起）
+    boolean：布尔。true，false
+    null：对象为空（若：var obj = null;则alert(obj)弹出的是object而不是null，这是JS的一个错误，被沿用至今了）
+    undefined：当声明的变量未初始化时，该变量的默认值是undefined
+使用typeof运算符可以获取数据类型
+alert(typeof age);
+
+*运算符（解释==和===的区别）
+一元运算符：++，--
+算术运算符：+，-，*，/，%
+赋传运算符：=，+=，-=…
+关系运算符：>，<，>=，<=，!=，==，===(全等于)…
+逻辑运算符：&&，||，!
+三元运算符：条件表达式?true_value：false_value
+
+==与===的区别:
+eg：
+var age1 = 20;
+var age2 = "20";
+alert(age1 == age2);//返回true（底层步骤：判断类型是否一样，若不一样，类型转换后判断值是否相等）
+alert(age1 === age2);//返回false（不会进行类型转换）
+
+类型转换：
+*其他类型转为number
+    1.string：按照字符串的字面值转为数字，如果字面值不是数字，则转为NaN。
+    JS里，若要把字符串转为数字，则在前面加一个+或-，这是正、负号的意思，因为正号后面需要数字，而若后面不是数字，则会自动转换（但一般不会用+或-来转换，而是用parseInt方法（与Java类似））
+    eg1：用正负号转换
+    var str = +"20";
+    alert(str + 1); --- 21
+    eg2：用parseInt转换
+    var str = "20";
+    alert(parseInt(str) + 1); --- 21
+
+    2.boolean：true转为1，false转为0
+    var flag = +true;
+    alert(flag); --- 1
+
+*其他类型转为boolean
+1.number：0和NaN转为faLse，其他的数字转为true
+2.string：空字符串转为false，其他的字符串转为true
+3.null：转为false
+4.undefined：转为false
+
+JS里其他类型转为boolean的意义：
+简化str健壮性判断的书写
+//健壮性判断
+if(str != null && str.length > 0){
+}
+可简化为
+if(str){
+}
+
+*流程控制语句
+ if、switch、for、while、do...while
+（与Java一样）
+
+*函数
+在Java里叫方法，在JS里叫函数
+函数是被设计为执行特定任务的代码块
+定义方式一：
+JavaScript函数通过function关键词进行定义，语法为：
+function funcName(参数1, 参数2..){
+//要执行的代码
+}
+注意：
+    形式参数不需要类型。因为JavaScript是弱类型语言
+    返回值也不需要定义类型，可以在函数内部直接使用return返回即可
+eg:
+function add(a, b){
+    return a + b;
+}
+调用：函数名称(实际参数列表);
+let result=aaa(1，2);
+
+定义方式二：
+var functionName = function(参数列表){
+//要执行的代码
+}
+eg:
+var add = function(a, b){
+return a + b;
+}
+
+注意：JS中，函数调用可以传递任意个数参数
+let result = add（1，2，3）;//如上函数，3未被接收，所以还是1+2
+let result = add (1);//如上函数，b没有传参数，所以是NaN，而NaN与数字相加是NaN，所以返回NaN
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**JavaScript常用对象
+*Array对象
+定义
+1.var 变量名 = new Array(元素列表);//方式一
+eg:var arr = new Array(1, 2, 3);
+2.var 变量名 = [元素列表]; //方式二（一般用这个方式）
+（注意：Java里是用大括号，JS用中括号）
+eg:var arr = [1, 2, 3];
+
+访问
+arr[索引] = 值;
+eg:arr[0] = 1;
+注意：JS数组类似于Java集合，长度，类型都可变
+
+特点
+JS里的数组相当于Java中的集合（长度和类型都可变）
+变长eg:
+var arr3 = [1, 2, 3];
+arr3[10] = 10;
+alert(arr3[10]);//可以成功弹出10，没有越界
+alert(arr3[9]);//9号索引没有被赋值，所以弹9号位置是“undefined”
+
+变类型eg:
+arr3[5] = "hello";
+alert(arr3[5]); --- hello
+alert(arr3); --- 1,2,3,,,hello,,,,,10（undefined的位置用空字符串代替了）
+
+*Array对象属性
+length —— 用于变量数组
+
+*Array对象方法
+push —— 添加方法
+eg:
+var arr = [1, 2, 3];
+arr.push(10);
+alert(arr); --- 1,2,3,10
+
+splice —— 删除元素
+eg:
+var arr = [1, 2, 3];
+arr.splice(0, 1);//从0开始删，删1个
+alert(2, 3);
+
+其余属性与方法可查看手册
+
+*String
+定义
+方式一：
+var str = new String("abc");
+方式二：
+var str = "abc";或var str = 'abc';
+
+属性
+//length
+alert(str.length);
+
+方法
+//trim()：去除字符串前后两端的空白字符
+var str = ' abc  ';
+alert(1 + abc + 1); --- 1 abc  1
+alert(1 + abc.trim() + 1); --- 1abc1
+应用场景：
+用户登录时输入用户名的时候，有时候可能前后会输入多了一些空格，那么就要用这个方法删除
+
+//charAt() —— 返回在指定位置的字符
+//IndexOf() —— 检索字符串
+
+*自定义对象
+格式
+var 对象名称 = {
+    属性名称1：属性值1，
+    属性名称2：属性值2，
+    ...
+    函数名称：fnction(形参列表){}
+    ...
+    };
+
+eg:
+var person = {
+     name:"zhangsan"
+     age:23
+     eat:function(){
+         alert("干饭~");
+     }
+}
+alert(person.name); --- zhangsan
+alert(person.age); --- 23
+person.eat(); --- 干饭~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**BOM对象
+*全称：Browser Object Model —— 浏览器对象模型
+
+*作用：JavaScript将浏览器的各个组成部分封装为对象
+
+*组成：
+    Window：浏览器窗口对象
+    Navigator：浏览器对象（整个浏览器）
+    Screen：屏幕对象（显示器屏幕）
+    History：历史记录对象
+    Location：地址栏对象
+
+*Window —— 浏览器窗口对象
+获取：直接使用window，其中window.可以省略
+    eg:window.alert("abc");
+
+属性：获取其他BOM对象
+history —— 对History对象的只读引用。请参阅History对象。
+Navigator ——对Navigator对象的只读引用。请参阅Navigator对象。
+Screen —— 对Screen对象的只读引用。请参阅Screen对象。
+location —— 用于窗口或框架的Location对象。请参阅Location对象。
+
+方法：
+alert() —— 显示带有一段消息和一个确认按钮的警告框。
+confirm() —— 显示带有一段消息以及确认按钮和取消按钮的对话框。（防止用户误操作）
+eg：
+//用flag接收返回值（点击确认返回true，点击取消返回false）
+var flag = confirm("确认删除？");
+if(flag){
+     //删除逻辑
+}else{
+     //什么都不干
+}
+
+定时器方法：
+setTimeout(function, 毫秒值) —— 在指定的毫秒数后调用函赦或计算表达式。（只执行一次）
+eg：
+setTimeout(function(){
+    alert("时间到了");
+    }, 3000); --- 3秒后弹出“时间到了”
+
+setInterval(function, 毫秒值) —— 按照指定的周期（以毫秒计）来调用函数或计算表达式。
+（循环执行）（一般是放广告滚动图片的地方）
+eg：
+setInterval(function(){
+    alert("时间到了");
+    }, 3000); --- 每3秒弹出“时间到了”
+
+*灯的切换案例分析
+1.用setInterval方法
+2.根据一个变化的数字，产生两个固定值 x % 2 --- 0或1
+（同理，若以后需要产生三个，则x % 3）
+（那么滚动显示图片时，就用这种方法，若图片有8张滚动的，就x % 8就行）
+3.当x % 2 == 0时开灯(if)，当x % 2 == 1时关灯(else)
+
+*History —— 历史记录对象
+获取：使用window.history获取，其中window.可以省略
+window.history.方法();
+history.方法();
+方法
+back() —— 加载history列表中的前一个URL（前进）
+forward() —— 加载history列表中的下一个URL（后退）
+
+*Location —— 地址栏对象
+获取：使用window.location获取，其中window.可以省略
+window.location方法();
+location.方法();
+属性
+href —— 设置或返回完整的URL
+
+eg：三秒钟跳转到首页
+document.write("注册成功，三秒钟后跳转到首页~")//在页面显示一句话
+setTimeout(function () {
+    location.href = "https://www.baidu.com";
+}, 3000);
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**DOM
+*全称：Document Object Model —— 文档对象模型
+
+*作用：将标记语言的各个组成部分封装为对象
+    Document：整个文档对象
+    Element：元素对象
+    Attribute：属性对象
+    Text：文本对象
+    Comment：注释对象
+
+*DOM是W3C（万维网联盟）的标准
+DOM定义了访问HTML和XML文档的标准：
+W3C DOM标准被分为3个不同的部分：
+1.核心DOM：针对任何结构化文档的标准模型
+    Document：整个文档对象
+    Element：元素对象
+    Attribute：属性对象
+    Text：文本对象
+    Comment：注释对象
+2.XML DOM：针对XML文档的标准模型
+
+3.HTML DOM：针对HTML文档的标准模型（现在主要学习这个）
+    Image：<img> —— 把<img>标签封装成了Image对象
+    Button：<input type='button'> —— 把button封装成了Button对象
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**DOM Element对象、Attributes对象
+*获取方法 —— 使有Document对象的方法来获取
+1.getElementByld：根据id属性值获取，返回一个Element对象
+2.getElementsByTagName：根据标签名称获取，返回Element对象数组
+3.getElementsByName：根据name属性值获取，返回Element对象数组
+4.getElementsByClassName：根据class属性值获取，返回Element对象数组
+
+eg:
+<img src="../img/灯亮.png" id="light">
+<script>
+var light = document.getElementById("light");//灯亮.png的id是light
+</script>
+
+*常用HTML Element对象的使用
+1.控制图片
+imageObject.src = URL
+eg:
+light.src = '../img/灯灭.png';//修改了
+
+2.控制样式
+var divs document.getElementsByTagName("div");
+//style:设置元素CSS样式
+for(let i = 0;i < divs.length; i++){
+     divs[i].style.color = 'red';
+}
+
+3.改变文本内容
+//innerHTML:设置元素内容
+for(let i = 0;i < divs.length; i++){
+     divs[i].innerHTML = "呵呵";
+}
+
+4.控制checkbox都被选中
+//checked
+var hobbys = document.getElementsByname
+
+*常用的DOM Attributes对象的使用
+value —— 设置或返回属性的值
+eg:更改图片src属性
+法一：
+<body>
+
+<h1>HTML DOM Attributes</h1>
+
+<h2>value 属性</h2>
+
+<p>点击开灯按钮可更改图片的 src 属性：</p>
+
+<button onclick="myFunction()">开灯</button>
+
+<img id="light" src="/i/pic/bulboff.gif" width="108" height="180">
+
+<script>
+function myFunction() {
+  const nodeMap = document.getElementById("light").attributes;
+  nodeMap.getNamedItem("src").value = "/i/pic/bulbon.gif";
+}
+</script>
+
+</body>
+
+法二：
+<body>
+
+<h1>HTML DOM Attributes</h1>
+
+<h2>value 属性</h2>
+
+<p>点击开灯按钮可更改图片的 src 属性：</p>
+
+<button onclick="myFunction()">开灯</button>
+
+<img id="light" src="/i/pic/bulboff.gif" width="108" height="180">
+
+<script>
+function myFunction() {
+  const element = document.getElementById("light");
+  element.getAttributeNode("src").value = "/i/pic/bulbon.gif";
+}
+</script>
+
+</body>
+
+*小结
+获取元素对象，查阅文档，查看该对象有哪些方法可以操作它
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**事件监听
+*简介 —— HTML事件是发生在HTML元素上的“事情”。
+比如：
+    按钮被点击
+    鼠标移动到元素之上
+    按下键盘按键
+
+*作用 —— Javascript可以在事件被侦测到时执行代码
+
+*事件绑定
+事件绑定有两种方式
+方式一:通过HTML标签中的事件属性进行绑定
+eg:
+<input type="button" onclick='on()'>
+function on(){
+    alert("我被点了");
+}
+
+方式二:通过DOM元素属性绑定（推荐使用这种方式）
+eg:
+<input type="button" id="btn">
+document.getElementById("btn").onclick=function(){
+alert("我被点了”);
+}
+
+*常见事件
+onblur —— 元素失去焦点
+onfocus —— 元素获得焦点
+（文本输入框里点击为获取焦点，外点击为失去焦点）
+（这两个可以用来，如：获得焦点时，外面的背景色变暗。失去焦点时，验证与判断输入内容是否合法）
+
+onchange —— 文本内容被改变
+（如：把小写输入变为大写）
+
+onclick —— 当用户点击某个对象时调用的事件
+onkeydown —— 某个按键被按下
+（如：输入框无法输入数字，只能输入字母）
+
+onmousemove —— 鼠标从某元素移开
+onmouseover —— 鼠标移到某元素之上
+（如：移到某个块块，背景色会更换、移到某个元素，会弹出警告）
+
+onsubmit —— 确认按钮被点击
+（一般用来做表单输入信息的合法性验证）
+
+详情请看手册DOM Event对象部分
+
+*案例：表单验证
+1.当输入框失去焦点时，验证输入内容是否符合要求
+2.当点击注册按钮时，判断所有输入框的内容是否都符合要求，如果不合符则阻止表单提交
+步骤：
+1，当输入框失去焦点时，验证输入内容是否符合要求
+    (1)获取表单输入框”var usernamelnput = document.getElementByld("username");
+    (2)绑定onblur事件usernamelnput.onblur = function(){}
+    (3)获取输入内容var username = usernamelnput.value.trim();
+    (4)判断是否符合规则var usernameReg = /Aw{6,12}$/;/正则表达式
+    (5)如果不合符规则，则显示错误提示信息
+
+2，当点击注册按钮时，判断所有输入框的内容是否都符合要求，如果不合符则阻止表单提交
+    (1)获取表单对象var regForm = document.getElementByld("reg-form);
+    (2)为表单对象绑定onsubmit regForm.onsubmit = function(){}
+    (3)判断所有输入框是否都符合要求，如果符合，则返回true，如果有一项不符合，则返回false
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**正则表达式
+*概念:正则表达式定义了字符串组成的规则
+定义:
+1.直接量:注意不要加引号
+    var reg = /^\w{6,12}$/;
+2.创建RegExp对象
+    var reg=new RegExp("^\\w{6,12}$");
+
+*语法
+^ —— 表示开始
+$ —— 表示结束
+[] —— 代表某个范围内的单个字符，比如:[0-9]单个数字字符
+. —— 代表任意单个字符，除了换行和行结束符
+\w —— 代表单词字符:字母、数字、下划线(_)，相当于[A-za-z0-9_]
+\d —— 代表数字字符:相当于[0-9]
+
+量词 
++ —— 至少一个
+eg:var reg=/^\w+$/; --- 至少一个单词字符
+
+* —— 零个或多个
+? —— 零个或一个
+{x} —— x个
+{m,} —— 至少m个
+{m,n} —— 至少m个，最多n个（包含m，也包含n）
+eg:var reg = /^\w{6,12}$/;
+
+*test(str)方法
+判断指定字符串是否符合规则，返回true或false
+eg:
+var reg = /^\w{6, 12}$/;
+var str = "abc";
+var flag = reg.test(str);
+alert(flag) --- 不符合单词字符6到12位，返回false
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+***Day8 —— HTTP&Tomcat&Servlet
+**Web核心简介
+*什么是JavaWeb？
+Web：全球广域网，也称为万维网(www)，能够通过浏览器访问的网站
+JavaWeb：是用Java技术来解决相关web互联网领域的技术栈
+
+*JavaWeb技术栈
+B/S架构：Browser/Server，浏览器/服务器架构模式，它的特点是，客户端只需要浏览器，应用程序的逻辑和数
+据都存储在服务器端。浏览器只需要请求服务器，获取Web资源，服务器把Web资源发送给浏览器即可
+
+好处：易于维护升级：服务器端升级后，客户端无需任何部署就可以使用到新的版本
+
+静态资源：HTML、CSS、JavaScript、图片等。负责页面展现
+动态资源：Servlet、JSP（Java代码要遵守的书写规范）等。负责逻辑处理和对数据库进行访问
+数据库：负责存储数据
+HTTP协议：定义通信规则
+Web服务器：负责解析HTTP协议，解析请求数据，并发送响应数据（Apache Tomcat服务器）
+
+*Web核心学习路径和方向
+1.HTTP、Tomcat、Servlet
+2.Request（请求）、Response（响应）
+3.JSP、会话技术（Cookie、Session）
+4.Filter（过滤器）、Listener（监听器）
+5.Ajax、Vue、ElementUl
+6.综合案例
+
+**HTTP协议
+*概念：HyperText Transfer Protocol，超文本传输协议，规定了浏览器和服务器之间数据传输的规则
+（浏览器传到服务器的请求数据要约定一定的数据格式，数据才能被服务器识别，同理服务器给浏览器的响应数据也要遵守一定的数据格式）
+
+*HTTP协议特点
+1.基于TCP协议：面向连接，安全
+2.基于请求-响应模型的：一次请求对应一次响应
+3.HTTP协议是无状态的协议：对于事务处理没有记忆能力。每次请求-响应都是独立的。
+    缺点：多次请求间不能共享数据。Java中使用会话技术（Cookie、Session）来解决这个问题
+    优点：速度快
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**HTTP请求数据格式:
+1.请求行:请求数据的第一行。其中GET表示请求方式，/表示请求资源路径，HTTP/1.1表示协议版本
+2.请求头:第二行开始，格式为key:value形式。
+3.请求体:POST请求的最后一部分，存放请求参数
+eg:
+GET/HTTP/1.1  --- 请求行
+Host:www.itcast.cn  --- 请求头
+Connection:keep-alive
+Cache-Control:max-age=0Upgrade-lnsecure-Requests:1
+User-Agent:Mozilla/5.0Chrome/91.0.4472.106
+---（此空行用来分隔Header和Body，必不可少！）
+username=superbaby&password=123456  --- 请求体
+
+*常见的HTTP请求头:
+Host:表示请求的主机名
+User-Agent:浏览器版本，例如Chrome浏览器的标识类似Mozilla/5.0.…
+Chrome/79，上浏览器的标识类似Mozilla/5.0(Windows NT.…)like Gecko;
+
+Accept:表示浏览器能接收的资源类型，如text/*，image/*或者*/*表示所有;
+Accept-Language:表示浏览器偏好的语言，服务器可以据此返回不同语言的网页;
+Accept-Encoding:表示浏览器可以支持的压缩类型，例如gzip,deflate等。
+
+*GET请求和POST请求区别:
+1.GET请求请求参数在请求行中（在请求资源路径的?后开始），没有请求体。POST请求请求参数在请求体中
+2.GET请求请求参数大小有限制，POST没有
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**HTTP响应数据格式
+1.响应行:响应数据的第一行。其中HTTP/1.1表示协议版本，200表示响应状态码，OK表示状态码描述
+2.响应头:第二行开始，格式为key:value形式
+3.响应体:最后一部分。存放响应数据
+eg:
+HTTP/1.1 200 OK
+Server: Tengine
+Content-Type: text/html
+Transfer-Encoding: chunked...
+<html>
+<head>
+    <title></title>
+</head>
+<body></body>
+</html>
+
+*响应状态码分类
+1xx —— 响应中 —— 临时状态码，表示请求已经接受，告诉客户端应该继续请求或者如果它已经完成则忽略它
+2xx —— 成功 ——表示请求已经被成功接收，处理已完成
+3xx —— 重定向 —— 重定向到其它地方;它让客户端再发起一个请求以完成整个处理。
+4xx —— 客户端错误 —— 处理发和错误，责任在客户端,如客户端的请求一个不存在的资源，客户端未被授权，禁止访问等
+5xx —— 服务器端错误 —— 处理发生错误，责任在服务端，如:服务端抛出异常，路由出错，HTTP版本不支持等
+
+状态码大全:https:/cloud.tencent.com/developer/chapter/13553
+
+*常见的HTTP响应头:
+Content-Type:表示该响应内容的类型，例如text/html，image/jpeg
+Content-Length:表示该响应内容的长度（字节数）
+Content-Encoding:表示该响应压缩算法，例如gzip
+Cache-Control:指示客户端应如何缓存，例如max-age=300（表示可以最多缓存300秒）
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Web服务器 - Tomcat
+Web服务器是一个应该程序(软件)，对HTTP协议的操作进行封装，使得程序员不必直接对协议进行操作，让Web开发更加便捷（让程序员可以专注于对前端页面的设计和后端服务的完善）。主要功能是“提供网上信息浏览服务”
+
+*Tomcat简介
+概念:Tomcat是Apache软件基金会一个核心项目，是一个开源免费的轻量级Web服务器，支持Servlet/JSP少量JavaEE规范。
+
+JavaEE:Java Enterprise Edition，Java企业版。指Java企业级开发的技术规范总和。包含13项技术规范:JDBC、JNDI、EJB、RMI、JSP、servlet、XML、JMS、Java IDL、JS、JTA、JavaMail、JAF
+
+Tomcat也被称为Web容器、Servlet容器。Servlet需要依赖于Tomcat才能运行
+
+官网:https://tomcat.apache.org
+
+*Tomcat基本使用
+下载：官网下载（下载8版本，现在企业最常用的）
+安装：绿色版，直接解压即可（解压到不带空格和中文的目录）
+卸载：直接删除目录即可
+启动：双击:bin\startup.bat
+
+*Tomcat各个目录的介绍
+bin —— 可执行文件存放目录（bin是binary(二进制)的缩写）
+conf —— 配置文件存放目录
+lib —— tomcat依赖的jar包
+logs —— 日志文件
+temp —— 临时文件
+webapps —— 应用发布目录
+work —— 工作目录
+
+*解决Tomcat控制台乱码问题
+修改conf/logging.properties
+java.util.logging.ConsoleHandler.encoding = UTF-8(改为GBK)
+
+*验证Tomcat是否启动成功
+浏览器地址栏输入：localhost:8080
+会根据Tomcat自带的项目访问到Tomcat的欢迎页面
+
+*关闭Tomcat
+1.直接×掉运行窗口：强制关闭
+2.bin\shutdown.bat：正常关闭
+3.ctrl + C：正常关闭
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Tomcat的配置
+*配置
+1修改启动端口号
+打开conf/server.xml文件
+<Connector port="8080" protocol="HTTP/1.1".... --- 把8080修改为80
+注:HTTP协议默认端口号为80，如果将Tomcat端口号改为80，则将来访问Tomcat时，将不用输入端口号
+（若80端口号被System占用，应该是不能用此端口了）
+
+*启动时可能出现的问题:
+注：启动窗口要往上翻翻是否有org.apache.catalina.LifecycleException: 协议处理程序初始化失败
+1.端口号冲突：找到对应程序，将其关闭掉
+2.启动窗口一闪而过:检查JAVA_HOME环境变量是否正确配置
+
+*拓展：如何根据端口号找到相应正在运行的程序？
+1.打开cmd（管理员），netstat -ano|findstr "8080"  （如查找8080端口号）
+2.找到 TCP    0.0.0.0:8080           0.0.0.0:0              LISTENING       6204
+3.然后根据最后的进程id（PID(processId)）
+4.在任务管理器“详细信息”处可找到该程序（或cmd输入tasklist|findstr "6204"）
+
+*Tomcat部署项目与访问
+将项目放置到webapps目录下，即部署完成
+一般JavaWeb项目会被打成war包（这样复制过去速度快一点），然后将war包放到webapps目录下，Tomcat会自动解压缩war文件
+
+访问eg:
+如把一个项目（hello文件夹下有a.html）放在webapps下，然后浏览器地址栏写：localhost/hello/a.html即可
+
+*pom.xml中<packaging>打包方式介绍
+jar —— 默认值
+war —— Web项目
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**IDEA中创建Maven Web项目
+*Web项目结构：
+Maven Web项目结构 —— 开发中的项目
+hello --- 项目名称
+    src --- 主目录
+        main
+            java --- Java代码
+            resources --- 资源文件
+            webapp --- Web项目特有目录
+                html --- HTML文件目录（可自定义）
+                WEB-INF --- Web项目核心目录（必须叫这个名称）
+                   web.xml --- Web项目配置文件
+        test --- 测试目录
+        m pom.xml
+
+部署的JavaWeb项目结构：开发完成，可以部署的项目
+hello --- 项目访问路径（虚拟目录）
+    html --- HTML文件目录（可自定义）
+    WEB-INF --- Web项目核心目录（必须叫这个名称）
+        classes --- Java字节码文件
+        lib --- 项目所需jar包
+        web.xml --- Web项目配置文件
+
+编译后的Java字节码文件和resources的资源文件，放到WEB-INF下的classes目录下
+pom.xml中依赖坐标对应的jar包，放入WEB-INF下的lib目录下
+
+*开始在IDEA创建项目（用/不用骨架）
+使用骨架：（骨架 == 模板）
+1.在HTML项目中新建一个新的模块，选择Maven，把Create from archetype勾选（使用骨架）
+2.找到maven-archetype-webapp
+3.next -> 起一个名：tomcatdemo，然后也可以打开Artifact Coordinates改GroupId等坐标信息
+4.创建模块完成后，自动跳到pom.xml文件里，删除无用的插件，只留下groupId、artifactId、version、packaging
+5.补齐缺失的目录结构：在main下右键新建目录java和resources（会有提示“是否创建这两个缺失的目录”，按住ctrl选中这两个直接回车，两个都创建好了）
+6.若以后还需要写测试用例，可以再补一个与main平级的test，然后在test里新建java
+
+不使用骨架：（比较清爽，pom.xml里不会引入很多需要手动删除的无用的插件）
+1.选择Maven，不勾选Create from archetype
+2.创建成功后，这样创建的只是普通的Maven项目，所以要在pom.xml手动添加<packaging>war</packaging>
+3.手动构建JavaWeb项目结构目录，或打开File -> Project Structure -> Facets，选择新创建的Web项目
+4.根据右方Web Resource Directories提示，双击标红的文本，OK即可自动创建webapp目录
+5.点击Deployment Descriptors的加号，点击web.xml，检查添加位置是否正确（模块名 -> src -> main -> webapp -> WEB-INF -> web.xml），若不正确请手动补齐，然后OK，自动创建WEB-INF目录和web.xml文件（若不想手动补齐，则直接OK，然后把WEB-INF目录拖到webapp下就行）
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**IDEA中方便快捷地使用Tomcat
+*问题痛点
+写项目过程中，往往需要边写边测试，那么需要测试Tomcat项目时，就要运行Maven的package打包命令生成war包，然后把war包放到Tomcat的webapps目录下再运行，这样非常麻烦
+
+*解决办法
+方法1：把本地Tomcat集成到IDEA，然后进行项目部署
+Run -> Edit Configurations -> 点击+号 -> 选择Tomcat Server(Local) -> 起名字为Tomcat8 -> 点击Configure -> 选择本地Tomcat的安装目录（主目录，即bin的上一级） -> 选择相应的浏览器 -> 点击Deployment -> 点击+号，选择Artifact -> 选择web项目的war包（以war结尾的，不是exploded结尾的）-> 然后下面的Application context是该项目的访问路径，是可以更改的（可以改一个短一点的方便在浏览器地址栏输入(只写一个/也行)） -> 配置完成
+
+使用方法：右上角运行符号的旁边是Tomcat8时，点击运行，即可自动启动Tomcat服务并打开浏览器运行本项目，若要关闭Tomcat服务，则按红色正方形即可
+
+方法2：使用Tomcat Maven插件（速度比方法1要快很多）
+1.pom.xml添加Tomcat插件的依赖坐标
+<build>
+  <plugins>
+    <!-Tomcat插件-->
+    <plugin>
+      <groupld>org.apache.tomcat.maven</groupld>
+      <artifactld>tomcat7-maven-plugin</artifactld>
+      <version>2.2</version>
+    </plugin>
+    </plugins>
+</build>
+坐标添加完后，最好把插件坐标统一放在packaging标签下面，然后记得刷新一下pom.xml（pom.xml被修改后，界面右上角会有一个m字样的刷新按键）
+这样一来，相当于在Maven项目里内置了一个Tomcat，就可以在项目模块名通过右键Run Maven来启动Tomcat了
+这样的方式启动，就可以在项目里打断点，进行项目的调试工作
+
+也可以在当前项目模块目录下打开cmd（或IDEA自带的控制台），输入mvn tomcat7:run也可以启动
+
+2.配置Tomcat插件默认参数
+在以上的坐标的version下面，继续添加一个标签<configuration>
+标签里可以配置端口号<port>、项目访问路径<path>（同样地，只写一个/也行）
+若不配置端口号和访问路径，默认是8080，路径为项目模块名称
+
+用Tomcat插件的缺点：只支持到tomcat7，但现阶段的开发调试已经够用了
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Servlet快速入门
+*简介
+Servlet是Java提供的一门动态web资源开发技术
+eg：不同的用户登录该网站，就有不同的显示效果
+张三：localhost:8080/login?username=zhangsan --> 页面显示：张三欢迎你
+王五：localhost:8080/login?username=wangwu --> 页面显示：您没有访问权限
+
+Servlet是JavaEE规范之一，其实就是一个接口，将来我们需要定义Servlet类实现servlet接口，并由web服务器运行Servlet
+
+所以，要想查看Servlet相关文档，需找到JavaEE的API文档，搜索Servlet即可
+
+*Servlet实现步骤：
+1.创建web项目，导入Servlet依赖坐标（写在pom.xml里）
+<dependency>
+    <groupld>javax.servlet</groupld>
+    <artifactld>javax.servlet-api</artifactld>
+    <version>3.1.0</version>
+    <scope>provided</scope>  --- 依赖范围一定要写provided
+</dependency>
+2.创建:定义一个类，实现servlet接口,并写接口中所有方法，并在service方法中输入一句话
+public class ServletDemo1 implements Servlet{//写完这个后按alt + enter可以自动补充所有servlet方法
+    public void service(){}
+}
+3.配置:在类上使用@Webservlet注解，配置该Servlet的访问路径
+@WebServlet("/demo1”)
+public class ServletDemo1 implements Servlet{
+4.访问:启动Tomcat，浏览器输入URL访问该Servlet
+http://localhost:8080/web-demo/demo1
+
+eg:
+定义了一个ServletDemo类，实现Servlet接口：
+package com.sio.web;
+
+import javax.servlet.*;
+import javax.servlet.annotation.WebServlet;
+import java.io.IOException;
+
+@WebServlet("/demo")//servlet要想被访问，就要配置一个访问路径
+public class ServletDemo implements Servlet {  //写一个Servlet的接口
+
+    public void init(ServletConfig servletConfig) throws ServletException {
+
+    }
+
+    public ServletConfig getServletConfig() {
+        return null;
+    }
+
+    //当servlet被访问时，service方法会自动被执行
+    public void service(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException {
+        System.out.println("servlet hello world");
+    }
+
+    public String getServletInfo() {
+        return null;
+    }
+
+    public void destroy() {
+
+    }
+}
+运行效果是：打开我的网页http://localhost:8080/
+然后斜杠后面写servlet的访问路径http://localhost:8080/demo，就会在IDEA的控制台输出servlet hello world，而网页是空白的，因为还没有给网页输出内容
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Servlet执行流程
+Servlet对象是由Tomcat帮我们创建的
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Servlet生命周期
+对象的生命周期指的是一个对象从被创建到被销毁的整个过程
+Servlet运行在servlet容器(web服务器)中，其生命周期由容器来管理，分为4个阶段:
+1.加载和实例化:默认情况下，当servlet第一次被访问时，由容器创建servlet对象
+@WebServlet(urlPatterns="/demo"，loadOnStartup=1)//其中loadOnStartup是一个属性(默认值为-1)
+    负整数:第一次被访问时创建servlet对象
+    0或正整数:服务器启动时创建servlet对象，数字越小优先级越高（把创建对象耗时的工作提前，让用户到时访问servlet时可以快一些）
+
+2.初始化:在servlet实例化之后，容器将调用servlet的init()方法初始化这个对象，完成一些如加载配置文件、创建连接等初始化的工作。
+（调用次数：只调用一次）
+（调用时机：Servlet对象被创建时即调用初始化方法）
+
+3.提供服务:每次请求Servlet时，Servlet容器都会调用Servlet的service()方法对请求进行处理。
+（调用时机、次数：每次请求Servlet都会调用）
+
+4.服务终止:当需要释放内存或者容器关闭时，容器就会调用Servlet实例的destroy()方法完成资源的释放。在destroy()方法调用之后，容器会释放这个servlet实例，该实例随后会被Java的垃圾收集器所回收
+（调用次数：只调用一次）
+（调用时机：内存释放或者服务器正常关闭（直接按红色正方形是强制关闭，不会调用destroy()）的时候，Servlet对象会被销毁，调用）
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Servlet方法介绍
+1.初始化方法，在Servlet被创建时执行，只执行一次
+    void init(ServletConfig config) —— config对象是自动生成并传入的
+
+2.提供服务方法，每次Servlet被访问，都会调用该方法
+    void service(ServletRequest req,ServletResponse res)
+
+3.销毁方法，当servlet被销毁时，调用该方法。在内存释放或服务器关闭时销毁servlet
+    void destroy()
+
+前三个上面已有详解，下面谈谈这两个方法：    
+
+4.获取ServletConfig对象
+    ServletConfig getServletConfig() —— 获取Servlet配置对象
+eg:
+需求：返回自动生成并传入init方法里的config配置对象
+技术难点：在getServletConfig方法里使用init方法的局部变量config
+解决办法：
+private ServletConfig config;//声明全局变量config
+void init(ServletConfig config){
+     this.config = config;//自动生成并传入init方法的config局部变量赋给全局变量config
+}
+ServletConfig getServletConfig(){
+     return config;//返回全局变量config
+}
+5.获取Servlet信息
+    String getServletlnfo() —— 返回一些信息（作者、版本、版权...）（一般没什么用，返回空字符串或null就行）
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Servlet体系结构
+*简介
+Servlet -> Servlet体系根接口
+↑
+GenericServlet -> Servlet抽象实现类
+↑
+HttpServlet -> 对HTTP协议封装的Servlet实现类
+
+我们将来开发B/S架构的web项目，都是针对HTTP协议，所以我们自定义Servlet，会继承HttpServlet
+
+*Servlet继承HttpServlet实战案例
+eg:
+写一个a.html
+<body>
+<form action="/ServletDemo" method="post">
+    <input type="text" name="username">
+    <input type="submit" value="提交">
+</form>
+</body>
+
+写一个继承了HttpServlet的Servlet
+@WebServlet("/ServletDemo")
+public class ServletDemo extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println("Post~");
+    }
+}
+
+功能：先在浏览器打开a.html，然后输入框输入内容并提交，会跳转到/ServletDemo网页获取其中资源（此处是在控制台输出Post~）
+
+思考：
+1.HttpServlet中为什么要根据请求方式的不同，调用不同方法?
+创建一个Servlet类并实现接口（现称为Servlet.java），在原始Servlet的五个方法之service()里，可以用代码来判断当前用户发到服务端的数据是get请求还是post请求，，如果是get，则使用doGet方法，如果是post，则使用doPost方法
+那么，我们以后可以把这个Servlet.java改名为MyHttpServlet.java，把doGet方法和doPost方法都设置为protected，然后以后我们再写Servlet的时候，就不需要再定义Servlet类并实现接口了，而是extends继承MyHttpServlet然后根据自己这个Servlet页面的响应需求，重写其中的doGet和doPost方法即可
+
+*MyHttpServlet案例实战
+a.html：
+<body>
+<form action="/ServletDemo1" method="post">
+    <input type="text" name="username">
+    <input type="submit" value="提交">
+</form>
+</body>
+
+MyHttpServlet.java：
+package com.sio.web;
+
+import javax.servlet.*;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+
+@WebServlet("/MyHttpServlet")
+public class MyHttpServlet implements Servlet{
+
+    public void init(ServletConfig servletConfig) throws ServletException {
+        System.out.println("init~");
+    }
+
+    public ServletConfig getServletConfig() {
+        return null;
+    }
+
+    public void service(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        //获取请求方式
+        String method = request.getMethod();
+        //判断
+        if("GET".equals(method)){
+            doGet(servletRequest, servletResponse);
+        }else{
+            doPost(servletRequest, servletResponse);
+        }
+    }
+
+    public String getServletInfo() {
+        return null;
+    }
+
+    public void destroy() {
+        System.out.println("destroy~");
+    }
+    protected void doGet(ServletRequest req, ServletResponse res){
+        System.out.println("MyHttpServlet_doGet");
+    }
+    protected void doPost(ServletRequest req, ServletResponse res){
+        System.out.println("MyHttpServlet_doPost");
+    }
+}
+
+ServletDemo1.java：
+package com.sio.web;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebServlet;
+
+@WebServlet("/ServletDemo1")
+public class ServletDemo1 extends MyHttpServlet{
+    @Override
+    protected void doGet(ServletRequest req, ServletResponse res) {
+        super.doGet(req, res);
+        System.out.println("ServletDemo1_doGet");
+    }
+
+    @Override
+    protected void doPost(ServletRequest req, ServletResponse res) {
+        super.doPost(req, res);
+        System.out.println("ServletDemo1_doPost");
+    }
+}
+
+运行过程：
+先访问a.html，文本框输入内容并提交后，IDEA控制台输出如下：
+init~
+MyHttpServlet_doPost
+ServletDemo1_doPost
+且网页自动跳转到/ServletDemo1
+（这是Post请求）
+然后在/ServletDemo1页面继续按回车，控制台输出如下：
+MyHttpServlet_doGet
+ServletDemo1_doGet
+（这是Get请求）
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Servlet urlPattern配置
+Servlet要想被访问，必须配置其访问路径(urlPattern)
+1.一个Servlet，可以配置多个urlPattern
+    @WebServLet(urLPatterns={"/demol","/demo2"}) --- 可以写数组的格式（那么以后多个Servlet路径都可以访问同一个doGet或doPost的资源）
+2.urlPattern配置规则
+*精确匹配
+    精确匹配 —— @WebServlet("/aaa/b") —— 必须访问/aaa/b才能访问到资源
+*目录匹配
+    目录匹配 —— @WebServlet("/aaa/*") —— /aaa/（*是通配符，所以这里写什么都能被访问到资源）
+        注意：1.若同时满足精确匹配和目录匹配，会选择精确匹配的资源
+             2.精确匹配和目录匹配都要以/开头，否则会报错
+*扩展名匹配
+    扩展名匹配 —— @WebServlet("*.do") —— 则/aaa.do或/bbb.do都能访问到该资源
+        注意：扩展名匹配不能写/开头
+*任意匹配
+    任意匹配 —— @WebServlet("/")或@WebServlet("/*") —— 不管写什么，都能访问到资源，但前提是没有被其他匹配拦截
+        注意：/和/*都是任意匹配，但/*优先级要高于/
+
+*任意匹配的/和/*区别:
+    当我们的项目中的Servlet配置了/，会覆盖掉tomcat中的DefaultServlet，当其他的url-pattern都匹配不上时都会走这个Servlet
+    当我们的项目中配置了/*，意味着匹配任意访问路径，那么我们的静态资源a.html也访问不了了
+
+*优先级：精确 > 目录 > 扩展名 > /* > /
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**XML配置方式编写Servlet
+*注解配置与XML配置
+Servlet从3.0版本后开始支持使用注解配置（上面使用的@WebServlet()就是注解配置），3.0版本前只支持XML配置文件的配置方式
+步骤:
+    1.编写servlet类
+    2.在web.xml（在webapp/WEB-INF目录下）后配置该Servlet
+eg:
+（注意，此处没写注解@WebServlet()）
+ServietDemo2.java：
+public class ServletDemo2 extends MyHttpServlet{
+    @Override
+    protected void doGet(ServletRequest req, ServletResponse res) {
+        super.doGet(req, res);
+        System.out.println("ServletDemo2_doGet");
+    }
+
+    @Override
+    protected void doPost(ServletRequest req, ServletResponse res) {
+        super.doPost(req, res);
+        System.out.println("ServletDemo2_doPost");
+    }
+}
+
+web.xml配置文件：
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+  <display-name>Archetype Created Web Application</display-name>
+
+  <!--Servlet全类名-->
+  <servlet>
+    <servlet-name>demo2</servlet-name>
+    <servlet-class>com.sio.web.ServletDemo2</servlet-class>
+  </servlet>
+
+  <!--Servlet访问路径-->
+  <servlet-mapping>
+    <servlet-name>demo2</servlet-name>
+    <url-pattern>/demo2</url-pattern>
+  </servlet-mapping>
+</web-app>
+
+运行情况：
+访问/demo2时，控制台输出如下：
+init~
+MyHttpServlet_doGet
+ServletDemo2_doGet
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+***Navicat软件使用
+**外键
+*如何直观查看表与表之间的链接
+对象->按住ctrl选中所有要查看的表->右键->逆向表到模型
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+***IDEA软件使用
+**代码快捷操作
+*模版介绍
+file -> settings -> editor -> Live templates
+查看有哪些模版快捷键/可以自己添加模版
+模版可以高效完成开发，提高速度
+以下部分是一些常用模版
+
+*快速写出main方法 —— main + enter
+
+*快速写出for循环 —— fori + enter
+
+*System.out.println();快捷操作
+sout —— System.out.println();
+name.sout —— System.out.println(name);
+
+*用.var快速定义类和类对象（自动分配变量名）
+如：new int[10].var -> 回车 -> int[] ints = new int[10];
+若不喜欢自动起的名字，可在框框内直接改对象名，若确认该名字，回车确定即可
+若有多个框框，Tab选择下一个框框，Shift + Tab选择上一个框框
+
+*快速替换某个区域的所有变量名A为变量名B
+选中某个想要替换的区域，ctrl + R
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**快捷键
+*删除一行 —— ctrl + d（自己设置）
+进入Settings的Keymap，搜索delete，把ctrl + y设置为ctrl + d（先remove，然后重新设置，提示有冲突，也确认修改即可）
+ 
+*复制当前行 —— ctrl + alt + 向下箭头（自己设置）
+Keymap里搜索duplicate
+配置Duplicate Line or Selection即可
+
+*补全代码快捷键 —— alt + /
+本来有提示的代码，但是写了一半，光标移到了别的地方，再移回去提示就没有了，这时可使用此快捷键
+
+*添加注释和取消注释 —— ctrl + /
+按一次是添加注释，再按是取消
+
+*消除报错警告 —— alt + enter
+
+*生成构造方法、getter、setter、toString等方法 —— alt + Ins
+
+*Maven项目里，pom.xml文件中依赖模板、插件模板的快速插入 —— alt + Ins
+
+*查看一个类的层级关系（继承关系）—— ctrl + H
+
+*定位到哪个类的方法 —— ctrl + B 或 ctrl + 鼠标左键
+将光标放在一个方法上，再按ctrl + B
+
+*列编辑模式及使用技巧 —— shift + alt + Ins（进入列编辑模式）
+使用技巧：
+1.按住shift，鼠标左键点击（或按上、下键）可选多列；按住shift，鼠标最后在哪点击，则在哪结束全选这一部分
+2.ctrl + home光标到开头；ctrl + shift +end光标在第一列全闪烁；“右”键可控制光标往右
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Settings
+*IDEA自动import的设置
+Editor -> General -> Auto Import里
+Add unambiguous iports on the fly
+Optimize imports on the fly (for current project)
+两个勾都打上即可
+若没能自动导入，则光标移到红色警告上按alt + enter即可
+
+*解决IDEA的ctrl + /注释总在行首开始的问题
+Editor -> Code Style -> Java -> Code Generation
+把Line comment at first colum和Block comment at first column的勾都去掉
+同理，xml也可以这样设置
+
+

@@ -1,0 +1,22 @@
+# define Y "有四舍五入机制"
+
+# define N "无四舍五入机制"
+
+a = "3.14159"
+①A:
+    print('{:.3f}'.format(float(a))) #输出3.142(str型)(Y)    #此法，a可以为int型或float型，若为int型(如：a = 3)，则输出3.00，但此法不可为str型
+  B:
+    print('{:.5s}'.format(a))  #输出3.141(str型)(N)    #从3开始右数5位，即："3"   "."   "1"   "4"   "1"
+②A:
+    print(format(float(a), '.3f'))   #输出3.142(str型)(Y)   #a可为int型或float型(原理与①A相似)
+  B：
+    print(format(a, '.5s'))  #输出3.141(str型)(N)    #a必为str型。(原理与①B相似)
+
+③print('%.3f' % float(a))  #输出3.142(str型)(Y)      #a可为int型或float型。(原理与①A相似)
+
+④print(round(float(a), 3))   #输出3.142(float型)(Y)  #此法，a必须为float型，不可为int型或str型，若为int型(如a = 3)，则输出3，不输出3.00。
+
+⑤print(a[:5])  #输出3.141(str型)(N)  #此法，a必为str类型。(原理与①B相似)
+
+tips:[:5]为切片，这样写是从头开始数5位，若[5:]则是
+从头数5位后取这五位后面的所有位。(即输出59)

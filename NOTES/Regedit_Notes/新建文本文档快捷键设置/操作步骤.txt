@@ -1,0 +1,5 @@
+1、首先，windows+R，输入regidit点击确定
+2、HKEY_CLASSES_ROOT下ctrl+F搜索
+3、输入C:\Windows\system32\notepad.exe,-469
+4、找到后双击，将数值数据中的“文本文档”改为“T文本文档”
+5、设置成功，右击，新建，发现文本文档前面多了个T，此时鼠标右击，键盘上按WT就可以快速新建出文本文档了

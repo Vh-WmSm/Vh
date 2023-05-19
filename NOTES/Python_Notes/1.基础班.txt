@@ -1,0 +1,2177 @@
+Python 基础语法补习
+
+目录：
+
+Day 4
+*字符串
+*元组（内含isinstance() —— 判断参数1是否是参数2的类型对象）
+*列表
+*字典
+*集合：（set） —— 集合不支持下标操作、集合是无序的
+*str、list、tuple、dict公共方法
+
+Day 5
+*列表推导式（列表解析）
+*函数定义的格式 —— 用pass快速建立项目整体框架
+*用for和return筛选时需要注意加一个else
+*组包和拆包
+*全局变量和局部变量
+*引用的概念 —— 数据在内存中存储时的内存编号
+*可变类型和不可变类型
+*函数的默认值参数
+*位置参数(positional argument)和关键字参数
+*不定长位置参数 —— *args在参数中定义了该形参后，可以通过*args接收多个不确定个数的位置参数
+*可变参数的二次传递（重点掌握）
+*exit()和sys.exit()
+
+Day 6
+*匿名函数(lambda)
+*高阶函数 - map
+*高阶函数 - reduce
+*高阶函数 - filter（过滤函数）：—— 用于过滤序列，过滤掉不符合条件的元素
+*sort方法的高级应用 - key与lambda结合使用
+*文件的操作
+*其他文件操作 —— 大文件的复制
+
+Day 7
+*面向对象概述
+*类和对象概念
+*类的定义（Python）： —— 类中的def xxx就叫方法，凡是在类之外的def xxx就叫函数
+*创建对象和使用对象的格式
+*为对象动态绑定属性
+*在初始化方法中绑定属性
+*__str__方法和__del__方法： —— 也是魔法方法
+
+Day 8
+*类的复合
+*私有属性的定义和使用
+*私有方法的定义和使用
+*继承的介绍以及单继承
+*子类不能直接使用父类的私有属性和私有方法
+
+Day 9
+*子类初始化父类的属性（子类调用父类的初始化方法来为自己的对象绑定属性）
+*子类中重写和调用父类的方法
+*子类方法中调用父类的同名方法
+*多层继承（纵向）与多继承（横向）
+*多层继承（纵向） —— 继承关系有多层
+*多层继承中的属性初始化问题
+*多继承（横向）
+*多继承的初始化
+*super()解决多继承与多层继承共存时的问题 —— 菱形（钻石）继承关系
+*多继承初始化时，参数传递问题的解决
+*super简化格式，解决多进程初始化问题
+*类的继承书写顺序会影响mro顺序
+*mro顺序的确定的原理 —— 树的深度优先算法
+*多态 —— 多种形态（面向对象最重要的特征）
+*实例对象属性和实例对象方法
+*类对象和类属性
+*扩展：方法调用的底层原理 —— 与函数调用的原理一致（了解即可，写架构才需要这些知识）
+
+Day 10
+*类方法
+*静态方法
+*三种方法（实例方法、类方法、静态方法）的区别总结
+*模块介绍
+*import导入模块/成员 
+*from-import方式的命名冲突问题
+*模块导入的搜索顺序
+*__name__
+*扩展：查百度的——“模块”(module)、“包”(package)、“库”(library)三者的概念
+*包
+*通过__init__.py设置导入模块时的权限
+*__all__在init文件中的用法
+*异常介绍
+*异常处理
+*异常的传递
+*异常别名、捕捉多个异常、获取异常信息
+*异常处理之else和finally
+*自定义异常和抛出
+
+Day 11
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Day 4:
+
+*字符串：
+a = '123' \
+       'abc'
+print(a) #---123abc —— \是断行符，表示该字符串还没写完
+
+
+三引号：文档字符串——doc说明文档
+模块的说明文档放在py文件的开头，用成对的三个英文单引号引起来，通过以下方式获取模块的说明文档。
+import 模块名
+print(模块名.类/方法.__doc__)
+
+a = '''123abc'''
+b = '''123
+	abc
+       '''
+print(a) #--- 123abc —— 三引号（等价于""" """）的内容也是字符串，不只是用来注释
+print(b) #--- 123
+		abc —— 三引号中换行也输出
+
+
+字符串切片[开始:结束:步长]
+"123456"[-2::-1] #--- 54321
+
+splitlines 等价于 split('\n')
+split()什么都不写默认是以空字符为分隔（空格、\n、\t等）
+split()函数有两个参数。第一个叫做separator，它决定了用哪个字符来分割字符串
+如果想同时分割两种以上的字符，你可以使用正则表达式（regex）作为separator
+e.g:
+如果想根据空格、逗号和问号分割字符串，可以这样写：
+import re
+string = "Hello, how are you?"
+strings = re.split(" |,|\?", string)
+print(strings)  # --- ['Hello', '', 'how', 'are', 'you', '']
+# Tips：正则表达式中的特殊字符需要用反斜杠（\）转义
+
+注意：
+split()分隔\n时，不管\n有多少个连着，分隔后列表都不会出现空字符''
+而用splitlines()、split('\n')、re.split('\n', s)时，字符串中有2个\n连着时会结果列表中出现一个''，3个\n连着则出现2个''
+
+字符串的逆序：
+法一：如上
+法二：while循环
+法三：先转为列表，然后用.reverse()方法
+
+
+s.find('（要查找的字符串或字符）', （查找开始位置，默认值None）,（查找结束位置，默认值None）)
+找到了返回该字符索引（或字符串的第一个字符的索引），找不到则返回-1
+
+s.index()类似于s.find()但index()找不到了会报错而不是返回-1（index意为索引，所以这个s.index()是查索引的意思）
+
+s.rind()和s.rindex()同理
+
+
+s.replace('（要替换的子串）', '（替换为）', （替换多少个）) 
+替换时默认替换所有符合的子串，不更改原始字符串
+
+
+s.count('（要数的字符串或字符）', （查找开始位置）,（查找结束位置）)
+统计出现的次数
+（注意：查找结束位置不包含该位置。如：0, 3则索引“3”不纳入）
+
+
+s = 123.txt.txt
+s.partition('.') #--- ('123', '.', 'txt.txt')
+s.rpartition('.') #--- ('123.txt, '.', 'txt')
+
+
+s.startswith('xxx') —— 判断是否以指定字符串开头（返回True或False）
+(应用：用来判断某个电话号码是不是以xxx开头)
+
+s.endswith() —— 判断是否以指定字符串结束
+
+
+s.isupper() —— 判断是否全是大写字母
+s.islower() —— 判断是否全是小写字母
+s.isalpha() —— 判断是否全是字母（中文也会判断为True）
+s.isdigit() —— 判断是否全是数字
+s.isalnum() —— 判断是否全是数字或字母（中文也会判断为True） #---'abc123'#---True ；'abc 123'#---False（多了个空格）
+s.isspace() —— 判断是否是空格或\t或\n
+
+
+s.upper() —— 全转换成大写
+s.lower() —— 全转换成小写
+s.title() —— 每个单词（不一定是单词，用空格分隔即可）的首字符转换成大写
+capitalize() —— 将第一个单词的首字符转换成大写
+
+
+s.center(（宽度）， '（填充的字符）') —— 按给定宽度居中显示
+e.g: 
+print('|' + s.center(11) + '|')  #--- |___Hello___|
+
+s.rjust() —— 与center类似，但右对齐
+s.ljust() —— 左对齐
+
+
+s.strip() —— 去除两端空白（空白包括：空格、\n、\t）
+s.lstrip() —— 去除左侧空白
+s.rstrip() —— 去除右侧空白
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*元组：
+如果元组中只有一个元素，那么在定义时要加一个逗号
+e.g:
+要定义(1)的元组必须(1,)或写为tuple(1)
+要定义('123456')的元组必须('123456',)，但tuple('123456')#---('1','2','3','4','5','6')
+
+
+元组不可更改，t = (1,2,3);t[0] = 2 #--- 会报错
+也不可往里加减数据，定义成什么样就什么样了
+
+
+if isinstance(v, tuple): —— isinstance()判断参数1是否是参数2的类型对象（返回bool类型）
+或if type(v) == type(turple()):
+
+
+pycharm输入时弹出的提示中，前头带m的就是能用的方法(method)
+
+
+tuple的方法有两个，它们的用法与字符串相同：
+count() —— 统计元素个数
+index() —— 查找元素位置的索引，如果不存在会报错
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*列表：
+如果要分割字符串每一个字符，split不能实现了，则list('123') #--- ['1', '2', '3']可以实现
+
+
+列表的排序和逆序：
+lis.sort()默认升序排序即：reverse=False
+lis.sort(reverse=True)降序排序
+用“方法”会改变原列表，且返回值为None
+
+而用“函数”不会改变原列表，返回值为排序后的列表 —— sorted(lis, reverse=True/False)
+
+lis.reverse()列表逆序
+
+
+列表
+增：
+a.append(o) —— 把对象o追加到列表a（不论o是什么，直接追加）（a = [1,2]; o = [3,4]; a.append(o) #--- [1,2,[3,4]]）
+
+
+a.extend(o) —— 把列表o的内容追加到列表a（a = [1,2]; o = [3,4]; a.extend(o) #--- [1,2,3,4]）
+extend的效果用a + o也一样
+
+
+a.insert(位置, 插入内容)
+e.g:
+a = [1,2,3]; a.insert(1, 4) #--- [1,4,2,3]
+a = [1,2,3]; a.insert(10, 4) #--- [1,2,3,4] —— insert没有越界的问题，超过列表最大索引则在最后一个位置插入
+
+查：
+print(lis.count(6)) —— 数数列表lis中有几个6
+print(lis.index(6)) —— 查找列表lis中元素6的索引（找到的第一个6的索引），找不到6则报错
+
+列表没有rindex()
+
+已掌握：in、not in
+
+删：（使用列表时，不要在循环遍历时删除元素（索引会改变））
+lis.pop(index=) —— 其中的index（索引）参数可以不写，默认删除最后一个
+lis.remove(object=) —— 删除指定对象，当有多个相同对象时，只删除第一个
+
+del的两种方式：
+del lis[1] —— 法一：删除lis索引为1的对象
+del(lis[1]) —— 法二
+
+del lis —— 将整个列表删除，此时再print(lis)会报错，因为整个列表都删除消灭了，lis已经不存在了
+
+lis.clear() —— 清空列表元素
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*字典：
+—— 理论上，所有不可变的类型都可以作为key（键），只要是可hash的对象
+都可以作为key，key一般情况下使用字符串的数据充当
+
+for i in 字典：
+其中的i是字典的每个key
+
+增：（如果在赋值时，使用的key在字典中不存在，那么就是向字典中添加数据）
+d['a'] = 1
+
+改：（如果在赋值时，使用的key在字典中存在，那么就是修改这个key所对应的值）
+d['a'] = 2
+——（字典中的key在字典中具有唯一性）
+（key是不能修改的，只能把这个键值对删了，然后再添加一个新的键值对）
+
+查：
+访问key对应的value：
+法一：
+字典也是通过下标方式来访问元素，但是字典中没有索引，也就是没有下标编号
+字典通过下标的中括号中书写key的方式来直接访问key所对应的值
+—— d = {'one': '星期一', 'two': '星期二'}; print(d['one']) #--- '星期一'
+（这种方式访问的话，若key不存在则会报错）—— 不安全，但常用
+
+法二：
+d.get('one') #--- '星期一' 来访问，这种方式若key不存在不会报错，会返回None
+ —— 安全，不常用
+
+
+删：
+d.popitem() —— 删除最后一个键值对
+d.pop(key) —— 指定删除某一个键值对
+del d[key] —— 同pop
+del d —— 删除整个字典
+d.clear() —— 清空字典
+
+字典的其他方法：
+d.keys() —— 获取所有的键，list(d.keys())可查看
+d.values() —— 获取所有的值
+
+无序字典和有序字典
+在Python 3.5之前，dict类型是无序的 —— 写入顺序与显示顺序不同
+在Python 3.5之后，都是有序的
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*集合：（set） —— 集合不支持下标操作、集合是无序的
+s = {1,2,3,4,5,6,7,7,7} —— 没有键值对的用大括号括起来的就叫集合
+print(s) #--- {1, 2, 3, 4, 5, 6, 7}
+
+定义一个空集合：
+s = {} —— 这是定义一个空字典
+s = set() —— 这才是定义一个空集合
+
+应用 —— 去重
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*str、list、tuple、dict公共方法：
+1.运算符：
+运算符 表达式      结果	    描述    支持的数据类型	
++    [1,2]+[3,4]	[1,2,3,4]   合并	str、list、tuple
+*    ['Hi']*2	['Hi', 'Hi']  复制	str、list、tuple
+in	  3 in (1,2,3)  true	  str、list、tuple、dict
+not in 	
+
+2.Python内置函数
+max()/min() —— 返回容器中元素最大/小值
+del() —— 删除变量
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Day 5:
+
+*列表推导式（列表解析）：
+c_l = [i for i in range(1,101) if x % 3 == 0] —— 实现列表中所有值都是3的倍数
+c_l = [(x, y) for x in range(10) for y in range(3)] —— 循环嵌套，for x里嵌套一个for y
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*函数定义的格式 —— 用pass快速建立项目整体框架
+def fun():
+	pass —— 可以这样写
+
+好处：可以把整个项目的框架快速构建好，再一块一块填充代码
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*用for和return筛选时需要注意加一个else
+def fun(stu_id):
+    for stu in students:
+        if stu['id'] == stu_id:
+            print(stu)
+            return stu
+    # 遇到类似这种通过for和return筛选的情况，若筛选不到，则这里写一个else才是规范写法
+    else:
+        print('查无此人')
+        return None
+
+students = [{'id':'11', 'name':'jack'}]
+fun(stu_id='11')
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*组包和拆包：
+组包：a = 1,2,3,4,5;print(a) #--- (1, 2, 3, 4, 5) #--- tuple
+
+拆包：a, b = 1, 2;print(a, b) #--- 1 2
+单纯数字（先把数字组包成元组，然后拆包分配）、str、list、tuple、dir —— 都可拆包（注意：字典拆包只拆出key）
+
+组包的应用 —— 函数返回多个值
+def get_max_min():
+	xxx
+	xxx
+	return max, min （都是单纯数字，所以自动组包成元组返回（没必要写成(max, min)））
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*全局变量和局部变量：
+def f1():
+	print(a) #--- 1  # 没传局部（Local）参数a所以在全局搜索a
+def f2():
+	a = 2
+	print(a) #--- 2
+a = 1  # 默认为全局变量
+f1()
+f2()
+
+变量查找规则：
+查找先后顺序 —— Local(本地) -> EnClosed(闭包) ->Global(全局) -> Buildings(内建)
+
+如果要修改不可变类型全局变量a，需要在子函数中开头定义global a
+e.g:
+def f():
+	global a
+	a = 2
+a = 1  # 不可变类型全局变量
+f()
+print(a) #--- 2
+
+如果要修改可变类型全局变量a_lis，不需要在子函数开头定义global a_lis
+e.g:
+def f():
+	a_lis.append(1)
+a = []  # 可变类型全局变量
+f()
+print(a_lis) #--- [1]
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*引用的概念 —— 数据在内存中存储时的内存编号
+通过id()函数可以得到数据在内存中的地址
+
+通过引用，可以方便地在函数之间进行数据传递，实现函数间的数据通信
+print(id(1)) #--- 内存编号1
+a = 1
+print(id(a)) #--- 内存编号1
+可见a指向了数据1的地址
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*可变类型和不可变类型：
+不可变类型：
+数字 int
+字符串 str
+浮点数 float
+布尔类型 bool
+元组 tuple
+特点：这些数据都是不可以直接修改的，如果在修改或赋值时，都会开辟一个新空间
+e.g:
+a = 1
+print(id(a)) #--- 内存编号1
+a = 2  # 把不可变类型a进行修改，会开辟新空间
+print(id(a)) #--- 内存编号2
+
+可变类型：
+列表 list
+字典 dict
+集合 set
+特点：这些数据类型，是可以直接在原对象上进行修改数据的，修改完成后，并不影响原对象地址
+e.g:
+a = []
+print(id(a)) #--- 内存编号1
+a.append(1)
+print(id(a)) #--- 内存编号1 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*函数的默认值参数：
+无默认值参数时：
+e.g:
+def fun(a, b):
+	return (a + b)
+fun() #--- 会报错
+fun(1) #--- 会报错
+fun(1, 2, 3) #--- 会报错
+fun(1, 2) #--- 正常
+所以，如果没有默认值参数，则传参传多传少都会报错
+
+有默认值参数时：
+e.g:
+def fun(a = 0, b = 0):
+	return (a + b)
+fun() #--- 0
+fun(1) #--- 1
+fun(1, 2) #--- 3
+
+使用默认值参数时，需要注意：
+在默认值参数的右侧，不能再出现无默认值参数（默认值参数只能出现在参数列表的最右侧）
+e.g:
+def fun(a, b=0, c):
+	print(a, b, c)
+fun(1) #--- 会报错，因为再默认值参数b的右侧出现了无默认值参数c，c没有收到参数，所以报错
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*位置参数(positional argument)和关键字参数：
+位置参数 —— 必须实参形参一 一对应
+
+关键字参数 —— 关键字参数解决了参数在传递时的顺序问题，可以无序传递
+（在定义形参时，每个参数都可以理解成一个key，使用这个key， 可以明确地为当前这个参数进行赋值）
+e.g:
+def fun(n, s):
+	print(n, s)
+fun(s='hello', n=1) —— 实参形参不需要按顺序对应
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*不定长位置参数 —— *args在参数中定义了该形参后，可以通过*args接收多个不确定个数的位置参数
+e.g:
+def fun(*args):
+	print(args) #--- (1, 2, 3) —— *args会自动把1, 2, 3组包成元组
+fun(1, 2, 3)
+
+不定长关键字参数 —— **kwargs在参数中定义了该形参后，可以通过**kwargs接收多个不确定个数的关键字参数
+e.g:
+def fun(**kwargs):
+	print(args) #--- {'a':1, 'b':2} —— **kwargs会自动把关键字参数组包成字典
+fun(a=1, b=2)
+
+重点：
+记住以下的函数定义格式
+——当定义函数时，如果函数的参数想接收任意类型和个数，那么定义格式如下：
+def 函数名(*args, **kwargs):
+	函数体内容
+
+混合参数：
+def fun(a, b, c, d , e, *args, f=1, g=2, **kwargs):
+	print(a, b, c, d, e) #--- 1 2 3 4 5
+	print(args) #--- (5, 6, 7, 8, 9)
+	print(f, g) #--- 11 22
+	print(kwargs) #--- {'h':333, 'i':444}
+fun(1, 2, 3, 4, 5, 5, 6, 7, 8, 9, f=11, g=22, h=333, i=444)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*可变参数的二次传递（重点掌握）
+e.g:
+def f1(a, *args):
+	print(a) #--- 1
+	print(args) #--- (2, 3, 4, 5)
+	f2(args) #--- 会报错，因为只把元组(2, 3, 4, 5)赋给了f2的a变量，b,c,d没赋到值
+	print(*args) #--- 2 3 4 5  # *args手动解包
+	f2(*args) #--- 成功二次传参
+def f2(a, b, c, d):
+	print(a, b, c, d)
+
+f1(1, 2, 3, 4, 5)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*exit()和sys.exit()
+exit(0) —— 0为结束代码，写0就是0，写1就是1，因为正常结束是0，所以写0即可，不写默认为0
+sys.exit() —— 同上
+
+sys.exit()和exit()都是用来退出Python程序的函数，但是它们有一些区别
+①sys.exit()是sys模块中的一个函数，它会引发一个SystemExit异常，这个异常可以被捕获和处理，如果没有被捕获，Python解释器就会退出。sys.exit()可以接受一个可选的参数，表示退出的状态码或者其他类型的对象
+②exit()是一个内置函数，它实际上是quit()函数的别名，它也会引发一个SystemExit异常。但是exit()和quit()只能在交互式模式下使用，而不能在生产代码中使用，因为它们依赖于site模块，这个模块可能不总是可用的
+sys.exit()通常被认为是更好的选择，因为sys模块总是可用的，并且可以提供更多的控制和灵活性
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Day 6:
+
+*匿名函数(lambda)：
+先学基础：
+Python中，万物皆对象，变量即对象名，对象名都是变量
+对象就会有内存地址，就会有一个引用
+通过这个引用就可以找到该对象并使用它 
+在python中函数也是对象，对象是内存中专门用来存储的数据的一块区域
+函数名就是该函数的对象，保存的是该函数所在的地址
+e.g:
+def f():
+	print(1)
+t = f
+print(t) #--- 内存地址1
+print(f) #--- 内存地址1
+
+实现一个可以调用(Callable)另外一个函数的函数：
+e.g:
+def f():
+	print(1)
+def t(x):  # t函数形参x获得f函数的地址
+	x()  # 函数地址加括号就是调用这个地址指向的函数内容 —— 即f函数
+t(f)  # 把f函数的地址赋给t函数并执行t函数
+
+正式了解lambda函数：
+e.g1:
+lambda : 1 + 1 #--- 匿名函数没有函数名，不可直接调用，但其本身整体是一个对象，即函数的地址
+func = lambda : 1 + 1 #--- 用一个变量接收这个函数的地址，然后就可以调用了
+print(func()) #--- 函数的地址加括号即可调用（加print是因为lambda: 1 + 1意思是return 冒号后面的）
+或者直接调用print((lambda : 1 + 1)())这样也行
+
+e.g2:
+func = lambda x: print(x ** 10)
+func(2) #--- 1024
+
+格式：
+lambda [形参1], [形参2], ... : [单行表达式] 或 [函数调用]
+lambda 定义和普通函数的区别：
+1. lambda 没有函数名
+2. lambda 参数列表外没有括号
+3. lambda 函数体中，只能实现简单的表达式计算或函数调用
+4. lambda 函数体中，不能使用 return（因为默认返回表达式计算结果，所以加了return反而报错），
+同时，if，while，for-in 也不能用
+
+5. lambda 函数体中，可以使用 if 实现的三目运算符
+e.g:
+func = lambda m, n: if m > n else n
+
+使用场景：
+变量 = lambda ...
+
+一般情况下，因为 lambda 的局限性，使得它不能实现复杂功能，只能实现简单的功能
+那么在使用时，一般会实现一个简单的，一次性使用的场景
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*高阶函数 - map：
+map(fun, my_list) —— 把my_list中每一个元素依次放入fun函数中运算，把对应结果返回到map对象（这个对象直接打印是返回一个map对象而看不到内容，但可以用for遍历，也可以转换为list打印出来）
+e.g:
+my_list = [1, 2, 3, 4, 5]
+def fun(x):
+	return x ** 2
+result = map(fun, my_list)
+print(list(result)) #--- [1, 4, 9, 16, 25]
+
+因为map第一个参数放的是函数的对象（地址），故可以用匿名函数，因此以上可优化为
+my_list = [1, 2, 3, 4, 5]
+result = map(lambda x: x*2, my_list)
+print(list(result)) #--- [1, 4, 9, 16, 25]
+
+这样的优点是：
+因为fun只用一次，所以用lambda可以不需要开辟一个新函数fun从而省内存空间
+
+同理，可以分析一下已经很熟悉的这个表达式的原理：
+a, b = map(int, input().split())
+int是int()函数的对象，所以map()是把input().split()的内容逐个放到int()函数中处理，
+最后得到一个map“列表”对象。若输入1 2那么split()会根据空格把字符串分隔为['1','2']
+那么再通过map可以把'1'、'2'分别放入int()中处理成1, 2然后包装成map“列表”，
+然后这个map“列表”再通过拆包把1、2分配到a、b上
+
+map实现原理：
+def my_map(func, c_list):
+	# 定义一个新空列表，保存映射结果
+	new_list = []
+	# 遍历原列表中的数据
+	for i in c_list:
+		# 调用函数func()计算映射值，并保存到新列表中
+		new_list.append(func(i))
+	return new_list
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*高阶函数 - reduce：
+reduce(fun, my_list)
+1. 用传给reduce中的函数fun(有两个参数)，先对my_list中第1、2个元素进行操作
+2. 得到的结果再与第三个数据用fun函数运算，以此类推，最后得到一个结果
+
+e.g1: —— 求n的阶乘
+import functools  # reduce函数需要导入functools模块
+
+print(functools.reduce(lambda x1, x2: x1 * x2, [i for i in range(1, int(input('n=')) + 1)]))
+
+e.g2: —— 相当于.join的作用
+import functools
+
+my_list = ['a', 'b', 'c']
+print(functools.reduce(lambda x1,x2: x1 + x2, my_list))
+
+e.g3: —— 把'abc'转大写
+import functools
+
+my_list = list('abc')
+print(functools.reduce(lambda x1,x2: x1.upper() + x2.upper(), my_list))
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*高阶函数 - filter（过滤函数）：—— 用于过滤序列，过滤掉不符合条件的元素
+filter(fun, my_list) —— 把my_list中每一个元素依次传入fun中进行判断，
+若fun返回值为True说明符合条件，最后将返回True的元素放到filter对象中，
+同map类似，可用list()转换来查看其内容
+
+e.g1:
+my_list = [1,2,3,4,5,6,7,8,9,10]
+print(list(filter(lambda x: x%2 == 0, my_list))) #--- [2, 4, 6, 8, 10]
+
+e.g2:
+my_list = ['123', '456', 'a', ' ', '&&&', '890']
+print(list(filter(lambda x: x.isdigit(), my_list))) #--- ['123', '456', '890']
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*sort方法的高级应用 - key与lambda结合使用
+
+my_list = [{'id': 1, 'name': 'tom', 'age': 12}, {'id': 2, 'name': 'rose', 'age': 14}, {'id': 1, 'name': 'jack', 'age': 16}]
+# 默认sort方法是不能对字典进行比较排序的
+# 按id的降序排序：
+my_list.sort(key=lambda d: d['id'], reverse=True)
+print(my_list)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*文件的操作
+文件的作用 —— 将数据进行持久化存储
+e.g:
+保存“学生管理系统”的输入
+作为数据库的底层实现
+
+文件的读取：
+f = open('1.txt', 'r') #---r写成rt(read text)也一样，w写成wt，a写成at都一样
+print(f) #--- <_io.TextIOWrapper name='1.txt' mode='r' encoding='cp936'>
+可见，默认使用cp936编码读取文件，经查询，cp936即GBK编码
+encoding要与文件编码格式一致，若文件为utf-8，还用默认编码cp936的话，读到中文就会报以下错
+'gbk' codec can't decode byte 0xa0 in position 19: incomplete multibyte sequence
+
+f.read()  # size默认-1，表示读取整个文件内容 —— 只适合小文件，不适合大文件（如蓝光电影30G，电脑内存如今最大可能才16G，30G不可能读完，而且就算能读完，效率也非常低）
+f.read(size)  # 读取n个字节
+
+读取大文件怎么读？ —— 在读取数据时，每次指定读取一部分
+f = open('1.txt', 'r', encoding='')
+while True:
+	content = file.read(1024)  # 一次读1024字节（1kB字节）或4096字节
+	if content == '':
+		break  # 如果read返回空字符串，说明文件读取完毕，退出循环
+	print(content, end='')
+f.close()
+
+文件其他读取方式：
+readline()  # 一次读取一行
+readlines()  # 一次性将整个文件内的内容以行的形式读取出来，放到一个列表中（也会把\n读取出来）
+
+open中w+、a+、r+的区别和用法：
+w+是在Python中打开一个文件，清空原有内容，成为一个新的空文件，并且对这个空文件具有读写权限。这与r+的区别是，r+不会清空原有内容，而是在原有内容上进行覆盖写。w+也与a+的区别是，a+不会清空原有内容，而是在文件末尾进行追加写
+
+open里的seek是一个文件方法，它用于移动文件读取指针到指定位置
+文件指针是像一个光标，它定义了从哪里开始读取或写入文件的数据
+seek方法有两个参数：
+offset：表示需要移动偏移的字节数。
+whence：表示要从哪个位置开始偏移，默认值为0，代表从文件开头算起；1代表从当前位置算起；2代表从文件末尾算起
+e.g:
+假设有一个名为test.txt的文件，内容如下：
+Hello World
+This is a test file
+Python is awesome
+
+如果我们想读取文件的第二行，我们可以这样做：
+# 打开文件
+f = open("test.txt", "r")
+# 移动指针到第一行末尾，即换行符后面
+f.seek(len("Hello World\n"))
+# 读取一行
+line = f.readline()
+# 打印一行
+print(line)
+# 关闭文件
+f.close()
+
+输出：
+This is a test file
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*其他文件操作 —— 大文件的复制
+自己写一个复制命令：—— 针对大文件的复制
+
+import os
+def my_copy(src, dst):
+	# 以读取的方式打开源文件(src)
+	file_r = open(src, 'r')  # 若复制的文件是视频或图片，则'r'改为'rb'
+	# 以写的方式打开目标文件(dst)
+	file_w = open(dst, 'w')  # 若~，则'w'改为'wb'
+	# 循环
+	while True:
+		# 读取文件内容
+		content = file_r.read(1024)
+		# 将读取的文件内容写入到另一个文件中
+		if content == '':  # 若~ 则''改为b''
+			print('文件拷贝成功')
+			break
+		# 写入文件
+		file_w.write(content)
+	# 关闭文件
+	file_r.close()
+	file_w.cloce()
+
+command_lis = sys.argv  # 用来接收命令行窗口的输入的参数，空格分隔（e.g: python 1.py 1.txt 2.txt #--- sys.args == [1.py, 1.txt, 2.txt]）
+src = sys.argv[1]
+dst = sys.argv[2]
+my_copy(src, dst)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Day 7:
+*面向对象概述：
+面向过程 —— 注重是问题解决的过程 —— eat(狗, 屎)
+面向对象 —— 注重是谁去做这个事 —— 狗.eat(屎)
+
+如今主流的软件开发思想有两种：
+一个是面向过程,另一个是面向对象，面向过程出现得较早，
+典型代表为C语言，开发中小型项目的效率很高，
+但是很难适用于如今主流的大中型项目开发场景。
+面向对象则出现得更晚一些，典型代表为Java或C++等语言，
+更加适合用于大型开发场景。两种开发思想各有长短。对于面向过程的思想：
+需要实现一个功能的时候，看重的是开发的步骤和过程，
+每一个步骤都需要自己亲力亲为, 需要自已编写代码（自己来做）
+对于面向对象的思想：当需要实现一个功能的时候。看重的并不是过程和步骤，
+而是关心谁帮我做这件事（偷懒，找人帮我做）
+
+面向对象的三大特征有：封装性、继承性、多态性
+
+生活举例：
+买电脑：
+面向过程（自己买）：需要电脑、查询电脑参数、横向比较机型、
+了解打折信息、与店家讨价还价、下单、收快递、开机验货、确认收货
+面向对象（找人买）：需要电脑、找秘书帮我买、收电脑
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*类和对象概念：
+对象是面向对象编程的核心，在使用对象的过程中，
+为了将具有共同特征和行为的一组对象抽象定义，提出了另外一个新的概念——类
+
+“类”就是用来模拟现实事物的
+
+模拟现实世界的事物通常从两方面模拟：
+1.属性：事物的特征描述信息，用于描述某个特征“是什么”
+2.行为：事物的能力行动方案，用于说明事物“能做什么”
+
+类中也有属性、行为两个组成部分，而“对象”是类的具体事例，例如：
+1.类：抽象的，是一张“手机设计图”
+2.对象：具体的，是一个“真正的手机实例”
+
+类就相当于制造手机的设计图，用它来进行创造的手机就相当于对象
+
+人以类聚，物以群分。
+具有相似内部状态的和运动规律的实体的集合（统称为“抽象”）—— 具有相同属性和行为事物的统称
+
+类（Class）的构成：
+类的名称：类名（抽象）
+类的属性：一组数据（特征）
+类的方法：允许对对象进行操作的方法（行为）
+e.g:
+人类设计：
+类名：Person
+属性：height、age
+方法：run、walk
+
+类的抽象：
+如何把日常生活中的事物抽象成程序中的类？
+拥有相同（或类似）属性和行为的对象都可以抽象出一格类
+方法：一般名词都是类（名词提炼法）
+e.g:
+坦克发射3颗炮弹轰掉了两架飞机 —— "坦克"、"炮弹"、"飞机"可以抽象成类
+小明在公交车上牵着一条叼着热狗的狗 —— "小明" ->人类、"公交车" ->交通工具类、"热狗"->食物类、"狗"->狗类
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*类的定义（Python）： —— 类中的def xxx就叫方法，凡是在类之外的def xxx就叫函数
+类在Python中分为旧式类（经典类）和新式类 —— Python3之后，只有新式类，以后我们也写新式类
+# 经典类1：
+class Hero:
+	# 定义一个方法
+	def skill(self):  
+		print("放一个大招。。。")
+# 经典类2：
+class Person():
+	def eat(self, food):
+		print('吃', food)
+	def sleep(self):
+		print('每天至少睡8小时')
+# 新式类：
+class Dog(object):
+	def bark(self):
+		print('汪汪汪。。')
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*创建对象和使用对象的格式：
+对象名 = 类名(参数列表......)
+Tips: 函数名() —— 函数调用    类名() —— 实例对象
+实例对象的过程：
+在内存中给实例的对象分配一块存储空间，然后把对象的地址引用返回，赋给对象名
+
+创建多个对象：
+如果通过同一个类，创建多次对象时，创建的对象是否为同一个？
+否，创建的是多个类型相同，但地址不同的多个对象
+e.g:
+class Person(object):
+# self是“自己”或“我”的意思，这个“自己”指当前实例的对象名，如下方
+# 实例对象tom时解释器自动传参，使得self = tom，实例rose时，self = rose，
+# 当然，self只是一个变量名，也可以不写self，写其他也行，但self是“自己”的意思，外国人容易理解
+	def eat(self, food): 
+		return '某人' + '在吃' + f'{food}'
+# 实例两个对象
+tom = Person()
+rose = Person()
+print(tom) #--- 对象地址1
+print(rose) #--- 对象地址2
+
+print(Person().eat('饭'))  # --- 某人在吃饭 —— 创建匿名实例对象Person()
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*为对象动态绑定属性：
+class Person(object):
+	def eat(self, food):
+		print(self.name, '在吃', food)
+tom = Person() 
+rose = Person()
+# 为对象动态添加一个属性name
+tom.name = 'Tom'
+# 动态为对象绑定属性时，给哪个对象绑定了属性，只有哪个对象有该属性，其他对象没有该属性
+# 如果在方法中引用了该属性，那么这时没有该属性的对象，调用这个方法时就会报错
+#所以此处每个已实例的对象都需要动态添加属性name —— （比较麻烦，有无方法可以在实例对象时就绑定了属性？（以下介绍__init__））
+rose.name = 'Tom'
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*在初始化方法中绑定属性：
+先学基础：
+__int__方法：
+这个方法是一个魔法方法，命名规则是前后各有两个下划线，
+魔法方法是Python当中，预设好的，具有特定功能的方法，
+一般这种方法，不需要手动调用，会自动调用执行
+
+该方法会在创建对象的时候自动调用，
+调用时，这个方法用来为对象进行初始化
+e.g1:
+class Cat(object):
+	def __init__(self):
+		print('Init Run...', self)
+		# 绑定属性时，使用self.属性名 = 值
+		self.name = 'cat'
+		self.age = 0
+	def show(self):
+		print(self.name, self.age)
+tom = Cat()
+print(tom.name) #--- cat
+tom.show() #--- cat 0  ——  self = tom
+在调用方法时，方法的第一个参数self是不用手动传参的
+这个参数会由解释器自动将调用该方法的对象传递过去
+即：tom.show()  # 自动令self = tom
+
+e.g2:
+class Cat(object):
+	def __init__(self, name, age): 
+		print('Init Run...', self)
+		# 绑定属性时，使用self.属性名 = 值
+		self.name = name
+		self.age = age
+	def show(self):
+		print(self.name, self.age)
+tom = Cat('Tom', 2)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*__str__方法和__del__方法： —— 也是魔法方法
+__str__方法（重点掌握）：
+格式化对象
+该方法返回一个字符串值
+当使用print(对象名)或str(对象名)做类型转换时，会自动调用该方法
+
+e.g:
+class Cat(object):
+	def __init__(self, name, age, height):
+		self.username = name
+		self.age = age
+		self.height = height
+	    
+tom = Cat('Tom', 1, '50cm')
+print(tom) #--- <模块名.类名  object at 0x...> 默认没有实现__str__方法，那么会打印这个
+
+引入__str__：
+class Cat(object):
+	def __init__(self, name, age, height):
+		self.username = name
+		self.age = age
+		self.height = height
+	def __str__(self):
+		print('String Run .. ', self.username, self.age, self.height)
+		# 该函数必须有一个返回值
+		# 并且这个返回值必须是一个字符串
+		# 如果需要将对象的信息按照一定的格式进行格式化，那么可以在这里进行格式修饰
+		# 修饰完后，可以将这个格式化字符串返回，让str()方法在执行时，得到该对象转换的字符串类型
+		s = self.username.ljust(10) + str(self.age).ljust(5) + self.height.ljust(5)
+		return s  # 以上的ljust()是左对齐的意思
+	    
+tom = Cat('Tom', 1, '50cm')
+print(tom) #--- String Run ..  Tom 1 50cm —— print(对象名)时调用了__str__
+		Tom       1    50cm 
+tom_s = str(tom) —— str(对象名)时调用了__str__
+print('|' + tom_s + '|') #--- String Run ..  Tom 1 50cm
+				|Tom       1    50cm |
+
+__del__方法：
+该方法时用来在销毁对象时，回收对象占用的资源
+该方法也是自动调用
+当在使用del对象时，会调用方法
+e.g:
+calss Cat(object):
+	def __init__(self, name):
+		self.name = name
+	def __del__(self):
+		# 要在这个方法中将当前对象持有的其他对象手动销毁
+		# 一般在__init__写了什么属性，那么在这个__del__这里写del什么属性就可以了
+		del self.name —— 由于此处上方__init__只写了name属性，所以这里只需写del self.name即可
+		print('del run ...')
+tom = Cat('Tom')
+# 执行下面的代码时，会自动调用__del__方法，将这个对象销毁，回收对象内存资源
+del tom
+print('over')
+print(tom) #--- 因为tom已销毁，所以此行会报错
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Day 8:
+*类的复合：
+e.g1:人想听狗叫
+# 创建一个狗类
+class Dog(object):
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+    def dog_bark(self, n):
+        for i in range(n):
+            print('wang..')
+
+# 创建一个人类
+class Person(object):
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+    def add_pet(self, pet_object):  # 传入新建的宠物对象
+        self.pet_object = pet_object
+
+    def listen_bark(self, n):
+        self.pet_object.dog_bark(n)  # 类的复合
+
+tom = Person('Tom', 22)
+tom.add_pet(Dog('哈士奇', 2))
+tom.listen_bark(3)
+
+e.g2:房子添加家具
+# 房子类
+class House(object):
+    def __init__(self, address, area):
+        self.address = address
+        self.area = area
+        self.free_area = int(area * 0.7)  # 只有房子总面积的70%可以放家具
+        self.house_furniture = []
+
+    def add_furniture(self, furniture_object):
+        if furniture_object.furniture_area < self.free_area - furniture_object.furniture_area:
+            self.house_furniture.append(furniture_object)  # 把家具对象加入列表
+            self.free_area -= furniture_object.furniture_area  # 成功添加后减去空间，得新剩余可用空间
+            print(f'{furniture_object.furniture_name}添加成功！')
+        else:
+            print(f'{furniture_object.furniture_name}添加失败，因为只剩下{self.free_area}平米可用，而该家具占地{furniture_object.furniture_area}平米')
+
+
+    def __str__(self):
+        s = f'以下是该房子的信息：\n地址：{self.address} 占地面积：{self.area} 家具可用剩余面积：{self.free_area}\n'
+        if self.house_furniture != []:
+            s += '家具如下：\n'
+            for f in self.house_furniture:  #遍历家具对象列表
+                s += f'{str(f)}\n'  # 调用str()调用每一个家具对象的__str__方法
+        else:
+            s += '该房子还未添加家具！'
+        return s
+# 家具类
+class Furniture(object):
+    def __init__(self, furniture_name, furniture_area):
+        self.furniture_name = furniture_name
+        self.furniture_area = furniture_area
+
+    def __str__(self):
+        return f'{self.furniture_name} 占用了 {self.furniture_area} 平米'
+
+Jack_House = House('Beijing', 30)
+bed = Furniture('Bed', 10)
+Jack_House.add_furniture(bed)
+chair = Furniture('Chair', 5)
+Jack_House.add_furniture(chair)
+table = Furniture('Table', 7)
+Jack_House.add_furniture(table)
+print(str(Jack_House))
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*私有属性的定义和使用：
+在Python抽象类时，默认定义的变量是公有的，公有的变量，可以通过对象在任何位置访问
+类中公有属性一般不建议使用，破环程序的封装性，在类的外部可以通过对象直接访问，对于数据来说，相对不安全
+类中共有的方法的作用是为外部提供一种接口，通过这个接口可以来实现相应的交互操作
+
+私有属性：
+因为公有属性的不安全，可以将属性设置成私有，私有属性只能在类的内部使用，而在类的外部是不可以使用的
+
+私有方法：
+将不想公开的关键代码、实现数据和逻辑通过私有方法进行封装，可以隐藏关键代码
+如果想使用私有方法功能时，可以在类的内部使用，或者再类的外部通过类中提供的共有方法来间接使用
+
+Java和Python对私有的定义的不同：
+Java：
+public  公有		private  私有		protected  保护
+
+Python：
+定义属性时，没有任何修饰的都是公有的
+如果在属性或方法前，加两个下划线前缀，那么这个属性或方法，Python解释器就认为是私有的
+
+e.g: —— 未定义私有属性时：
+class Account(object):
+    def __init__(self, name, balance):
+        # 定义了两个公有属性，这两个属性在类的外部也可以访问
+        self.name = name
+        self.balance = balance
+
+    def show_info(self):
+        # 在类的内部，访问对象的公有属性
+        print(self.name + '有', self.balance, '元')
+
+
+jack = Account('Jack', 99999)
+jack.show_info() #--- Jack有 99999 元
+# 在类的外部，修改对象的公有属性
+jack.name = 'Tom' 
+jack.show_info() #--- Tom有 99999 元
+
+则可在类的外部修改了属于Jack的账户为Tom了，所以公有属性不安全
+
+e.g: —— 定义私有属性时：
+class Account(object):
+    def __init__(self, name, balance):
+        # 定义了两个私有属性，这两个属性在类的外部不能访问 —— 指凡是含“对象名.name”的表达式都不起作用
+        # 当一个类中的属性或方法全部是私有时，这个类是无意义的
+        self.__name = name
+        self.__balance = balance
+
+        # 当私有属性定义好后，可以保证数据访问的安全
+        # 但是还有需求对属性进行访问，可以通过公有接口方法进行间接访问
+        # 一般对私有属性会提供一种称为存取器方法的公有方法
+        # set/get方法 —— 格式：set_属性名	get_属性名
+
+    # 对name提供一个公有方法get_name（由于name不需修改，所以不需设置set方法）
+    def get_name(self):
+        s_name = f'此账户是{self.__name}的'  # __name只是在类外部不能访问，但是在类内部是可以访问的
+        return s_name
+
+    def get_balance(self):
+        s_balance = f'此账户余额是：{self.__balance}元'
+        return s_balance
+
+    def set_balance(self, new_balance):
+        if isinstance(new_balance, float) or isinstance(new_balance, int):  # 判断输入的钱数是否为数字
+            self.__balance = new_balance
+        else:
+            print('写入的金额数不是数字！')
+
+
+jack = Account('Jack', 99999)
+# print(jack.name)  # --- 报错，私有属性不可直接访问，所以jack不存在name这个属性
+# print(jack.__name)  # --- 报错，私有属性不可直接访问，所以jack不存在name这个属性
+jack.name = 'Tom'
+print(jack.name)  # --- 'Tom' —— 看似改了jack的name属性，但事实上只是新增了一个name属性
+jack.__name = 'Tom'
+print(jack.__name)  # --- 'Tom' —— 看似改了jack的name属性，但事实上只是新增了一个__name属性
+print(jack.get_name())  # --- 调用公有的get方法间接访问私有属性，发现此账户仍是Jack的
+jack._Account__name = 'Tom'
+print(jack.get_name())  # --- 此账户是Tom的 —— 可见，Python针对私有属性的定义__属性名的本质是给它在外部访问它的属性名改成了这个格式：_类名__属性名。但是我们不能这样使用，说这个只是为了了解私有的原理（要是要这样强行访问的话，为啥不直接用公有属性呢？）
+
+私有属性的优点：
+set/get方法对私有属性操作时的好处：
+1.提供精确的访问控制权限 —— 想让外部访问就让就让（写set/get），不让就不让（不写set/get）
+2.隐藏实现细节，让代码更安全 —— 在set/get方法名上使坏，如get_name写成get_username，让外人以为属性名是username从而在外部强行使用_Acount__username进行访问，可惜，无法访问（这就叫隐藏代码实现细节）
+3.可以提供更加安全的数据精度控制
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*私有方法的定义和使用：
+如迅雷的下载方法中的函数实现，是属于迅雷的商业机密，所以他那个方法肯定是一个私有方法
+e.g:
+# 迅雷下载器类
+class Thunderbolt(object):
+    def add_task(self, url):
+        # 用公有方法调用私有方法
+        self.__download(url)
+
+    # 核心代码，用__方法名来构建私有方法
+    def __download(self, url):
+        print(f'正在执行下载{url}的内容')
+
+tb = Thunderbolt()
+# 利用公有接口方法传入url
+tb.add_task('http://www.xxxx.com//xxx')  # --- 正在执行下载http://www.xxxx.com//xxx的内容
+# tb.__download('http://www.xxxx.com//xxx')  # --- 报错，不能调用私有方法
+tb._Thunderbolt__download('http://www.xxxx.com//xxx')  # --- 正在执行下载http://www.xxxx.com//xxx的内容 —— 可见私有方法与私有属性原理相同
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*继承的介绍以及单继承：
+在程序中，继承描述的是多个类之间的从属关系
+如果一个类A里面的属性和方法可以复用，则可以通过继承的方式，传递到类B里（相同的功能代码可以从父类抄过来，从而减少了重复代码）
+那么类A就是基类，也叫做父类；类B就是派生类，也叫做子类
+e.g:
+# 定义一个父类
+class Phone(object):
+    # 定义一个打电话的方法
+    def call(self, number):
+        print(f'正在给{number}打电话')
+
+
+# 定义一个子类
+class iPhone(Phone):
+    # 添加一个拍照方法
+    def carmera(self):
+        print('正在拍照')
+
+
+# 当发生继承后，子类会继承父类中的属性和方法，可以直接使用
+
+iphonex = iPhone()
+iphonex.call('13800138000')
+iphonex.carmera()
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*子类不能直接使用父类的私有属性和私有方法
+e.g:
+class Father(object):
+    def __init__(self):
+        self.__money = 999
+        self.name = 'tom'
+
+    def __show(self):
+        print('这个是父类中的一个私有方法')
+
+    def display(self):
+        print('这个是父类中的一个公有方法')
+
+    def dis(self):
+        self.__show()  # 给一个父类中的公有接口，可调用私有方法
+
+
+# 定义一个子类
+class Son(Father):
+    def play(self):
+        print('这是子类中玩的方法')
+        # self.__show()  # --- 报错，在子类中不能直接使用父类中的私有方法
+
+
+s = Son()
+s.play()  # --- 这是子类中玩的方法
+s.display()  # --- 这个是父类中的一个公有方法
+# s.__show()  # --- 报错
+s.dis()  # --- 这个是父类中的一个私有方法 —— 成功间接调用父类的私有方法
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Day 9:
+*子类初始化父类的属性（子类调用父类的初始化方法来为自己的对象绑定属性）
+e.g1：子类未定义自己的初始化方法时
+# 父类
+class Father(object):
+    def __init__(self, name):
+        self.name = name
+# 子类
+class Son(Father):
+        pass
+# 测试
+s = Son()  # --- 会报错（缺少了一个初始化参数name），因为此时子类没有写任何东西，但继承了父类，会自动调用父类的__init__
+
+e.g2：子类定义了自己的初始化方法时
+在子类中如果定义了自己的初始化方法，那么这时父类的初始化方法就不会再执行了
+那么就导致父类中定义的属性无法初始化，子类对象就无法使用继承自父类的属性。
+如果想正常初始化，需要在子类的初始化方法中，手动调用父类的初始化方法
+现阶段调用格式：父类名._init__(self，父类中需要属性参数列表)
+
+# 父类
+class Father(object):
+    def __init__(self, name):
+        print('Father init run ...')
+        self.name = name
+# 子类
+class Son(Father):
+    def __init__(self, name, age):
+        # 因为子类提供了init方法后，那么在使用子类实例对象时，就会调用子类自己的init方法（重写了__init__），
+        # 那么就不会再调用父类的init方法了，父类当中的属性就不会有绑定的机会，所以这时是没有父类的属性的
+        # 如果想父类中的属性可以得到，需要执行父类中的init方法
+        # 父类名.init()
+        Father.__init__(self, name)  # 由于现在实例对象s是Son的对象，所以要写self，把Father的__init__初始化结果绑定到Son实例的对象上
+					# 在下方不需要这样写s = Son(s, 'Tom', 12)，是因为实例对象时解释器就自动传参，使得self = s了，而这里调用父类的方法不会自动传参，所以要把对象s（即此时的self）传进父类的__init__中进行调用
+        print('Son init run...')
+        self.age = age
+# 测试
+s = Son('Tom', 12)
+print(s.name, s.age)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*子类中重写和调用父类的方法
+*子类方法中调用父类的同名方法
+在子类继承父类时，子类会拥有父类中的方法，
+但是子类并不需要或不满足父类方法中提供的功能，这时就需进行对父类方法重写
+重写之后，调用该方法时，执行的是子类中的方法
+e.g:
+# 父类
+class Father(object):
+    # 实现一个治病
+    def cure(self):
+        print('父类是个老中医，使用中医古法治病')
+# 子类
+class Son(Father):
+    # 子类也是一个大夫，也有治病的功能
+    def cure(self):
+        Father.cure(self)  # 子类调用父类，道理同上方的子类调用父类初始化方法
+        print('子类出国深造，学成以后使用中西医结合方式治病')
+s = Son()
+s.cure()  # --- 遇到同名方法，调用子类重写后的方法
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*多层继承（纵向）与多继承（横向）：
+*多层继承（纵向） —— 继承关系有多层
+e.g:
+class A(object):
+    def a(selfs):
+        print('a function')
+class B(A):
+    def b(self):
+        print('b function')
+class C(B):
+    def c(self):
+        print('c function')
+class D(object):
+    def d(self):
+        print('d function')
+# 此时，A类和D类都是继承object类，所以他们都是根类（最年长的长者）
+# 但是，虽然都继承object类，只能说明A和D同宗同源（万年前是一家），但A和D相互并不认识（毫无关系）
+# 既然A和D无关，那么继承A的B和继承B的C也与D无关了
+
+# 若此时改为class D(A) 则B和D是兄弟了
+# 若此时改为class D(B) 则C和D是兄弟了
+# 若此时改为class D(C) 则D是C的儿子了
+
+# 测试
+c = C()  # 因为C与B、A属于多层继承关系，所以此时C可以调用B、A的方法
+c.a()  # 运行逻辑：在C类中找不到a()方法，于是往上级B找，也找不到，最后直到找回根类（object）A类，找到了a()方法，就调用了
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*多层继承中的属性初始化问题
+e.g:
+class A(object):
+    def __init__(self, a):
+        self.a = a
+class B(A):
+    def __init__(self, a, b):
+        A.__init__(self, a)
+        self.b = b
+class C(B):
+    def __init__(self, a, b, c):
+        B.__init__(self, a, b)
+        self.c = c
+class D(C):
+    def __init__(self, a, b, c, d):
+        C.__init__(self, a, b, c)
+        self.d = d
+d = D(1, 2, 3, 4)
+print(d.a, d.b, d.c, d.d)  # --- 1 2 3 4
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*多继承（横向）：
+e.g:
+# 定义一个父亲类
+class Father(object):
+    def func_fa(self):
+        print('Father Function')
+# 定义一个母亲类
+class Mother(object):
+    def func_mo(self):
+        print('Mother Function')
+# 上面的两个类，有一个共同的子类
+class Son(Father, Mother):
+    def play(self):
+        print('Son play')
+# 测试
+s = Son()
+s.play()  # Son play --- 自己的方法直接调用
+s.func_fa()  # Father Function --- 先在Son类中找，找不到再到Father类找
+s.func_mo()  # Mother Function --- 先在Son类中找，再到Father类找，再到Mather类找 —— 因为继承时是Son(Father, Mother)，说明Father比Mother查找优先级更高（有事先找亲爹Father，再找干爹Mother）
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*多继承的初始化：
+e.g:
+# 定义一个父亲类
+class Father(object):
+    def __init__(self, name):
+        self.name = name
+# 定义一个母亲类
+class Mother(object):
+    def __init__(self, age):
+        self.age = age
+# 上面的两个类，有一个共同的子类
+class Son(Father, Mother):
+    def __init__(self, name, age, gender):
+        Father.__init__(self, name)  # —— 与多层继承相类似，用父类名.初始化方法即可
+        Mother.__init__(self, age)
+        self.gender = gender
+# 测试
+s = Son('Tom', 12, '男')
+print(s.name, s.age, s.gender)  # --- Tom 12 男
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*super()解决多继承与多层继承共存时的问题 —— 菱形（钻石）继承关系：
+e.g1：不使用super()时
+# 以下，做一个菱形（钻石）继承关系
+# Son -> Father ->Person
+#        -> Mother
+# 定义一个人类
+class Person(object):
+    def __init__(self, Number):
+        print('Person Init...')
+        self.Number = Number
+# 定义一个父亲类，继承Person类
+class Father(Person):
+    def __init__(self, Number, name):
+        print('Father Init...')
+        Person.__init__(self, Number)
+        self.name = name
+# 定义一个母亲类，继承Person类
+class Mother(Person):
+    def __init__(self, Number, age):
+        print('Mother Init...')
+        Person.__init__(self, Number)
+        self.age = age
+# 上面的两个类，有一个共同的子类
+class Son(Father, Mother):
+    def __init__(self, Number, name, age, gender):
+        print('Son Init...')
+        Father.__init__(self, Number, name)
+        Mother.__init__(self, Number, age)
+        self.gender = gender
+# 测试
+s = Son(1, 'Tom', 12, '男')
+'''
+Son Init...
+Father Init...
+Person Init...
+Mother Init...
+Person Init...
+'''
+# 可见，在这种继承关系上，这个共同的父类Person会被初始化多次（而事实上这是没有必要的），
+# 若此时这个菱形继承关系中Son类继承的n个类同时继承同一个父类，那么这个共同的父类会被初始化n次，十分影响效率
+# 出现问题的原因：运用父类名调用初始化方法时引起的（即：Person.__init__(self, Number)）
+print(s.Number, s.name, s.age, s.gender)  # --- 1 Tom 12 男
+
+e.g：使用super()解决使用父类名调用初始化方法时引起的父类被初始化多次的问题
+# 以下，做一个菱形（钻石）继承关系
+# Son -> Father ->Person
+#     -> Mother
+# 定义一个人类
+class Person(object):
+    def __init__(self, Number):
+        print('Person Init...')
+        self.Number = Number
+# 定义一个父亲类，继承Person类
+class Father(Person):
+    def __init__(self, Number, name, age):  # --- Number, name, age对应接收上一个super传来的参数
+        print('Father Init...')
+        super(Father, self).__init__(Number, age)  # --- 此时，self是上一个super传入的s，而s属于Son类，于是mro方法获得了相同的顺序，然后根据参数1（Father）在该顺序找到下一个类（Mother）解析，且把self（s）传到下一个类的__init__中
+        self.name = name
+# 定义一个母亲类，继承Person类
+class Mother(Person):
+    def __init__(self, Number, age):
+        print('Mother Init...')
+        super(Mother, self).__init__(Number)
+        self.age = age
+# 上面的两个类，有一个共同的子类
+class Son(Father, Mother):
+    def __init__(self, Number, name, age, gender):
+        print('Son Init...')
+        super(Son, self).__init__(Number, name, age)  # --- self是s，s所属Son类，mro方法通过Son类计算出方法解析顺序（顺序在下方已打印，可参考），然后根据顺序找第一个参数（Son）的下一个类（Father）初始化，且把参数2（s）传入Father的__init__方法中的self中，其他三个参数对应传入Father类的__init__方法中
+        self.gender = gender
+# 测试
+print(Son.__mro__)  # --- 这是mro算法计算出的顺序（一个元组）——(<class '__main__.Son'>, <class '__main__.Father'>, <class '__main__.Mother'>, <class '__main__.Person'>, <class 'object'>) 这个顺序关系是解释器在执行代码时自动确认，我们无法干涉
+# 或写成print(Son.mro())  # 这种调用mro方法的得到的是一个列表
+s = Son(1, 'Tom', 12, '男')
+'''
+Son Init...
+Father Init...
+Mother Init...
+Person Init...
+'''
+# 可见，程序运行顺序与mro算法计算的顺序一致 —— 多重多继承时，方法的查找顺序也参考mro
+# 可见，成功解决问题，Person类只被初始化一次
+print(s.Number, s.name, s.age, s.gender)  # --- 1 Tom 12 男
+
+super执行过程：
+在self这个对象的所属类中，通过__mro__（解释器通过算法帮我们确定）找到方法解析顺序（method relational ordered）（是当前类在继承关系上的一个顺序）（可通过print(类名.__mro__)打印出此顺序），在顺序中，找到当前类名的下一个类来初始化或查找方法
+即：
+super(参数1, 参数2).__init__(xxx)
+参数2是当前类的实例对象（即self），参数1是当前类名
+super是将参数2对象的所属类的mro关系中找参数1的下一个类B进行初始化
+且将参数2赋给类B的__init__(self, xxx)的self中
+而super().__init__(xxx)中的xxx是传到类B中__init__中的所有参数（除了self），必须能够对应接收。
+
+但是，现在又出现了一个问题，就是假如实例对象f = Father(1, 'Tom')，只需传Number和name即可，而age参数多余了（所以未运行前，Pycharm就在age处报了警告：Unexpected argument（未意料到的参数），说明这里是有风险的），
+因为Father类的mro顺序是Father->Person->object，与Mother类无关（没结婚（生孩子）之前，根本与她无关系）
+下面就来解决这个问题。。。
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*多继承初始化时，参数传递问题的解决
+①Father类的__init__中改为(self, name, *args) —— name是Father类中特有的属性，而其他元素传进来改为*args不定长位置参数，进行元组组包
+②super(Father, self).__init__(*args) —— 其中*是解包的意思
+③Mother类的__init__中改为(self, age, *args)
+④super(Mother, self).__init__(*args)
+⑤Son类的__init__改一下传参顺序(self, gender, name, age, Number) —— 首先传self，然后传属于自己这个类特有的属性gender，然后因为Son多继承的第一个类是Father（先找），所以传的下一个参数应该与Father有关，即传入name，然后再找Mother，即传入age，最后再找Person，所以最后传Number即可
+⑥super(Son, self).__init__(name, age, Number)
+
+如此便解决了上一节的实例对象f的问题
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*super简化格式，解决多进程初始化问题
+格式：super().__init__(*args)
+事实上就是少写了super()括号中的参数，事实上还是有的，解释器默认会帮我们加上
+为什么能帮我们加上？因为参数1是当前类名，参数2是当前类的实例对象，这些都是显而易见的
+
+我们写的时候，写这个简化格式即可！
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*类的继承书写顺序会影响mro顺序
+e.g:
+# 写一个钻石继承关系
+class A(object):
+    pass
+class B(A):
+    pass
+class C(A):
+    pass
+class D(B, C):
+    pass
+print(D.__mro__)  # --- (<class '__main__.D'>, <class '__main__.B'>, <class '__main__.C'>, <class '__main__.A'>, <class 'object'>)
+
+class D_(C, B):
+    pass
+print(D_.__mro__)  # --- (<class '__main__.D_'>, <class '__main__.C'>, <class '__main__.B'>, <class '__main__.A'>, <class 'object'>)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*mro顺序的确定的原理 —— 树的深度优先算法
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*多态 —— 多种形态（面向对象最重要的特征）
+程序中的意义：
+当调用同一个方法名的时候，得到的结果不同
+在一般的面向对象语言中，多态是由继承来实现的
+但是再Python中，Python天生具有多态性 —— 鸭子类型：Duck Typing —— 如果一只鸟长得像鸭子，叫声像鸭子，那么认为它就是鸭子
+
+e.g1：其他语言中，面向对象的标准多态
+# 老大夫类
+class Father(object):
+    def cure(self):
+        print('老中医使用中医治病')
+# 小大夫类
+class Son(Father):
+    def cure(self):
+        print('小大夫使用中西医结合治病')
+# 狗类
+class Dog(object):
+    def bark(self):
+        print('Wang Wang Wang!')
+# 病人类
+class Patient(object):
+    # 需要一个大夫给他治病
+    def need_doctor(self, Father doctor):  # 这里只是模拟其他面向对象语言（强类型对象，需指定传进去的是什么类型的对象，就像C语言写函数那样）
+        doctor.cure()
+# 测试
+p = Patient()
+p.need_doctor(Father())  # --- 老中医使用中医治病 —— 此时，传进去的是Father类的对象Father()，且Father()对象所在的Father类存在cure()方法，所以可以调用并运行
+p.need_doctor(Son())  # --- 小大夫使用中西医结合治病 —— 此时，传进去的是Son类的对象Son()，而Son类继承了Father类，所以也符合强类型所需要的Father类的要求，且Son()对象所在的Son类存在cure()方法，所以可以调用并运行
+# p.need_doctor(Dog())  # --- 报错，因为1.狗类不在Father的继承关系上，2.狗类没有cure方法
+
+由上可知：
+①标准多态的存在需要有继承和改写 —— 如Son继承Father，且改写了cure方法
+②标准多态只能支持所指定的强类型所在类的这一系列继承关系上实现多态 —— 如指定了Father类为强类型，那么多态的实现只能在Father这一系列的继承关系上（Father -> Son）
+③标准多态的强类型的指定最好选择这一系列继承关系的根类 —— 若上例中指定强类型为Son则不能调用Father的cure方法了
+
+e.g2：Python中的Duck Typing多态
+# 大大夫类
+class Father(object):
+    def cure(self):
+        print('老中医使用中医治病')
+# 小大夫类
+class Son(Father):
+    def cure(self):
+        print('小大夫使用中西医结合治病')
+# 狗类
+class Dog(object):
+    def bark(self):
+        print('Wang Wang Wang!')
+# 兽医类
+class AnimalDoctor(object):
+    def cure(self):
+        print('我是个兽医，主要给动物治病，但是也能给人凑合治一下')
+# 病人类
+class Patient(object):
+    # 需要一个大夫给他治病
+    def need_doctor(self, doctor):
+        doctor.cure()
+# 测试
+p = Patient()
+p.need_doctor(Father())  # --- 老中医使用中医治病
+p.need_doctor(Son())  # --- 小大夫使用中西医结合治病
+# p.need_doctor(Dog())  # --- 报错，因为狗没有cure方法
+p.need_doctor(AnimalDoctor())  # --- 我是个兽医，主要给动物治病，但是也能给人凑合治一下 —— 兽医类继承object，并不在Father大夫类的继承关系上，但兽医类有cure方法，所以在Python中可以调用
+
+由上可知：
+Python中不需要指定强类型，所以B类不需要在A类的继承关系上也可调用，只需B类也存在所需方法即可
+很好地解释了这句话：如果一只鸟长得像鸭子，叫声像鸭子，那么认为它就是鸭子 —— 鸟是兽医，他有治病的能力（cure方法），所以长得像鸭子（大夫），那么就可以认为他是大夫
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*实例对象属性和实例对象方法
+以对象名.xxx的形式调用的都是实例的属性或实例的方法
+e.g:
+class Person(object):
+    def __init__(self, name):
+        # 定义一个实例属性
+        self.name = name
+    def info(self):
+        print(self.name)
+# 测试
+tom = Person('Tom')
+# 使用实例属性
+print(tom.name)  # --- Tom
+# 使用实例方法
+tom.info()  # --- Tom
+
+# Python中万物皆对象，是否可以用类对象调用实例属性和实例方法？
+# 直接调用Person类对象中的实例属性name
+# print(Person.name)  # --- 报错，人类的名字无法打印，因为未指定哪个人的名字
+# 直接调用Person类对象中的实例方法info()
+# Person.info()  # --- 报错，人类的信息无法打印，因为未指定打印哪个人的信息
+# 用实例对象tom调用Person类对象中的实例方法info()
+Person.info(tom)  # --- Tom —— 成功运行，因为指定打印实例对象tom的信息（原理是把实例对象tom传入人类的info方法的self中，使self = tom，再打印self.name，即tom.name，因为tom在上方实例时已经初始化name = Tom，即tom.name = Tom已经与对象tom绑定，所以可以打印出Tom）
+
+结论：
+为什么类名不能调用实例属性和实例方法？
+答：因为类对象存在时，不一定有实例对象存在，实例属性和实例方法只能由实例对象调用
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*类对象和类属性
+e.g:
+class ClassRoom(object):
+    # 当定义一个类属性时，相当于这个类中的全局变量 —— 只在当前类中是全局变量
+    # 该类的所有对象都可以使用该类属性
+    # 可以在所有的对象间进行数据共享
+    contral_air_conditioning = '格力空调'
+    def info(self):
+        # 实例方法中去访问类属性
+        print(ClassRoom.contral_air_conditioning)  # --- 类属性用类对象来调用
+cr1 = ClassRoom()  # --- 格力空调
+print(cr1.contral_air_conditioning)
+cr2 = ClassRoom()  # --- 格力空调
+print(cr2.contral_air_conditioning)
+cr3 = ClassRoom()  # --- 格力空调
+cr3.contral_air_conditioning = '美的空调'
+print(cr1.contral_air_conditioning)  # --- 格力空调
+print(cr2.contral_air_conditioning)  # --- 格力空调
+print(cr3.contral_air_conditioning)  # --- 美的空调
+# 可见，这样的操作并未实现数据共享 —— 中央空调已经换成美的了，而班级1和班级2还是格力空调
+# 所以，要想更改类中的类属性，可以下操作
+ClassRoom.contral_air_conditioning = '美的空调'
+print(cr1.contral_air_conditioning)  # --- 美的空调
+print(cr2.contral_air_conditioning)  # --- 美的空调
+print(cr3.contral_air_conditioning)  # --- 美的空调
+# 改是改了，但一般不会这样调用类属性，而是用类对象访问类属性
+print(ClassRoom.contral_air_conditioning)  # --- 美的空调 —— 直接类对象访问类属性
+cr1.info()  # --- 美的空调 —— 实例方法间接类对象访问类属性
+
+总结：
+类属性可以使用实例对象来引用，但是不能修改
+一般情况下：类属性都只使用类对象来访问
+格式：类对象.类属性
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*扩展：方法调用的底层原理 —— 与函数调用的原理一致（了解即可，写架构才需要这些知识）
+class Cat(object):
+    def __init__(self, name):
+        self.name = name
+        self.__age = 1
+    def public_method(self):
+        print('公有的对象方法')
+    def __private_method(self):
+        print('私有的对象方法')
+tom = Cat('Tom')
+jack = Cat('Jack')
+# __dict__ 是一个魔法属性，用来保存当前对象的所有成员
+print(Cat.__dict__)  # --- {'__module__': '__main__', '__init__': <function Cat.__init__ at 0x015393D0>, 'public_method': <function Cat.public_method at 0x015390B8>, '_Cat__private_method': <function Cat.__private_method at 0x01539148>, '__dict__': <attribute '__dict__' of 'Cat' objects>, '__weakref__': <attribute '__weakref__' of 'Cat' objects>, '__doc__': None}
+# 其中__module__表示一个文件，__main__表示当前文件，然后后面保存的就与本类相关的方法（可见私有方法在保存时就是改成了_类名__方法名，这样外部访问当然可以用这个key去调用），再后面就是一些文档，不用管
+print(tom.__dict__)  # --- {'name': 'Tom', '_Cat__age': 1}
+print(jack.__dict__)  # --- {'name': 'Jack', '_Cat__age': 1}
+# 方法调用的原理：
+tom.public_method()  # 这是用实例对象调用方法，解释器自动传self = tom
+Cat.public_method(tom)  # 这是用类对象调用方法，手动传self = tom
+# 然后在__dict__中自动查询.后的名字（public_method）是否是字典的一个key，如果是，则取出值，让value()，而这个值由上可知，是该方法的对象，那么方法对象加括号即为调用该方法
+
+这个道理和之前学的函数一致：
+e.g:
+def fun():
+    print('fun run ...')
+fun()  # --- fun run ... —— Python万物皆对象，所以fun是一个函数对象，函数对象加括号就是调用该函数
+# 也可以下写法更易理解：
+f = fun  # f是fun函数的一个对象
+f()  # --- fun run ... —— 调用fun函数
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Day 10:
+*类方法
+定义格式：
+@classmethod
+def 方法名(cls, ...):  # —— cls与self类似，只不过cls接收类对象，而self接收实例对象
+    pass
+调用格式：
+类对象.类方法名
+
+注意：在类方法中不能使用self，但是可以使用cls，该参数用来表示当前类对象，这个参数也是自动传递的
+应用场景：一般在设计类时，如果有类方法，该类一般不会去实例对象，直接使用类对象来操作（比如数学函数类，e.g: math.max(1, 2)）
+一般用来定义工具类使用，而不是工具类的，如狗类里的bark方法，就用普通的实例方法定义，虽然类方法也能写，但不符合现实生活逻辑 —— 1.狗都没有实例出来，哪来的狗叫？2.每只狗的叫声都不同，不能把所有的狗叫声都用类方法统一了。
+
+e.g:
+class MyMath(object):
+    # 定义一个类属性
+    n = 999
+    @classmethod  # 这是一个装饰器，用来修饰一个方法成为类方法，当在执行该类方法时，解释器会自动将该类对象传递到参数cls中，若不写，则需手动传类对象给cls
+    def fun(cls):
+        print(cls.n)
+    @classmethod
+    def sum(cls, *args):
+        s = 0
+        for i in args:
+            s += i
+        return s
+# 直接用类名.类方法执行类方法
+MyMath.fun()  # --- 999
+print(MyMath.sum(1, 2, 3))  # --- 6
+# 也可以创建一个类对象再访问类方法，但是不建议
+mm = MyMath()
+print(mm.sum(1, 2, 3))  # --- 6
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*静态方法
+格式：
+@staticmethod
+def 方法名(参数列表...):
+    pass
+
+调用方式：
+与类方法相同
+类对象.静态方法名()
+
+设计目的：
+将一些相关联的普通函数使用类进行整合封装，方便查找与使用
+
+作用：
+静态方法同类方法相似，也是在不需要实例对象产生的条件下，可以使用静态方法实现
+一般这两种方法，都是用在工具类的实现上
+通过类，将一系列的功能方法进行整合到一起
+
+e.g:
+# 设计一个编码工具类
+class EncodeUtil(object):
+    # 编码方法
+    @staticmethod  # 用此装饰器表示以下函数不需要除了我指定的参数的其他参数（如：cls、self）—— 不写这个的话，运行下面的EncodeUtil.encode_data('hello', 'utf-8')也是通的，只是并不规范
+    def encode_data(data, format):
+        print(f'对数据{data}使用{format}格式进行了编码')
+    # 解码方法
+    @staticmethod
+    def decode_data(data, format):
+        print(f'对数据{data}使用{format}格式进行了解码')
+# 测试
+# eu = EncodeUtil()
+# eu.encode_data('hello', 'utf-8')  # 用对象形式报错，因为静态方法不需要self，多了self这个参数
+EncodeUtil.encode_data('hello', 'utf-8')  # 这样就可以
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*三种方法（实例方法、类方法、静态方法）的区别总结：
+实例方法，必须通过实例对象调用执行（第一个参数是当前调用该方法的实例）
+类方法，当不需要产生实例对象时，可以使用类方法来实现相应的代码功能，类方法可以直接使用类对象来调用，类方法的第一个参数是cls，用来接收当前类对象，通过个参数，可以在各个类方法中进行共享数据
+静态方法，作用同类方法相似，但是静态方法不接收任何默认参数（实例对象或类对象），静态方法其实就是将一些相关联的普通函数使用类进行整合。
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*模块介绍
+在Python中，一个.py文件就是一个模块
+在Python，万物皆对象，模块也不例外
+通过模块，可以有效的组织代码结构，让代码结构更加清晰
+
+导入模块是指：
+在一个.py文件中，使用另外一个.py文件时，需要将这个文件
+导入在一个模块中，使用另外一个模块时，需要将这个模块导入
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*import导入模块/成员 
+方式一：
+import 包名.模块名/模块名 —— 下面若干节后会有对“包”和“模块”两个概念的详解
+
+方式二：
+from 包名/模块名 import 模块名/成员名(属性/变量 或 方法/函数)
+from 包名.模块名 import 成员名
+
+但注意，这两种方法导入的终点都是模块名或成员名，而不能是包名（不能是一个文件夹）！
+如果终点需要写到包名，可以在该包下的__init__.py文件写入某些内容来达到目标 —— 这些知识会在《通过__init__.py设置导入模块时的权限》中学习
+
+e.g：解释何为成员名？
+模块A中有一个变量n —— from A import n	
+模块A中有一个方法fun —— from A import fun （不用加括号，因为只是调用fun方法这个对象）
+
+使用from-import方式导入后，不需要再使用模块名.成员形式调用该成员可以在当前文件中，可以直接使用成员名。因为from-import的导入方式相当于将导入的文件复制到了当前文件一份。如上面的e.g中from A import n，可以理解为在当前文件写了一行代码n = xxx
+	
+特例：
+from 包名/模块名 import * —— 这种方法导入所有模块/成员，就不能用as起别名了
+但注意，这种方法的from 包名 import * 需要在该包的__init__.py下用__all__ = [模块名（不加.py后缀）]来指定可调用的模块（该知识点可在下方《__all__在init文件中的用法》查看）
+
+别名：
+import 模块名 as 别名
+form 模块名 import 成员名 as 成员别名
+
+包有多层级时如何导入？
+test --- 文件夹（包名）
+	first --- first.py文件（模块名）
+		tool --- tool类
+			mytool --- mytool方法
+则：from test.first.tool import mytool —— 使用时可直接调用mytool方法
+或：from  test.first import tool —— 要使用mytool方法还需用tool.mytool才能调用，这种方法写得虽然长一些，但可以有效避免与当前文件代码中的变量产生命名冲突
+
+两种导入方式区别：
+1.import方式，是拿到了模块对象的引用地址，通过这个地址来使用模块中的成员
+2.from-import方式，相当于将被导入模块中的成员，复制了一份到本地模块中。所以可以直接使用成员来访问被导入的成员
+3.对于import方式来说，没有任何限制
+4.对于from-import方式来说，有些成员是不能被导入的（有权限限制）
+
+5.import 可以将整个模块中的成员都导入进来
+6.使用from-import时，可以使用谁导入谁，更加节省资源；不导入私有属性/方法，更安全
+e.g：针对5、6的例子
+已在p_06文件定义三个变量：
+x = 1  # 全局变量，模块间的公有变量
+_y = 2  # 私有变量，文件内的私有变量
+__z = 3  # 私有变量，一般出现在类中，不直接在模块中定义，这里只是借用
+
+然后打开文件p，写入以下进行实验：
+情况1：用import导入 —— 没有任何限制
+import p_06 as p6m
+print(p6m.x)  # --- 1
+print(p6m._y)  # --- 2
+print(p6m.__z)  # ---3
+
+情况2：用from-import导入 —— 私有变量不能被导入
+from p_06 import *
+print(x)  # --- 1
+print(_y)  # --- 报错
+print(__z)  # --- 报错
+
+但是通过__all__这个魔法属性，可以改变from-import的导入规则
+在p_06文件中，写上一行代码：
+__all__ = ['_y', '__z']
+然后回到文件p，发现print(_y)与print(__z)可以正常运行但print(x)会报错，因为__all__中没写x
+
+但是一般不会这样去使用__all__属性
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*from-import方式的命名冲突问题
+还是使用上面的例子，此时p_06文件里有一个变量x = 1，而在当前文件导入它则说明把x = 1写入当前文件
+那现在在文件p中：
+e.g1：先导入p_06，再定义一个同名成员x函数
+from p_06 import *
+
+def x():
+    print('x Function')
+
+print(x)  # --- <function x at 0x02109B70>
+
+e.g2：先定义一个同名成员x函数，再导入p_06
+def x():
+    print('x Function')
+
+from p_06 import *
+
+print(x)  # --- 1
+x()  # 报错 --- int object is not callable （整型对象不允许被调用）
+
+先找New bing解决以下两个问题：
+①Python中变量的多态性：是指不同类型的对象可以使用相同的方法名或运算符，而产生不同的行为或结果。Python是一种多态语言，它不需要声明变量的类型，也不支持重载。Python中多态性的好处是可以增加代码的灵活度和通用性，让不同类型的对象可以协作。
+②重载：是指在一个类中定义了多个同名的方法或运算符，但是它们的参数个数或类型不同。重载可以让同一个方法或运算符适应不同的场景和需求。
+Python不支持重载，因为它是一种动态类型语言，它不需要声明变量的类型，也不会根据参数的类型来选择调用哪个方法或运算符。Python中如果定义了多个同名的方法或运算符，只有最后一个会生效。
+
+因此，同名成员在当前文件的定义或导入顺序会影响到底这个名字代表哪个成员 —— 只有最后一个会生效
+
+如何解决命令冲突问题？
+①定义名字的时候，加上特有标记，不要与from-import导入的成员重名
+②使用import导入，明确表示该成员的出处是来自p_06的，这样就不会有命令冲突
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*模块导入的搜索顺序
+模块的分类：
+1.自定义模块
+2.系统模块
+3.第三方模块
+
+查找顺序：
+1.当前程序所在目录
+2.在当前程序所在工程的根目录
+3.PYTHONPATH  # 以上三个都是找自定义模块 —— 其中PYTHONPATH在环境变量中没有需自己新建，然后其值写要添加的查找目录即可（经测试，在IDLE中就可以运用这种方法添加了桌面路径，然后成功import了自定义的一个py文件，而在pycharm中就不行。查看PYTHONPATH的内容的方法是在命令行窗口：echo %PYTHONPATH% 这个命令在CMD中可正常显示新添加的路径，而在pycharm的命令行窗口就不能显示，现原因未明，知识点待补充。。）
+
+4.系统目录  # 找系统模块
+5.site_packages第三方模块的安装目录  # 找第三方模块
+
+如何查看以上目录？（即当前可查找的目录）
+import sys
+print(sys.path)  # --- 可以打印一个列表，或在pycharm ctrl + 鼠标左键点击sys.path的path也能跳转查看
+
+既然sys.path是当前可查找的路径列表，那么当然可以使用append添加路径了
+e.g:
+sys.path.append(c:\\users\\vh\\desktop)
+import my_py_file
+
+注意，这种方法并不能真正改变sys.path列表（可以理解为每次程序开始便lis = sys.path，然后lis.append()，所以真正的sys.path列表是不会改变的），这种方法只是为了本py代码能导入目标模块而设置的方法，使用时且注意两点：1.要先写sys.path.append再import 目标模块。2.最好不要在大公司的共同项目中使用这种方法，因为每个人的电脑的路径可能不同（例如桌面路径），而且就算别人的电脑也有某路径，也不能保证也有那个对应的模块，那代码就会检索不到那个模块而在别人的电脑运行报错。
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*__name__
+当使用__name__属性在获取当前模块名时，会有两种效果：
+1.如果当前模块文件是主动执行的，__name__得到的结果是字符串__main__，表示这是程序的入口
+2.如果当前模块文件是被动执行的（被导入的），__name__得到的结果就是当前模块文件的文件名
+
+所以这个if判断 —— if __name__ == '__main__':的作用就是主动运行该文件时就执行它的以下代码，而该文件被导入时它以下代码就不被执行，一般通过这个判断来作为程序的程序入口（只能写一个，因为入口只有一个）
+
+pycharm中快捷输入 —— 直接写一个main即可出现if __name__ == '__main__'提示，回车即可
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*扩展：查百度的——“模块”(module)、“包”(package)、“库”(library)三者的概念：
+①模块(module)是一个包含Python定义和语句的文件，也就是一个.py文件就可以称为一个模块。
+通过使用模块，不仅可以有效地避免命名空间的冲突，还可以将一个较大的程序分为多个文件，提升代码的可维护性和可重用性（“重用”上面已经说过了，如果把较大的程序分为多个文件，假如有同一个变量name那么利用import one;import two;就可以把name“重用”了，即one.name、two.name，这样的“重用”有效解决了命名冲突）
+
+②在比较大规模的任务一般需要用到大量的模块，此时我们可以使用包(Package)来管理这些模块。我们平时下载的第三方包也就是这个，如Numpy,
+什么是包？（下一节会说明这种说法过时了）包，就是里面装了一个__init__.py文件的文件夹。__init__.py脚本有下列性质：（1）它本身是一个模块；（2）模块名不是__init__，而是包的名字，也就是装着__init__.py文件的文件夹名。（3）它的作用是将一个文件夹变为一个Python模块（4）它可以不包含代码，不过一般会包含一些Python初始化代码(例如批量导入需要的模块)，在这个包被import的时候，这些代码会自动被执行。
+2.2 导入包导入包的方法和导入模块比较类似，只不过由于层级比一般模块多了一级，所以多了一条导入形式 —— import 包名.模块名import 包名.模块名 as 模块别名
+
+③库(library)的概念，网上搜到的信息也五花八门，没有一个统一的概念，主要总结为两种观点：
+观点1：严格来说Python中是没有库(library)的概念，模块(module)和包(package)都是Python语法中有的概念，Python中的库是借用其他编程语言的概念，
+
+*没有特别具体的定义，只是一个通俗的说法，平时说的库既可以是一个模块也可以是一个包。
+
+观点2：从大到小的层级关系：库->包->模块。库是指具有相关功能模块的集合，是一个完整的东西，可以认为库是一个完整的项目打包，可直接调用或者运行，一个库中可能有多个包。
+
+搜索到的答案中，大部分倾向于第一种观点。
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*包
+包就是一个文件夹
+区别：
+Python3以前，包中是有一个文件__init__.py，没有该文件的就是一个普通的文件夹，有该文件才是包
+在Python3以后，不管有没有__init__.py，都认为是一个包。
+
+包的导入 —— 可跳转到《*import导入模块/成员》一节中查看
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*通过__init__.py设置导入模块时的权限
+__init__.py文件相当于一个引导器，是用来指引程序应该到哪个文件（模块）去执行代码，可以类比银行的取号排队机
+如果import的目标是一个包（假设为Pack），那么通过这个包去找模块时，会报错，因为不确定要导入哪个模块
+需要在包中的__init__.py中，告诉解释器，当导入包时，应该导入哪些模块
+
+需在__init__.py中写入
+from . import 模块名（a）（其中.是指“当前目录下”） —— 此操作就令模块a可以被Pack.a调用了
+若还需要其他模块都可被调用，还需如此格式往下写，或直接在模块名A后写逗号，跟着写其他模块名
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*__all__在init文件中的用法
+也可以使用__all__来指定可以导入的模块，但是这种方式不通用，
+只能用在 —— from 包名 import * 
+这种导入所有模块的情况，通过这个__all__可以来设置哪个模块可以被导入
+e.g：
+在Pack包下的__init__.py文件中写入
+__all__ = ['a', 'b'] —— 假如a.py里有x = 1的代码
+那么在当前文件下写：
+from Pack import *
+然后就可以print(a.x)  # --- 1
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*异常介绍
+异常：不正常
+程序在执行过程中发生了不可预知的问题，导致程序崩溃
+常见的异常：
+NameError —— 没有定义某变量，直接用了，就是NameError
+TypeError —— 类型异常，如拿一个整型进行了一个调用（callable）就是类型异常
+ValueError —— 值异常，如s = 'Hello'但print('s.index('O')') --- 找不到O
+AttribitueError —— 属性错误，使用某类的一个实例对象的属性或方法时把名写错了
+SyntaxError —— 语法错误，写了一个无效的语法
+IndexError —— 下标越界
+这些异常名字都是一个个类，大多都是继承父类Exception
+
+代码中对“异常”的四种关键字：
+try：可能会出现异常问题的代码
+except：当出现异常时，解决异常的代码
+else：当没有出现异常时，正常执行的代码
+finally：无论是否出现异常，都会执行这里的代码
+
+其中else和finally不是必须的，但有些项目里是必须的
+
+以后会用以下格式代替这些异常处理方法：
+如with xxx as xxx:
+这是一个语法糖，语法糖不是Python特有的，意思是提供了一个简洁的语法格式来代替一个复杂的操作，使得程序员写起来像吃糖一样开心甜蜜
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*异常处理
+e.g：使用try-except进行基本的异常处理
+s = 'Hello'
+try:
+    print(s.index('O'))  # 这句代码会发生ValueError异常
+except ValueError:  # 用except捕捉ValueError异常（如果此处写NameError是捕捉不到的，所以可以把ValueError改为众多异常的父类Exception，范围就更广了，不怕捕捉不到）
+       print('查找的子串不存在')
+
+使用try来尝试执行后面语句块中的代码，如果代码发生异常问题，那么异常信息就会被except捕捉到，可以在except后面进行异常处理，如果代码没有异常，那么程序就正常运行，不会执行except后的代码
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*异常的传递：
+当代码出现了很多层级的调用时，在其中发生了异常，如果没有处理这个异常（这里的“处理”指用try-except处理），这个异常会自动向上抛出，如果上层也没有处理，那么继续向上抛出，直到抛到解释器，解释器默认处理异常的方式就是中断程序，将异常信息显示到控制台上
+e.g:
+def func_a(): --- 1
+    print('Func a run ...') --- 2
+    func_b() --- 3
+def func_b(): --- 4
+    print('Fun b run ...') --- 5
+    func_c() --- 6
+def func_c(): --- 7
+    print('Fun c run ...') --- 8
+    print(1 / 0) --- 9
+func_a() --- 10
+异常信息：
+Traceback (most recent call last):
+  File "E:/Old/Python1/test/Fifth.py", line 10, in <module>
+    func_a()
+  File "E:/Old/Python1/test/Fifth.py", line 3, in func_a
+    func_b()
+  File "E:/Old/Python1/test/Fifth.py", line 6, in func_b
+    func_c()
+  File "E:/Old/Python1/test/Fifth.py", line 9, in func_c
+    print(1 / 0)
+ZeroDivisionError: division by zero  # 错误原因 —— 除零错误
+此例子的异常传递过程：
+首先，在第9行发现错误（小明有发现一道数学题有问题），自身并没有设置异常处理（小明想不通），但想要解决问题，向上抛出给调用c的b（第6行）（小明问班长），但是b也没有设置异常处理（班长也不会），向上抛出调用b的a（第3行）（班长问老师），但是a也没有设置异常处理（老师也不确定），向上抛出给func_a()（第10行）（问出题人），但是func_a()也没有设置异常处理（出题人也不会），所以，程序就按照这个过程列出了4条异常信息。
+
+但凡有一个环节写了一个try-except异常处理（可以写在c、b、a、主函数任意一个都行，但一般我们会写在c这个可能出现问题的源头），这个问题就会得到解决，一旦问题解决了，所有报错都会消失
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*异常别名、捕捉多个异常、获取异常信息
+异常别名：
+通常用e表示 —— 格式：try:xxx except (Exception, ...) as e:
+
+捕捉多个异常：
+允许捕捉多个异常，但是同一时刻只能有一个异常发生，格式如上：用一个元组包裹想要捕捉的异常名
+
+获取异常信息：
+print(e)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*异常处理之else和finally
+e.g:
+try:
+    f = None
+    f = open('a.txt', 'r')
+except Exception as e:
+    print('要打开的文件不存在')
+    print(e)
+else:  # 用来处理没有异常时的情况
+    # 对文件的读取操作
+    print(f.read())
+finally:  # 不管是否出现异常，都要执行这个语句块
+    # 一般这个模块中，主要写的内容是资源的关闭或回收
+    # 比如，文件的关闭，网络连接的关闭，数据库的关闭
+    if f != None:
+        f.close()
+
+在这个程序中：
+如果a.txt文件存在，则try成功创建f读取对象，然后跳到else进行文件读取操作，最后跳到finally关闭文件
+如果a.txt文件不存在，则try中的f保持默认值None而不能创建f读取对象，转而跳到except处理“文件不存在”的异常，最后跳到finally，但是因为f == None，所以不会进入if而导致f.close()报错
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*自定义异常和抛出
+为什么要自定义异常？
+假如要写一个判断手机号输入是否正确的代码，那么：
+如果输入了中文？输入了英文字母？输入的手机号位数不对？这些异常的处理就需要自定义异常完成
+e.g：
+#格式：
+# 定义一个用来判断当前手机号是否有非法字符的异常
+class PhoneNumberNotDigitError(Exception):
+    def __init__(self, msg):
+        self.__msg = msg
+# 定义一个用来判断手机号位数是否合法的异常
+class PhoneNumberLengthError(Exception):
+    def __init__(self, msg):
+        self.__msg = msg
+
+# 自定义异常的抛出 —— raise —— 即用红色字体在控制台上显示异常信息
+# 格式：raise 异常对象
+# e.g：raise 类名 —— 抛出的是类对象、raise 类名() —— 抛出的是实例对象
+# 定义一个函数，用来获取一个电话号码
+def get_phone_number():
+    pn = input('请输入一个11位的手机号：')
+    if pn.isdigit() == False:  # 手机号不是纯数字
+        # 抛出自定义的异常
+        raise PhoneNumberNotDigitError('手机号不是纯数字')
+    elif len(pn) != 11:
+        print(str(PhoneNumberNotDigitError))
+        raise PhoneNumberNotDigitError('手机号位数不正确')
+    return '输入的手机号是合法的：' + pn
+
+if __name__ == '__main__':
+    num = get_phone_number()
+    print(num)
+
+一般来说，自定义异常是别人或自己写好来给某程序进行调用的，所以，一般一个异常文件写好后，到另一个文件中import它去使用
+e.g:
+# 假设现在是在需要调用以上自定义异常模块的文件中
+from 自定义异常模块 import *
+try:
+    num = get_phone_number()
+except (PhoneNumberNotDigitError, PhoneNumberLengthError) as e:
+    print(e)
+else:
+    print(num)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Day 11
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

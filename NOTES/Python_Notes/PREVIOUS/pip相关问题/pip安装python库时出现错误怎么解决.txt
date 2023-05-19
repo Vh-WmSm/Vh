@@ -1,0 +1,11 @@
+我们在使用 pip 安装 python 包时，经常会出现如下错误：
+
+ERROR: Could not find a version that satisfies the requirement xxxx(from versions: none)
+ERROR: No matching distribution found for xxxx
+
+找了很久终于找到能解决这种报错的方法了。
+
+直接选用pip源并且信任它的来源就可以解决这种问题。
+
+pip install 库包名 -i http://pypi.douban.com/simple/ --trusted-host pypi.douban.com
+上面使用了豆瓣源，将其换成清华源、阿里源等都适用。

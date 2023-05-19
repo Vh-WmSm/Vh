@@ -1,0 +1,5 @@
+清华大学-i https://pypi.tuna.tsinghua.edu.cn/simple
+淘宝：http://npm.taobao.org/mirrors/
+
+直接在地址栏进入网址可以看到很多资源从国外被搬运到这里，这就是下载快的原因，
+除了调用pip可以下载里面的东西，直接进入这个网址下载东西也是可以的

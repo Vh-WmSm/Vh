@@ -1,0 +1,1 @@
+ffmpeg -f dshow -rtbufsize 1000M -i audio="virtual-audio-capturer" -f gdigrab -i desktop -r 20 -b:v 150k -b:a 128k -ar 44100 -crf 30 rec.mp4

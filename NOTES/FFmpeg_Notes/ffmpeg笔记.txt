@@ -1,0 +1,219 @@
+My Notes:
+主流分辨率：320x240；640x400；640x480；800x480；800x600；1024x600；1024x768；1280x1024；1400x1050；1600x1200；1920x1200；2048x1536；2560x2048；3200x2400。
+
+例：* 8 kbit 关于电话质量 * 32 kbit 关于中波质量 * 96 kbit 关于FM 质量 * 128 kbit 关于光盘质量。
+
+音频采样率是指录音设备在单位时间内对模拟信号采样的多少，采样频率越高，机械波的波形就越真实越自然。在当今的主流采集卡上，
+采样频率一般共分为11025Hz、22050Hz、24000Hz、44100Hz、48000Hz五个等级，11025Hz能达到AM调幅广播的声音品质，
+而22050Hz和24000HZ能达到FM调频广播的声音品质，44100Hz则是理论上的CD音质界限，48000Hz则更加精确一些。
+
+音频格式：
+无损格式：WAV，FLAC，APE，ALAC，WAV
+有损格式：MP3，AAC
+
+mp3和m4a区别：
+1、 M4A是MPEG-4音频标准的文件的扩展名。而MP3则是属于MPEG-3音频标准。
+2、 M4A属于苹果专用的音频格式，而MP3则是一种通用音频格式。
+3、 M4A属于高品质压缩类型的音乐文件，而MP3则是低品质有损压缩。
+4、 M4A音频文件的大小要远远大于MP3，对于磁盘空间的占用，M4A要远大于MP3。
+5、 MP3的诞生时间要早于M4A，但是M4A的流行度正在超过MP3。目前大多数主流音乐播放器都支持M4A格式。
+
+在当今的主流采集卡上，采样频率一般分为8000Hz 、11025Hz 、22050Hz、32000Hz 、44100Hz 、47250Hz 、48000Hz 、
+50000Hz 、50400Hz、96000或192000Hz，以及320000HZ等。
+
+调整视频音量
+ffmpeg -i in.mp4 -filter:a "volume=25" -vcodec copy out.mp4，将音量调整为原来的25倍，视频编码不变
+
+ffmpeg在cmd运行中鼠标左键点一下暂停，ctrl+c继续运行
+
+将图片延长至N秒变成视频
+ffmpeg -r 25 -loop 1 -i a.png -t 10 a.mp4
+-r 为视频帧率，若生成的图片视频要和视频B连接，帧率必须和视频B的帧率一致，否则连接后该图片视频时长不能保证是10s   -t 表示生成多少秒的图片视频
+-loop 1表示无限循环，-loop 0表示不循环
+
+文件名%d.png表示输入或输出"文件名1、文件名2……"
+
+ffmpeg -i xxxxxxxx c:\x\x\out.mp4可以直接把输出文件放到某文件夹
+
+音频采样率高的视频A连接采样率低的视频B，会导致视频B升调
+音频采样率低的视频A连接采样率高的视频B，会导致视频B降调
+
+故连接视频时切记要将视频帧率、音频采样率调整一致
+
+将视频压缩指定大小
+ffmpeg  -i  Desktop/input.mp4  -fs 10MB  Desktop/output.mp4
+-fs 10 : 表示文件大小最大值为10MB
+
+设置视频的帧率为20fps
+ffmpeg  -i  Desktop/input.mp4  -r 20  Desktop/output.mp4
+-r 20：表示帧率设置为 20fps
+
+设置视频的码率
+ffmpeg  -i  Desktop/input.mp4  -b:v 1M  Desktop/output.mp4
+-b:v :指定视频的码率
+-b:a : 指定音频的码率
+
+1M：码率的值 1M 表示 1Mb/s(Mbps)1k表示1kbps（1kB/s=8kb/s）
+
+设置视频的分辨率
+ffmpeg  -i  Desktop/input.mp4  -s 1920x1080  Desktop/output.mp4
+-s 1920x1080表示分辨率为1920x1080
+
+
+可以结合上面的命令一起来使用
+ffmpeg  -i  Desktop/input.mp4  -s 1920x1080  -b:v 1M  -r 20  Desktop/output.mp4
+
+
+1.下载、配置
+www.bing.com点击国际版，搜索框输入ffmpeg进入官网
+按download，然后下面鼠标指向windows的图标，点击下面第一个下载
+下载后解压到自己喜欢的地方即可
+然后打开bin，复制bin的地址，此电脑-属性-高级系统设置-环境变量-打开系统变量的Path-新建-把地址粘贴下去-确定
+注：环境变量中有“xx的用户变量”和“系统变量”，若改用户变量，则指定这个用户才能使用这个环境变量，而改变系统变量，则这台电脑的所有用户都可以用这个环境变量
+ffmpeg -version 可查看ffmpeg是否安装成功或查看版本号
+
+2.简介、上手
+打开ffmpeg安装目录的bin，有三个命令行程序
+ffmpeg.exe 用于操作、转换和流式传输多媒体内容
+ffplay.exe 一个简洁的播放器
+ffprobe.exe 一个媒体参数分析工具
+ffmpeg -h或ffmpeg -?可查看各个命令的帮助
+ffplay 文件.后缀可播放视频、音频
+cls可清空命令窗口
+在视频/音频所在文件夹下，在地址栏输入cmd即可以该路径打开cmd进行操作里面的文件，也可以在该文件夹下按住shift键然后右键鼠标，“在此处打开命令行窗口”（注：这种方法win10只有"打开powershell窗口"，这也可以的）
+写出"ffmpeg "后，按Tab键可以自动输入该文件夹下的文件，按>1次可切换文件
+ffplay in.mp4 命令后，"f"、"双击鼠标左键"全屏。"空格"、"p"、"m"可暂停/播放。"w"选择显示模式。"鼠标右键"（横坐标方向）盲选播放起点。"上下左右方向键"快进/后退。"q"、"esc"退出视频/音频
+ffprobe in.mp4 命令可查看文件的基本信息，码率、编码方式、格式、大小、时长等等
+或者用potplayer打开视频，然后按Tab键也可查看相关信息
+
+3.转换格式（文件格式、封装格式）
+文件格式，常见有.mp4,.mov之类的，它们的作用是方便系统识别，并关联这些文件，让这些文件由相应的程序打开
+.mp4,.mov既是文件格式，也是视频的封装格式，所谓封装，是把编码器生成的多媒体内容，如音频、视频、字幕等等，按照一定的标准混合封装在一起
+AVI格式有点老，现在主流的封装是mp4格式或苹果公司的mov格式，mov格式支持透明的视频，mp4软硬件产商对它的支持非常好，故一般把其他格式转为mp4
+-i 是input的缩写，用来指定输入的文件（文件名可以是中文也可以英文，但不能包含空格，所以若文件有空格，则需整个文件加上双引号，如in put.mp4 --> -i "in put.mp4"）
+ffmpeg -i input.mov output.mp4 可以将mov格式转换为mp4格式，但是没指定属性的话，属性全部与原文件相同
+
+4.改变编码上（编码介绍、音频转码）
+编码：目的是缩小文件体积，便于传输和存储
+ffmpeg -codecs 可遍历ffmpeg所有的编解码方式，有百来种，查找某种方式按快捷键ctrl+f
+选择一种封装并更改：如：ffmpeg -i xxx -vcodec h264 xxx
+mp4封装：H264视频编码 + AAC音频编码（首选方案）
+WebM封装：VP8视频编码 + Vorbis音频编码（这是谷歌的方案，YouTube用的就是这个，但其实它的软硬件支持程度不高，
+	效果不好，纯粹用来避开专利和节省成本，所以一般采用MP4制作视频，然后上传YouTube，让它自己转码）
+OGG封装：Theora视频编码 + Vorbis音频编码（这是一套完全开源的编码方案，没有专利困扰）
+-acodec libmp3lame 其中"a"表示音频，"codec"表示编解码器。（此指令意思是：指定音频编码器为mp3的编码器）（这条指令也可不写，因为最后输出文件名后缀是什么，ffmpeg就会拿出相应的编码器来进行转码）
+
+-ar 44100 （指定采样率，（单位：Hz），不写此指令则默认采用原音频采样率，常用的采样率有44100Hz和48000Hz）
+
+
+-ab 320k （指定音频的比特率，若不输入此指令，则默认是128k）或-b:a 320k
+例：* 8 kbit 关于电话质量 * 32 kbit 关于中波质量 * 96 kbit 关于FM 质量 * 128 kbit 关于光盘质量。
+
+-ac 2 （设置声道数："1"则单声道，"2"则双声道立体声，不写则默认采用原音频声道数）
+整体命令：ffmpeg -i input.flac -acodec libmp3lame -ar 44100 -ab 320k -ac 2 out.mp3
+用指令：ffmpeg -h打开帮助目录，找到Audio options一项，这里有音频相关的常用指令
+-aframes number转换音频帧数，-aq quality 设置音频的质量，-an 禁用音频，-vol volume 设置音量，默认256，也就是100%音量，-af filter_graph设置音频过滤器
+
+5.改变编码 中（视频压制）
+
+
+6.
+
+7.提取、合并音视频
+ffmpeg -i in.mp4 -vcodec copy -an out.mp4（-an指去除音频，-vcodec copy指维持原视频编码）
+ffmpeg -i in.mp4 -acodec copy -vn out.m4a（-vn指去除视频，-acodec copy指维持原音频编码）
+注意：以上两种方法仅为视频转无声/无视频的视频，若mp4->mp3只需：ffmpeg -i file.mp4 file.mp3
+
+ffmpeg -i out.mp4 -i out.m4a -c copy out.mp4（-c copy指维持编码器）
+
+8.裁剪、连接音视频
+ffmpeg -in.mp4 -ss 00:00:10 -to 00:00:15 -vcodec copy out.mp4（-to指从00:00:10到00:00:15这5秒）
+ffmpeg -in.mpt -ss 00:00:10 -t 00:00:15 -vcodec copy out.mpt （-t指从00:00:10开始往后截15秒）
+ffmpeg -sseof -10 -i in.mp4 out.mp4 （表示截取最后10秒）ffmpeg -sseof -20 -t 10 -i in.mp4 out.mp4（表示从最后20秒开始往后截10秒）
+ffmpeg -ss 00:01:00 -i in.mpt -to 00:01:10 -c copy -copyts out.mp4（把-ss放到-i之前，启用关键帧技术，会让截取速度加快，但前后时间可能有误差，所以加上-copyts保留时间戳，就准确了）
+ffmpeg -i "concat:01.ts|02.ts|03.ts" -c copy out.mp4（连接多个ts或flv视频）
+ffmpeg -f concat -i list.txt -c copy out.mp4（在待拼接视频（如1.mp4和2.mp4）的文件夹中新建一个list.txt写入file '1.mp4'然后换行file '2.mp4'，然后打开cmd运行代码即可）
+
+9.截图、水印、动图gif
+ffmpeg -i in.mp4 -ss 5(或00:00:05) -vframes 1 img.png（截取第五秒的第一帧画面，-vframes 1就是指定截这秒的第一帧画面，因为一秒有很多帧的）
+ffmpeg -ss 5 in.mp4 -vframes 1 img.png（启用关键帧技术，截取比第一种方法快很多）
+ffmpeg -ss 00:00:00 -to 00:00:05 in.mp4 img%d.mp4 （获取0到5秒的每一帧图片）
+ffmpeg -ss 10 -i in.mp4 -vframes 5 img%d.png
+
+ffmpeg -i in.mp4 -i logo.png -filter_complex "overlay = 20:20" out.mp4（离左边20个像素，离上边20个像素放一个水印）
+ffmpeg -i in.mp4 -ss 7.5 -to 8.5 -s 640x320 -r 15 out.gif（输出gif动图，-s缩放大小，-r 15帧率设置为15）
+
+10.录屏、直播
+ffmpeg -f gdigrab -i desktop rec.mp4（gdigrab仅支持录屏，不能录声音，如果要录音，则要换一个组建Screen Capture Recorder。不过还是推荐使用OBS Studio这软件，开源免费）
+安装完成后我们打开cmd，输入以下命令行看dshow是否能显示相关设备：
+ffmpeg -list_devices true -f dshow -i dummy
+
+ffmpeg -re -i rec.mp4 按照网站要求编码 -f flv "你的rtmp地址/你的直播码"（可推流录播）
+
+
+
+使用ffmpeg将图片拼接为视频
+
+本文介绍下如何使用ffmpeg将大量图片拼接成一个视频，并介绍其中部分参数的含义。
+
+使用ffmpeg将图片拼接成视频前，需要将图片文件名做下预处理，文件名中必须有数字将其次序标记出来，这里我直接使用数字将图片重命名了，如下：
+
+直接使用命令ffmpeg -f image2 -i %d.jpeg output.mp4 就可以将其转为mp4视频，命令中的%d是数字编号占位符，ffmpeg会按次序加载1-250.jpeg做为输入。这里我们没有指定如何其他参数，所以ffmpeg使用了默认的参数，比如帧率是25fps，视频使用了h264编码，分辨率直接使用了图片原始分辨率……
+
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from 'output.mp4':
+  Metadata:
+    major_brand     : isom
+    minor_version   : 512
+    compatible_brands: isomiso2avc1mp41
+    encoder         : Lavf58.76.100
+  Duration: 00:00:10.00, start: 0.000000, bitrate: 28144 kb/s
+  Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuvj420p(pc, bt470bg/unknown/unknown), 2816x2160 [SAR 1:1 DAR 176:135], 28141 kb/s, 25 fps, 25 tbr, 12800 tbn, 50 tbc (default)
+    Metadata:
+      handler_name    : VideoHandler
+      vendor_id       : [0][0][0][0]
+
+
+我们可以调整其参数，生成更符合我们需求的视频，下面介绍下几个常见的参数。
+
+-r 调整帧率
+不指定帧率的话，ffmpeg会使用默认的25帧，也就是1秒钟拼接25张图片，我们可以通过调整帧率的大小来控制最终生成视频的时长。
+
+ffmpeg -r 10 -f image2 -i %d.jpeg output1.mp4
+
+如上命令每秒会拼接10张图片，250张图片最终会生成25秒的视频。
+这里需要注意-r 10 参数的位置，在-i %d.jpeg前面和在后面的效果是不一样的。放在-i后面只会改变输出的视频帧率，而输入的还是默认值25 ，比如ffmpeg -f image2 -i %d.jpeg -r 10 output1.mp4，250张图片依旧只会生成10s的视频，但视频的播放征率会减小到10。
+
+-b:v 调整视频码率
+-b:v bitrate of video。如果原始图片比较大，默认参数生成的视频大小会比较大。比如上文中我使用的图片都是2k的高清图，最终生成的10s视频就有35MB，码率有近30Mb/s（码率是只1s播过的数据量，注意这里单位是小b）。
+
+
+ffmpeg -r 10 -f image2 -i %d.jpeg -b:v 4M output2.mp4
+1
+这里额外提醒下，改变码率会影响到视频清晰度，但并不意味着高码率的视频一定比低码率的视频清晰度更高，这还取决于视频编码格式，比如h265编码可以用更小的码率生成h264同等的视频质量，像av1、v8、v9等编码也优于h264。
+
+-crf 调整视频质量
+-crf Constant Rate Factor，用以平衡视频质量和文件大小的参数，FFMPEG里取值范围为0-51，取值越高内容损失越多，视频质量更差。 ffmpeg的默认值是23，建议的取值范围是17-28。
+
+ffmpeg -r 10 -f image2 -i %d.jpeg output3.mp4
+
+-c:v 调整视频的编码格式
+-c:v codec of video。目前ffmpeg针对于mp4默认使用的是h264，你可以使用-c:v libx265生成同等质量，但文件更小的h265视频。
+
+ffmpeg -f image2 -i %d.jpeg -c:v libx265 output4.mp4
+
+output4.mp4相比于上文中生成的output.mp4，视频文件大小减少了60%，但视频质量不变。你也可以使用-c:v libvpx -c:v libvpx-vp9分别生成v8和v9编码的webm文件。
+
+ffmpeg -f image2 -i %d.jpeg -c:v libvpx output-v8.webm #注意webm默认生成的是低质量的视频，可使用-crf或者-b:v参数调整视频质量。
+
+-vf scale 调整视频分辨率
+-vf scale: Video Filter Scale
+
+ffmpeg -f image2 -i %d.jpeg -s 640x480 output5.mp4
+
+上面的命令会将视频直接调整为640x480的分辨率，如果原始图片不是4:3 肯定是会对原始图像做拉伸的。可以使用下面的命令等比例缩放
+
+ffmpeg -f image2 -i %d.jpeg -vf scale=-1:480 output5.mp4 #-1表示比例缩放，也可-vf scale=
+
+
+逆时针旋转x度
+ffmpeg -i input -metadata:s:v rotate="x" -c copy out.mp4

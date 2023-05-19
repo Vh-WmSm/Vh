@@ -1,0 +1,4 @@
+locateOnSceen("待匹配图片地址", confidence=xxx)   返回值是在当前桌面上匹配到"待匹配图片"，则返回图片的中心点坐标
+
+置信度confidence=xxx   取值范围0-1，默认1，越小识别越快，但准确度下降，一般设为0.9
+但要注意，使用confidence需先安装pip install opencv_python

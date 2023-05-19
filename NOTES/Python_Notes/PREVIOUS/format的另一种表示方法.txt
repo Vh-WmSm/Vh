@@ -1,0 +1,6 @@
+a = '123'
+
+则
+print('{}'.format(a))
+等价于
+print(f'{a}')

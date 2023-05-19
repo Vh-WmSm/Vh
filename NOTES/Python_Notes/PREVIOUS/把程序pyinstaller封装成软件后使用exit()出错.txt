@@ -1,0 +1,16 @@
+如报错：NameError: name ‘exit‘ is not defined
+
+把exit()变为：
+
+import sys
+
+sys.exit()
+
+即可
+
+原理：
+上面的意思是 exit 用于给交互式 Shell 返回值，而 sys.exit 是用于程序内部。
+
+exit()/quit(), 抛出 SystemExit 异常. 一般在交互式 Shell 中退出时使用.
+sys.exit(n) 退出程序引发 SystemExit 异常, 可以捕获异常执行些清理工作. n 默认值为 0, 表示正常退出. 其他都是非正常退出. 还可以 sys.exit(“sorry, goodbye!”); 一般主程序中使用此退出.
+os._exit(n), 直接退出, 不抛异常, 不执行相关清理工作. 常用在子进程的退出.
