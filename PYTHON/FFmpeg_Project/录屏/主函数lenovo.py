@@ -11,11 +11,11 @@ def rec(max, choice, name):
         order = 'ffmpeg -f dshow -rtbufsize 200M -thread_queue_size 500 -i audio="virtual-audio-capturer"' \
                 ' -f gdigrab -thread_queue_size 300 -i desktop -r 20 -b:v 150k -b:a 225k -ar 48000 -crf 30 {}.mp4'.format(name)
     elif choice == '3':
-        order = 'ffmpeg -f dshow -rtbufsize 200M -thread_queue_size 100 -i audio="麦克风阵列 (英特尔® 智音技术)"' \
+        order = 'ffmpeg -f dshow -rtbufsize 200M -thread_queue_size 100 -i audio="麦克风阵列 (适用于数字麦克风的英特尔® 智音技术)"' \
                 ' -f gdigrab -thread_queue_size 300 -i desktop -r 20 -b:v 150k -b:a 225k -ar 48000 -crf 30 {}.mp4'.format(name)
     elif choice == '4':
         order = 'ffmpeg -f dshow -rtbufsize 200M -thread_queue_size 500 -i audio="virtual-audio-capturer"' \
-                ' -f dshow -rtbufsize 200M -thread_queue_size 100 -i audio="麦克风阵列 (英特尔® 智音技术)" ' \
+                ' -f dshow -rtbufsize 200M -thread_queue_size 100 -i audio="麦克风阵列 (适用于数字麦克风的英特尔® 智音技术)" ' \
                 '-filter_complex amix=inputs=2 -f gdigrab -thread_queue_size 300 -i desktop -r 20 -b:v 150k ' \
                 '-b:a 225k -ar 48000 -crf 30 {}.mp4'.format(name)
     else:
