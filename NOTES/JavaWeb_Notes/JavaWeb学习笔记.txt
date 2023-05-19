@@ -4180,7 +4180,6 @@ MyHttpServlet_doGet
 ServletDemo1_doGet
 （这是Get请求）
 
-
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **Servlet urlPattern配置
@@ -4261,6 +4260,351 @@ ServletDemo2_doGet
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+***Day9 Request&Response
+**请求、响应执行流程
+*Request对象
+浏览器发送HTTP请求数据（一些字符串） -> 请求数据被Tomcat解析成Request对象 -> 程序员从Request对象中获取数据进行处理
+
+*Response对象
+程序员把响应数据存放到Response对象中 -> Tomcat接收到Response对象并解析成字符串 -> Tomcat把字符串发送到浏览器
+
+**Request继承体系
+ServletRequest -> Java提供的请求对象根接口
+↑
+HttpServletRequest -> Java提供的对Http协议封装的请求对象接口
+↑
+RequestFacade -> Tomcat定义的实现类
+
+*使用Request对象需要查阅什么文档？
+1.Tomcat需要解析请求数据，封装为request对象，并且创建request对象传递到service方法中
+2.使用request对象，查阅JavaEE API文档的HttpServletRequest接口
+
+**Request获取请求数据
+*获取请求行
+eg:
+a.html：
+<form action="/rd" method="get">
+    <input type="text" name="username">
+    <input type="submit" value="提交">
+</form>
+
+RequestDemo.java：
+@WebServlet("/rd")
+public class RequestDemo extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //获取请求方式
+        String method = req.getMethod();
+        System.out.println(method);
+        //获取虚拟目录（访问路径）
+        String contexpath = req.getContextPath();
+        System.out.println(contexpath);
+        //获取URL（统一资源定位符）
+        StringBuffer requestURL = req.getRequestURL();
+        System.out.println(requestURL);
+        //获取URI（统一资源标识符）
+        String requestURI = req.getRequestURI();
+        System.out.println(requestURI);
+        //获取请求参数（username=zhangsan）
+        String queryString = req.getQueryString();
+        System.out.println(queryString);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+    }
+}
+
+运行结果：
+GET
+          （因为pom.xml配置的Tomcat的path为/）
+http://localhost:8080/rd
+/rd
+username=zhangsan
+
+*获取请求头
+ //获取请求头
+String agent = req.getHeader("user-agent");
+System.out.println(agent);
+运行结果：
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36 Edg/113.0.1774.42
+
+*获取请求体（针对Post）
+a.html：
+<body>
+<form action="/rd" method="post">
+    用户名：
+    <input type="text" name="username"><br>
+    密码：
+    <input type="password" name="password">
+    <input type="submit" value="提交">
+</form>
+</body>
+
+RequestDemo.java
+ @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //获取字符输入流
+        BufferedReader br = req.getReader();
+        //读取数据
+        String line = br.readLine();//读取一行
+        System.out.println(line);
+    }
+
+运行结果：
+打开a.html后，填写表单并提交，控制台输出：username=zhangsan&password=123
+
+*通用方式获取请求参数
+请求参数获取方式：
+GET方式：String getQueryString()
+POST方式：BufferedReader getReader()
+方式不统一，用Map集合统一
+
+a.html：//get
+<body>
+<form action="/rd2" method="get">
+    用户名：
+    <input type="text" name="username"><br>
+    密码：
+    <input type="password" name="password"><br>
+    <input type="checkbox" name="hobby" value="1">游泳
+    <input type="checkbox" name="hobby" value="2">爬山<br>
+    <input type="submit" value="提交">
+</form>
+</body>
+
+b.html：//post
+<body>
+<form action="/rd2" method="post">
+    用户名：
+    <input type="text" name="username"><br>
+    密码：
+    <input type="password" name="password"><br>
+    <input type="checkbox" name="hobby" value="1">游泳
+    <input type="checkbox" name="hobby" value="2">爬山<br>
+    <input type="submit" value="提交">
+</form>
+</body>
+
+RequestDemo2.java：
+@WebServlet("/rd2")
+public class RequestDemo2 extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //获取所有参数的Map集合
+        Map<String, String []> map = req.getParameterMap();
+        for (String key : map.keySet()) {
+            //获取键
+            System.out.print(key + ":");
+            //获取该键的所有值
+            String[] values = map.get(key);
+            for (String value : values) {
+                System.out.print(value + " ");
+            }
+            System.out.println();
+        }
+        System.out.println("----------");
+
+        //根据key获取参数值数组
+        String[] hobbies = req.getParameterValues("hobby");
+        System.out.println("hobby:");
+        for (String hobby : hobbies) {
+            System.out.print(hobby + " ");
+        }
+
+        //根据key获取单个参数值
+        System.out.println("\n----------");
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+        System.out.println("username:" + username);
+        System.out.println("password:" + password);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        this.doGet(req, resp);
+    }
+}
+
+运行结果：
+username:zhangsanGet 
+password:123 
+hobby:1 2 
+----------
+hobby:
+1 2 
+----------
+username:zhangsanGet
+password:123
+username:zhangsanPost 
+password:123 
+hobby:1 2 
+----------
+hobby:
+1 2 
+----------
+username:zhangsanPost
+password:123
+
+*请求参数中文乱码问题（浏览器URL编码本质）
+POST解决方案：（POST本质是获取输入流来获取参数的方式）
+req.setCharacterEncoding("UTF-8");//设置字符输入流的编码
+
+GET解决方案：
+浏览器get发送时自动把中文编码为URL编码
+而传给Tomcat的解码方式是ISO-8859-1，但Tomcat没有给一个方法来设置这个解码方式
+所以要学习URL编码的本质：
+URL编码
+1.将字符串按照编码方式转为二进制
+2.每个字节转为2个16进制数并在前边加上%
+
+Java里也有URL编解码的工具类：
+String username = "张三";
+//utf-8进行URL编码
+String encode = URLEncoder.encode(username, "utf-8");
+System.out.println(encode); --- %E5%BC%A0%E4%B8%89
+//URL解码为utf-8
+String decode  = URLDecoder.decode(encode, "utf-8");
+System.out.println(decode); --- 张三
+//模拟Tomcat对URL编码解码为ISO-8859-1
+String decode  = URLDecoder.decode(encode, "SO-8859-1"); --- 复现该乱码
+
+解决方法：
+乱码的底层二进制数据也是没变的（0101001...）
+所以只要把乱码变成二进制数据，再把二进制数据转为“张三”即可
+//转换为字节数据
+byte[] bytes = decode.getBytes("ISO-8859-1");
+或写为：
+byte[]bytes = decode.getBytes(StandardCharsets.ISO_8859_1);
+//将字节数组转为字符串，解码
+String s = new String(bytes, "utf-8");
+（这种方法GET和POST都通用）
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Request请求转发(forward)
+*简介：一种在服务器内部的资源跳转方式
+在RequestDemo1的doGet里写
+req.getRequestDispatcher("/rd2").forward(req, resp);
+则在访问rd1后，要是运行过程中遇到了这行代码，就会把req转发到rd2的doGet执行
+
+若想转发时让req携带点额外的东西过去
+则在RequestDemo1里写：
+req.setAttribute("msg", "hello");//其中msg是键，hello是值，把这个键值对存到了req对象中
+然后再RequestDemo2里写：
+Object msg = req.getAttribute("msg");//获取msg键的值
+System.out.println(msg); --- hello
+
+void removeAttribute(String name) —— 根据key，删除键值对
+
+请求转发特点：
+    浏览器地址栏路径不发生变化
+    只能转发到当前服务器的内部资源（转发到百度不行）
+    一次请求，可以在转发的资源间使用request共享数据
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Response设置响应数据功能介绍
+*响应数据的三部分
+1.响应行:HTTP/1.1 200 OK
+    void setStatus(int sc): 设置响应状态码
+2.响应头:Content-Type:text/html
+    void setHeader(String name,String value):设置响应头键值对
+
+3.响应体:<html><head>head><body></body></html>
+    PrintWriter getWriter():获取字符输出流
+    ServletOutputStream getOutputStream():获取字节输出流 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Response完成重定向
+
+*重定向(Redirect)：一种资源跳转方式
+浏览器向服务器请求资源A -> 服务器处理不了，响应：302状态码、响应头：location:xxx（别的能处理的位置） -> 浏览器重定向请求
+
+*重定向代码编写
+ResponseDemo1.java：
+//设置响应状态码302
+resp.setStatus(302);
+//设置响应头Location
+resp.setHeader("Location", "/rpd2");
+
+ResponseDemo2.java：
+System.out.println("rpd1重定向到rpd2~");
+
+运行：
+浏览器访问rpd1，控制台输出：rpd1重定向到rpd2~（且浏览器变成了/rpd2的地址）
+
+*简化方式完成重定向的代码编写
+ResponseDemo1.java：
+resp.sendRedirect("/rpd2");
+运行：（与上方效果一致）
+resp.sendRedirect("https://www.baidu.com");
+运行：
+访问/rpd1重定向到百度
+
+*重定向特点:
+    浏览器地址栏路径发生变化
+    可以重定向到任意位置的资源(服务器内部、外部均可)
+    两次请求，不能在多个资源使用request共享数据
+
+*是否添加虚拟目录（项目访问路径(pom.xml中的path)）的问题
+浏览器发出的请求，就要添加虚拟目录，若是服务器发出的请求，就不需要添加虚拟目录
+练习：
+1.浏览器里有个<a href="路径"> —— 浏览器的超链接需要在“路径”添加虚拟目录（因为是浏览器发出的请求）
+2.<form action="路径"> —— 需要添加虚拟目录
+3.req.getRequestDispatcher("路径") —— 请求转发不需添加虚拟目录（因为是服务器内部的转发，不是浏览器发出的）
+4.resp.sendRedirect("路径") —— 重定向需要加虚拟目录（浏览器根据服务器返回的响应头再向服务器(内部或外部)发出请求，所以需要添加虚拟目录(当然仅是内部服务器要加虚拟目录)）
+
+可是为什么上面的重定向代码没有写虚拟目录也可以运行？
+因为我在pom.xml中的path中设定为/，不再是默认的项目模块名，所以虚拟目录就是“空”
+
+*虚拟目录引发的痛点
+如果要修改pom.xml里的path，那么所有有关虚拟目录的地方都要重新换一个虚拟目录，非常麻烦，下面的操作可以动态获取虚拟目录
+//动态获取虚拟目录
+String contextPath = req.getContextPath();//获取当前的虚拟目录
+resp.sendRedirect(contextPath + "/rpd2");//虚拟目录拼接资源路径
+
+**Response响应字符数据
+*代码编写方法
+eg1:
+ResponseDemo3.java：
+//通过Response对象获取字符输出流
+PrintWriter writer=resp.getWriter();
+//写数据
+writerwrite("aaa");
+运行效果：
+访问/rpd3，网页左上角显示aaa
+
+eg2:
+//通过Response对象获取字符输出流
+PrintWriter writer=resp.getWriter();
+//设置响应头的content-type参数，让浏览器把write内容识别为html格式
+resp.setHeader("content-type", "text/html");
+//写数据
+writer.write("<h1>aaa</h1><br><hr>");
+运行效果：
+访问/rpd3，网页左上角显示标题1形式的aaa且下方一个换行和一条横线
+
+*不能响应中文的解决办法
+这种write不能响应中文，因为字符输入流默认编码是ISO.8859.1
+eg3:
+//用简化形式的方法设置响应头的content-type参数（且这个方法可以用分号设置writer流的编码，而且正因为可以设置writer流编码，所以要在获取writer之前写这个）
+resp.setContentType("text/html;charset=utf-8");
+//获取字符输出流
+PrintWriter writer = resp.getWriter();
+writer.write("<h1>你好</h1>");
+运行结果：
+访问/rpd3，网页左上角显示标题1形式的“你好”中文
+
+*细节 —— writer不需要手动close()
+获取的字符输出流writer不需要关闭，因为writer是跟随resp产生的，等到此次响应结束后，resp会销毁，那么writer也会跟随销毁
+
+
+**Response响应字节数据
+
+
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -4287,6 +4631,9 @@ file -> settings -> editor -> Live templates
 *System.out.println();快捷操作
 sout —— System.out.println();
 name.sout —— System.out.println(name);
+
+*for(String s : arr) —— iter + enter
+本质上和for(int i=0;i<length;i++)没太大区别，但是for(String s : arr)中的arr一定是字符串数组，每次循环取一个字符串出来赋值给s，直到arr数组长度-1结束。
 
 *用.var快速定义类和类对象（自动分配变量名）
 如：new int[10].var -> 回车 -> int[] ints = new int[10];
@@ -4342,5 +4689,10 @@ Optimize imports on the fly (for current project)
 Editor -> Code Style -> Java -> Code Generation
 把Line comment at first colum和Block comment at first column的勾都去掉
 同理，xml也可以这样设置
+
+*IDEA模板创建Servlet
+1.Settings -> Editor -> File and Code Templates -> Other -> Web -> Java code templates -> Servlet Annotated Class -> 修改模板（注解留访问路径；post写this.doGet(req, resp);）
+2.在com.sio.web右键Create New Servlet，然后改名为RequestDemo3，此时下方的Class可能不会同步改变，需手动也写上RequestDemo3才能点击OK
+
 
 
