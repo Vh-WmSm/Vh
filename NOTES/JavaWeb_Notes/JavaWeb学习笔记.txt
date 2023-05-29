@@ -306,6 +306,47 @@
      **XML配置方式编写Servlet
           *注解配置与XML配置
 
+***Day9 Request&Response
+     **请求、响应执行流程
+          *Request对象
+          *Response对象
+     **Request继承体系
+          *使用Request对象需要查阅什么文档？
+     **Request获取请求数据
+          *获取请求行
+          *获取请求头
+          *获取请求体（针对Post）
+          *通用方式获取请求参数
+          *请求参数中文乱码问题（浏览器URL编码本质）
+     **Request请求转发(forward)
+          *简介：一种在服务器内部的资源跳转方式
+     **Response设置响应数据功能介绍
+          *响应数据的三部分
+     **Response完成重定向
+          *重定向(Redirect)：一种资源跳转方式
+          *重定向代码编写
+          *简化方式完成重定向的代码编写
+          *重定向特点:
+          *是否添加虚拟目录（项目访问路径(pom.xml中的path)）的问题
+          *虚拟目录引发的痛点
+     **Response响应字符数据
+          *代码编写方法
+          *不能响应中文的解决办法
+          *细节 —— writer不需要手动close()
+     **Response响应字节数据
+
+***Day10 JSP
+     **简介
+     **JSP快速入门
+     **JSP原理
+     **JSP脚本
+          *JSP脚本分类:
+          *JSP缺点
+     **EL表达式
+     **JSTL标签
+     **MVC模式和三层架构
+     **案例
+
 ***Navicat软件使用
      **外键
           *如何直观查看表与表之间的链接
@@ -316,6 +357,7 @@
           *快速写出main方法 —— main + enter
           *快速写出for循环 —— fori + enter
           *System.out.println();快捷操作
+          *for(String s : arr) —— iter + enter
           *用.var快速定义类和类对象（自动分配变量名）
           *快速替换某个区域的所有变量名A为变量名B
      **快捷键
@@ -332,6 +374,7 @@
      **Settings
           *IDEA自动import的设置
           *解决IDEA的ctrl + /注释总在行首开始的问题
+          *IDEA模板创建Servlet
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -723,7 +766,7 @@ Tips：
 
 ALTER TABLE 表名 ADD CONSTRAINT 外键名称 FOREIGN KEY(外键字段名) REFERENCES 主表(主表字段名); —— 建完表后添加外键约束
 
-ALTER TABLE 表名 DROP ROREIGN KEY 外键名称; —— 删除约束
+ALTER TABLE 表名 DROP FOREIGN KEY 外键名称; —— 删除约束
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2891,10 +2934,10 @@ eg:<video src="c.mp4" controls width="500" height="300"></vedio>
 
 *超链接标签
 <a> —— 定义超链接，用于链接到另一个资源
-href：指定访问资源的URL
-target：指定打开资源的方式
-    _self：在当前页面打开，不设置target属性，默认是_self
-    _blank：在空白页面打开
+    href：指定访问资源的URL
+    target：指定打开资源的方式
+        _self：在当前页面打开，不设置target属性，默认是_self
+        _blank：在空白页面打开
 eg:<a href="www.baidu.com" target="_blank">百度</a>
 
 *列表标签
@@ -2908,10 +2951,10 @@ table：定义表格
     border：规定表格边框的宽度（给表格添加边框）eg:border="1"
     width：规定表格的宽度
     cellspacing：规定单元格之间的空白 eg:cellspacing="0"
-tr：定义行
+<tr>：定义行
     align：定义表格行的内容对齐方式
-th：定义表头单元格
-td：定义单元格
+<th>：定义表头单元格
+<td>：定义单元格
     rowspan：规定单元格可横跨的行数（纵向合并单元格）
     eg:<td rowspan="2"></td>
     colspan：规定单元格可横跨的列数（横向合并单元格）
@@ -2992,7 +3035,7 @@ eg:
 <form action="#" method="post">
     <input type="hidden" name="id" value="123">
 
-    <label for="username">用户名：</label>
+    <label for="username">用户名：</label> --- label可以让用户名和输入框关联起来，点击“用户名”，光标即可聚焦到输入框里
     <input type="text" name="username" id="username"><br>
     <label for="password">密码：</label>
     <input type="password" name="password" id="password"><br>
@@ -4476,10 +4519,16 @@ String decode  = URLDecoder.decode(encode, "SO-8859-1"); --- 复现该乱码
 //转换为字节数据
 byte[] bytes = decode.getBytes("ISO-8859-1");
 或写为：
+调用java.nio.charset包下的 StandardCharsets类
 byte[]bytes = decode.getBytes(StandardCharsets.ISO_8859_1);
 //将字节数组转为字符串，解码
 String s = new String(bytes, "utf-8");
 （这种方法GET和POST都通用）
+eg:
+//根据key获取单个参数值
+String username = req.getParameter("username");
+byte[] bytes = username.getBytes(StandardCharsets.ISO_8859_1);
+System.out.println(new String(bytes, StandardCharsets.UTF_8));
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -4566,6 +4615,8 @@ resp.sendRedirect("https://www.baidu.com");
 String contextPath = req.getContextPath();//获取当前的虚拟目录
 resp.sendRedirect(contextPath + "/rpd2");//虚拟目录拼接资源路径
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 **Response响应字符数据
 *代码编写方法
 eg1:
@@ -4601,8 +4652,90 @@ writer.write("<h1>你好</h1>");
 *细节 —— writer不需要手动close()
 获取的字符输出流writer不需要关闭，因为writer是跟随resp产生的，等到此次响应结束后，resp会销毁，那么writer也会跟随销毁
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **Response响应字节数据
+//读取文件
+FileInputStream fileInputStream = new FileInputStream("D:\\杂物\\壁纸\\1.jpg");
+//获取response字节输出流
+ServletOutputStream outputStream = resp.getOutputStream();
+//完成流的copy
+byte[] buff = new byte[1024];
+int len = 0;
+while((len = fileInputStream.read(buff)) != -1) {
+  outputStream.write(buff, 0, len);
+}
+fileInputStream.close();
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+***Day10 JSP
+**简介
+概念:Java Server Pages，Java服务端页面
+一种动态的网页技术，其中既可以定义HTML、JS、5CSSs等静态内容，还可以定义Java代码的动态内容
+Jsp=HTML+Java
+JSP的作用：简化开发，避免了在Servlet中Servlet中直接输出HTML标签
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**JSP快速入门
+步骤：
+1.导入JSP坐标
+2.创建JSP文件
+3.编写HTML标签和Java代码
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**JSP原理
+JSP本质上就是一个Servlet
+.jsp -> Tomcat自动转换为Servlet -> Tomcat自动编译
+JSP在被访问时，由JSP容器(Tomcat)将其转换为Java文伟(Servleb，在由JSP容器(Tomcat)将其编译，最终对
+外提供服务的其实就是这个字节码文件
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**JSP脚本
+JSP脚本用于在JSP页面内定义Java代码
+*JSP脚本分类:
+1.<%...%>:内容会直接放到_jspService()方法之中
+2.<%=.…%>:内容会放到out.print()中，作为out.print()的参数
+<%="hello"%> --- 页面打印一个hello
+3.<%!..%>:内容会放到_jspService()方法之外，被类直接包含
+
+*JSP缺点
+由于JSP页面内，既可以定义HTML标签，又可以定义java代码，造成了以下问题:
+1.，书写麻烦:特别是复杂的页面
+阅读麻烦
+复杂度高:运行需要依赖于各种环境，JRE，JSP容器，JavaEE…
+占内存和磁盘:JSP会自动生成java和.class文件占磁盘，运行的是.class文件占内存
+调试困难:出错后，需要找到自动生成的,java文件进行调试
+不利于团队协作:前端人员不会Java，后端人员不精HTML
+
+JSP已逐渐退出历史舞台
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**EL表达式
+Expression Language表达式语言，用于简化JSP页面内的Java代码
+主要功能:获取数据
+语法:${expression}
+${brands}:获取域中存储的key为brands的数据
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**JSTL标签
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**MVC模式和三层架构
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**案例
+
 
 
 
