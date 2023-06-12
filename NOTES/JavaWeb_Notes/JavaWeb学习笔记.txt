@@ -4609,7 +4609,7 @@ resp.sendRedirect("https://www.baidu.com");
 可是为什么上面的重定向代码没有写虚拟目录也可以运行？
 因为我在pom.xml中的path中设定为/，不再是默认的项目模块名，所以虚拟目录就是“空”
 
-*虚拟目录引发的痛点
+*动态获取虚拟目录
 如果要修改pom.xml里的path，那么所有有关虚拟目录的地方都要重新换一个虚拟目录，非常麻烦，下面的操作可以动态获取虚拟目录
 //动态获取虚拟目录
 String contextPath = req.getContextPath();//获取当前的虚拟目录
@@ -4813,7 +4813,7 @@ Keymap里搜索duplicate
 **Settings
 *IDEA自动import的设置
 Editor -> General -> Auto Import里
-Add unambiguous iports on the fly
+Add unambiguous imports on the fly
 Optimize imports on the fly (for current project)
 两个勾都打上即可
 若没能自动导入，则光标移到红色警告上按alt + enter即可

@@ -1,3 +1,4 @@
+import os
 import sys
 from os import path
 import PySimpleGUI as sg
@@ -9,7 +10,7 @@ class My_Tool(object):
     @staticmethod
     def get_desktop_path():
         """
-        function: 可以获取当前用户的桌面地址，有这项技术后，换到别的电脑就不需要该代码了
+        可以获取当前用户的桌面地址，有这项技术后，换到别的电脑也自动获取该电脑桌面地址，不需要改代码了
         :return: 当前用户的桌面地址
         """
         return path.join(path.expanduser('~'), 'Desktop')
@@ -148,7 +149,8 @@ class Str_Prossing_Tool(object):
 
 # GUI图形窗口类
 class PySimpleGUI_Tool(object):
-    def __init__(self, title_name_lis, windows_name='小工具', button_name='OK', default_value_lis=None, file_suffix=None,
+    def __init__(self, title_name_lis, windows_name='小工具', button_name='OK', default_value_lis=None,
+                 file_suffix=['1'],
                  keep_on_top=False, title_size=25, in_size=10, suffix_in_size=5, folder_browse_size=5):
         self.windows_name = windows_name
         self.title_name_lis = title_name_lis
@@ -176,41 +178,51 @@ class PySimpleGUI_Tool(object):
         # 如果没写默认值，则和else情况处理一致
         if default_value == None:
             return [sg.Text(title_name, size=(self.title_size, 1)), sg.In('', size=(self.in_size, 1))]
-        # 如果default_value是文件夹，则该行加入一个“浏览”选项
-        elif path.isdir(default_value):
-            return [sg.Text(f'{title_name}', size=(self.title_size, 1)), sg.In(default_value, size=(25, 1)),
-                    sg.FolderBrowse('浏览', size=(self.folder_browse_size, 1))]
-        # 第一个if已经筛除c:\\users\\..这种情况，所以要是还有”:“说明是一个选择行
-        elif ':' in default_value:  # 因为default_value输入的是类似：3:2这样的，其中3就是该行选项的个数，2就是默认选择第二个选项
-            # 确定冒号的下标
-            colon_index = default_value.find(':')
-            # 确定该行有多少个选项
-            num = default_value[:colon_index]
-            # 把该行的选项数添加到choice_num_list，一轮过后，这个列表就是按顺序存着为选项行的选项数
-            self.choice_num_list.append(int(num))
-            # 确定选择的选项（选择的选项也就是选项的位置，因为选项是从1开始的）
-            choice = default_value[colon_index + 1:]
-            # 该行第一个模块是title_name，先写进列表
-            target_list = [sg.Text(f'{title_name}', size=(self.title_size, 1))]
-            # 设置Radio所属群组（只有在同一组的单选按钮才有排他性）
-            Radio_group = title_name + 'Radio1'
-            # 从1开始遍历，这样可以和选项位置一一对应，范围：range(该行选项数)
-            for n in range(1, int(num) + 1):
-                # 若遍历的当前位置和选择的选项位置相同，则执行default=True，使得默认选中该选项
-                if str(n) == choice:
-                    target_list.append(sg.Radio(str(n), Radio_group, default=True))
-                else:
-                    target_list.append(sg.Radio(str(n), Radio_group))
-            return target_list
-        # 如果default_value是一个文件名，则加入一个末尾有下拉选择菜单的模块（选择后缀）
-        elif default_value[default_value.find('.'):] in self.file_suffix:
-            # 把default_value以.分隔
-            lis = default_value.split('.')
-            default_name = lis[0]
-            default_suffix = '.' + lis[1]
-            return [sg.Text(title_name, size=(self.title_size, 1)), sg.In(default_name, size=(self.suffix_in_size, 1)),
-                    sg.Combo(self.file_suffix, default_value=default_suffix, size=(5, 1))]
-        # 其他情况则直接用In输入框
+        # 是字符串情况
+        elif isinstance(default_value, str):
+            # 如果default_value是文件夹，则该行加入一个“浏览”选项
+            if path.isdir(default_value):
+                return [sg.Text(f'{title_name}', size=(self.title_size, 1)), sg.In(default_value, size=(25, 1)),
+                        sg.FolderBrowse('浏览', size=(self.folder_browse_size, 1))]
+            # 第一个if已经筛除c:\\users\\..这种情况，所以要是还有”:“说明是一个选择行
+            elif ':' in default_value:  # 因为default_value输入的是类似：3:2这样的，其中3就是该行选项的个数，2就是默认选择第二个选项
+                # 确定冒号的下标
+                colon_index = default_value.find(':')
+                # 确定该行有多少个选项
+                num = default_value[:colon_index]
+                # 把该行的选项数添加到choice_num_list，一轮过后，这个列表就是按顺序存着为选项行的选项数
+                self.choice_num_list.append(int(num))
+                # 确定选择的选项（选择的选项也就是选项的位置，因为选项是从1开始的）
+                choice = default_value[colon_index + 1:]
+                # 该行第一个模块是title_name，先写进列表
+                target_list = [sg.Text(f'{title_name}', size=(self.title_size, 1))]
+                # 设置Radio所属群组（只有在同一组的单选按钮才有排他性）
+                Radio_group = title_name + 'Radio1'
+                # 从1开始遍历，这样可以和选项位置一一对应，范围：range(该行选项数)
+                for n in range(1, int(num) + 1):
+                    # 若遍历的当前位置和选择的选项位置相同，则执行default=True，使得默认选中该选项
+                    if str(n) == choice:
+                        target_list.append(sg.Radio(str(n), Radio_group, default=True))
+                    else:
+                        target_list.append(sg.Radio(str(n), Radio_group))
+                return target_list
+            # 疑似文件名
+            elif '.' in default_value:
+                # 如果default_value是一个文件名，则加入一个末尾有下拉选择菜单的模块（选择后缀）
+                if default_value[default_value.find('.'):] in self.file_suffix:
+                    # 把default_value以.分隔
+                    lis = default_value.split('.')
+                    default_name = lis[0]
+                    default_suffix = '.' + lis[1]
+                    return [sg.Text(title_name, size=(self.title_size, 1)), sg.In(default_name, size=(self.suffix_in_size, 1)),
+                            sg.Combo(self.file_suffix, default_value=default_suffix, size=(5, 1))]
+            # 若还有其他情况则直接用In输入框
+            else:
+                return [sg.Text(title_name, size=(self.title_size, 1)), sg.In(default_value, size=(self.in_size, 1))]
+        # 列表情况（说明这是一个下拉菜单模块）
+        elif isinstance(default_value, list):
+            return [sg.Text(title_name, size=(self.title_size, 1)), sg.Combo(default_value, default_value=default_value[0], size=(25, 1))]
+        # 若还有其他情况则直接用In输入框
         else:
             return [sg.Text(title_name, size=(self.title_size, 1)), sg.In(default_value, size=(self.in_size, 1))]
 
@@ -253,8 +265,24 @@ class PySimpleGUI_Tool(object):
         # 处理完后，truly_values列表模样：['C:\\Users\\Vh\\Desktop', '1', '.png', [False, True, False], [True, False], [False, True]]
         # 继续处理truly_values
         for i in truly_values:
+            # 判断i是字符串还是列表
+            if isinstance(i, str):
+                # 如果是地址
+                if os.path.isdir(i):
+                    return_values.append(i)
+                # 如果i是一个后缀，说明上一个append到return_values的是文件名，所以这个后缀需要和上一个连在一起
+                elif '.' in i:
+                    if i in self.file_suffix:
+                        # 记录上一个元素 —— 文件名
+                        file_name = return_values[-1]
+                        # 删除上一个元素
+                        return_values.pop()
+                        # 文件名与后缀连接再append到return_values列表中
+                        return_values.append(file_name + i)
+                else:
+                    return_values.append(i)
             # 如果i是列表，说明是一行选择模块
-            if isinstance(i, list):
+            elif isinstance(i, list):
                 # 遍历枚举后的i
                 for j in enumerate(i):
                     # 如果当前元素是True说明这行选择模块选择的就是它，由于单选只有一个True的原理，返回它即可退出循环
@@ -262,17 +290,10 @@ class PySimpleGUI_Tool(object):
                         # 返回的是枚举列表i的索引加1（假如选的是第二个选项，那么第二个位置枚举的就是1，再加1就是2了
                         return_values.append(str(j[0] + 1))
                         break
-            # 如果i是一个后缀，说明上一个append到return_values的是文件名，所以这个后缀需要和上一个连在一起
-            elif i in self.file_suffix:
-                # 记录上一个元素 —— 文件名
-                file_name = return_values[-1]
-                # 删除上一个元素
-                return_values.pop()
-                # 文件名与后缀连接再append到return_values列表中
-                return_values.append(file_name + i)
-            # 其他情况，如截图地址等，直接append到return_values列表即可
+            # 其他情况，直接append到return_values列表即可
             else:
                 return_values.append(i)
+
         # 返回最终处理好的参数列表：['C:\\Users\\Vh\\Desktop', '1.png', '2', '1', '2']
         return return_values
 
