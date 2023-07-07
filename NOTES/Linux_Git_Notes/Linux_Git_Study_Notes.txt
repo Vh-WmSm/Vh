@@ -664,7 +664,7 @@ a. What is hosts? hosts文件空白是不影响操作的，说到hosts文件就�
 电脑想要去到哪个ip地址最先查看hosts文件，有的话就通过其对应关系解析进入
 想要的域名。就像这个www.wesoullove.com,假如我给它写的对应关系是127.0.0.1
 就无法进入这个域名，因为这个ip代表的就是本机地址。
-b. 最新github的hosts下载地址：https://raw.hellogithub.com/hosts
+b. 最新github的hosts下载地址：https://raw.hellogithub.com/hosts（hosts路径：C:\WINDOWS\system32\drivers\etc）
 c. 所以如果出现网络问题，可以更新一下最新的hosts，也可以使用加速器：DevSidecar
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

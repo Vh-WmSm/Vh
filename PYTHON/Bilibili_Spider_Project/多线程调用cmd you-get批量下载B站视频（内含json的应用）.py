@@ -3,6 +3,7 @@ import sys
 import threading
 import requests
 import PySimpleGUI as sg
+import public_tools
 
 
 def url_txt_creator(desktop_path, judge):
@@ -138,7 +139,7 @@ def Set_the_thread():
             t.join()  # 设置线程等待，等该轮主线程结束后才进行下一轮，否则所有cmd将全部弹出
 if __name__ == '__main__':
     judge_F = Format = ''
-    desktop_path = 'c:\\users\\vh\\desktop'
+    desktop_path = public_tools.My_Tool.get_desktop_path()
     download_path = input('下载到：')
     os.chdir(desktop_path)
     judge1 = input('是否已经有url.txt且待下载视频链接都在内了？1.是。2.否：')

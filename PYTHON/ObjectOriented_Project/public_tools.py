@@ -149,9 +149,9 @@ class Str_Prossing_Tool(object):
 
 # GUI图形窗口类
 class PySimpleGUI_Tool(object):
-    def __init__(self, title_name_lis, windows_name='小工具', button_name='OK', default_value_lis=None,
+    def __init__(self, title_name_lis=None, windows_name='小工具', button_name='OK', default_value_lis=None,
                  file_suffix=['1'],
-                 keep_on_top=False, title_size=25, in_size=10, suffix_in_size=5, folder_browse_size=5):
+                 keep_on_top=False, title_size=25, in_size=10, suffix_in_size=5, folder_browse_size=5, start_button_size=50):
         self.windows_name = windows_name
         self.title_name_lis = title_name_lis
         self.default_value_lis = default_value_lis
@@ -161,6 +161,7 @@ class PySimpleGUI_Tool(object):
         self.in_size = in_size
         self.suffix_in_size = suffix_in_size
         self.folder_browse_size = folder_browse_size
+        self.start_button_size = start_button_size
         self.count = 0
         # 可能的后缀
         self.file_suffix = file_suffix
@@ -180,9 +181,13 @@ class PySimpleGUI_Tool(object):
             return [sg.Text(title_name, size=(self.title_size, 1)), sg.In('', size=(self.in_size, 1))]
         # 是字符串情况
         elif isinstance(default_value, str):
-            # 如果default_value是文件夹，则该行加入一个“浏览”选项
+            # 如果default_value是桌面路径，则Input框显示桌面路径且该行加入一个“浏览”选项
             if path.isdir(default_value):
-                return [sg.Text(f'{title_name}', size=(self.title_size, 1)), sg.In(default_value, size=(25, 1)),
+                return [sg.Text(f'{title_name}', size=(self.title_size, 1)), sg.In(default_value, size=(self.in_size, 1)),
+                        sg.FolderBrowse('浏览', size=(self.folder_browse_size, 1))]
+            # 特别指明此为文件夹选择行，则Input框为空，后面加一个“浏览”选项
+            elif 'folder' in default_value:
+                return [sg.Text(f'{title_name}', size=(self.title_size, 1)), sg.In('', size=(self.in_size, 1)),
                         sg.FolderBrowse('浏览', size=(self.folder_browse_size, 1))]
             # 第一个if已经筛除c:\\users\\..这种情况，所以要是还有”:“说明是一个选择行
             elif ':' in default_value:  # 因为default_value输入的是类似：3:2这样的，其中3就是该行选项的个数，2就是默认选择第二个选项
@@ -270,15 +275,20 @@ class PySimpleGUI_Tool(object):
                 # 如果是地址
                 if os.path.isdir(i):
                     return_values.append(i)
-                # 如果i是一个后缀，说明上一个append到return_values的是文件名，所以这个后缀需要和上一个连在一起
+                # 含有.
                 elif '.' in i:
-                    if i in self.file_suffix:
-                        # 记录上一个元素 —— 文件名
-                        file_name = return_values[-1]
-                        # 删除上一个元素
-                        return_values.pop()
-                        # 文件名与后缀连接再append到return_values列表中
-                        return_values.append(file_name + i)
+                    # 如果i是一个后缀，说明上一个append到return_values的是文件名，所以这个后缀需要和上一个连在一起
+                    if i[0] == '.':
+                        if i in self.file_suffix:
+                            # 记录上一个元素 —— 文件名
+                            file_name = return_values[-1]
+                            # 删除上一个元素
+                            return_values.pop()
+                            # 文件名与后缀连接再append到return_values列表中
+                            return_values.append(file_name + i)
+                    # 是一个网址，如https://www.baidu.com也含有.，直接返回
+                    elif 'http' in i:
+                        return_values.append(i)
                 else:
                     return_values.append(i)
             # 如果i是列表，说明是一行选择模块
@@ -308,7 +318,7 @@ class PySimpleGUI_Tool(object):
                     self.layout.append(self.__Layout_selection(self.title_name_lis[num], self.default_value_lis[num]))
             # 最后追加一个开始按钮
             self.layout.append(
-                [sg.Column([[sg.Button(self.button_name, size=(50, 1))]], expand_x=True,
+                [sg.Column([[sg.Button(self.button_name, size=(self.start_button_size, 1))]], expand_x=True,
                            element_justification='center')])
             # 显示窗口
             self.windows = sg.Window(self.windows_name, self.layout, keep_on_top=self.keep_on_top)
@@ -326,3 +336,11 @@ class PySimpleGUI_Tool(object):
     # 弹出一个框框显示文字
     def popup_scrolled(text, title='Text'):
         sg.popup_scrolled(text, title=title)
+    @staticmethod
+    # 选择框1
+    def popup_ok_cancel(prompt_message1="Press Ok to proceed", prompt_message2="Press cancel to stop", title="OkCancel"):
+        return sg.popup_ok_cancel(prompt_message1, prompt_message2, title=title)
+    @staticmethod
+    # 选择框2
+    def popup_yes_no(prompt_massage="Do you want to Continue?", title="YesNo"):
+        return sg.popup_yes_no(prompt_massage, title=title)

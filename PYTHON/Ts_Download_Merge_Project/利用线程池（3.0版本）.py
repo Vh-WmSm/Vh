@@ -4,6 +4,7 @@ import os
 import wget
 import chardet
 import concurrent.futures
+import public_tools
 
 
 def wget_download(url, file_name):
@@ -18,7 +19,7 @@ def check_encoding(url_txt_path):
 
 
 if __name__ == '__main__':
-    desktop_path = 'c:\\users\\vh\\desktop'
+    desktop_path = public_tools.My_Tool.get_desktop_path()
     os.chdir(desktop_path)
     try:
         os.mkdir('ts_path')
@@ -27,7 +28,7 @@ if __name__ == '__main__':
         if jud_del == '':
             os.chdir('ts_path')
             os.system('echo y |del *.*')
-    ts_path = 'c:\\users\\vh\\desktop\\ts_path'
+    ts_path = desktop_path + '\\ts_path'
     os.chdir(desktop_path)
 
     url_txt_path = input('url.txt文件地址（直接回车默认在桌面）：')
